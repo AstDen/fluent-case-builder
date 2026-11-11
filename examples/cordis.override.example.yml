@@ -1,0 +1,43 @@
+# Пример пользовательского патча профиля DSH.
+#
+# Куда положить:  ~/.dsh/profiles/web/cordis.patch.yml   (или свой профиль вместо web)
+# Что это:        обычный loader-патч, который применяется ПОСЛЕ патчей бандлов.
+#                 Он адресует уже вставленную строку плагина по id и заменяет её config.
+#
+# Важно: поле config заменяется ЦЕЛИКОМ, а не сливается с конфигом из bundle-патча.
+# Поэтому перечислите все ключи, значения которых вам нужны; неперечисленные
+# получат значения по умолчанию из lib/config.js.
+#
+# Полный список ключей и их смысл — examples/config.example.json и docs/INSTALL.md.
+# Внешний config.json (~/.config/fluent-case-builder/config.json) имеет приоритет
+# ВЫШЕ этого файла, а переменные окружения — ещё выше. Для личной машины обычно
+# достаточно внешнего config.json; патч профиля нужен, если конфиг должен быть
+# частью профиля DSH (например, на общей рабочей станции).
+
+- id: fluent-case-builder
+  name: 'fluent-case-builder'
+  config:
+    kbRoot: '/path/to/ansys-fluent-tui-kb'
+    indexDir: '/path/to/ansys-fluent-tui-kb/90_RAW_TUI_OUTPUT/_data'
+    caseRoots:
+      - '/home/user/fluent-cases'
+    templateRoots:
+      my-project: '/path/to/my-project/templates'
+    profileRoots:
+      my-project: '/path/to/my-project/solutions'
+    reportDir: '/home/user/fluent-cases/reports'
+    allowRun: false
+    fluentPath: '/opt/ansys_inc/v261/fluent/bin/fluent'
+    licenseHost: '1055@localhost'
+
+# Временно отключить плагин в профиле (не удаляя пакет) можно так:
+#
+# - id: fluent-case-builder
+#   disabled: true
+#
+# Чтобы задать в конфиге выражение времени выполнения, используйте скаляр !!js,
+# например:
+#
+# - id: fluent-case-builder
+#   config:
+#     reportDir: !!js "dshHomePath('reports')"

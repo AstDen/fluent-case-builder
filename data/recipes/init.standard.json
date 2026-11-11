@@ -1,0 +1,17 @@
+{
+  "id": "init.standard",
+  "title": "Стандартная инициализация потока",
+  "category": "initialization",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/09_INITIALIZATION/deep_dive.md:34-42; KB/07_SOLVER/deep_dive.md:136-140",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/initialize initialize-flow"
+  ],
+  "interactive": "/solve/initialize/initialize-flow → выполняется (значения из set-defaults/compute-defaults)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Строка из проверенного рабочего журнала (перед report-definitions). В исследовании команда НЕ выполнялась (07_SOLVER §9: запускает инициализацию), поэтому статус verified-medium: форма подтверждена журналом, живой прогон в 2026 R1 — нет."
+}

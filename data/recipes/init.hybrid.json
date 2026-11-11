@@ -1,0 +1,17 @@
+{
+  "id": "init.hybrid",
+  "title": "Гибридная инициализация",
+  "category": "initialization",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/09_INITIALIZATION/deep_dive.md:34-49; KB/QA_LOG.md:255-260",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/initialize/hyb-initialization yes"
+  ],
+  "interactive": "/solve/initialize/hyb-initialization → подтверждение yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Проверено пользователем и зафиксировано в Q-020; в рабочем журнале встречается также `/solve/initialize fmg-initialization yes` (см. init.fmg — противоречие версий). Для гибридной инициализации все BC должны быть заданы; параметры — /solve/initialize/set-hyb-initialization/."
+}

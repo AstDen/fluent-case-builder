@@ -1,0 +1,29 @@
+# Зависимости
+node_modules/
+
+# Артефакты сборки
+dist/
+
+# Локальные конфиги и секреты
+*.local.json
+.env
+.env.*
+.envrc
+
+# Сырые отчёты коллег: в репозиторий попадают только агрегаты (learning/aggregate.json,
+# learning/backlog.md). Сами отчёты и заметки остаются локально.
+learning/inbox/*
+!learning/inbox/.gitkeep
+
+# Сгенерированные отчёты и результаты локальных прогонов
+reports/
+analysis/
+
+# Временные файлы плагина (реестр, бэкапы, логи запусков)
+.fcb-*
+*.log
+
+# Служебный мусор
+.tmp*
+.DS_Store
+Thumbs.db

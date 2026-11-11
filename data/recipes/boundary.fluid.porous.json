@@ -1,0 +1,27 @@
+{
+  "id": "boundary.fluid.porous",
+  "title": "Пористая fluid-зона (55 шагов)",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "high",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:114-150; KB/03_BOUNDARY_CONDITIONS/dialogs_walked.md:5-68; KB/QA_LOG.md:127-136",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "zone id/name [fluid-1] → material-name → source terms? → fixed values? → Frame/Mesh Motion → Laminar zone? → Porous zone? yes → Direction Specification → Direction-1/2/3 → Relative Velocity Resistance Formulation → Viscous Resistance ×3 → Inertial Resistance ×3 → C0/C1 → Porosity → Relative Viscosity → 3D Fan Zone?",
+  "requires": [
+    "udf.compile-load-hook"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "porosity",
+      "type": "number"
+    }
+  ],
+  "notes": "Полная 55-шаговая цепочка зафиксирована в KB (walk/bc_deep.jsonl, структура проверена). Конкретная позиционная строка содержит параметры приватного расчёта и в публичный пакет не включена. Соберите строку в своей сессии: /define/boundary-conditions fluid → ответы на 55 вопросов; порядок и значения resistencia/porosity проверяйте вживую."
+}

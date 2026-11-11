@@ -1,0 +1,30 @@
+{
+  "id": "models.multiphase",
+  "title": "Многофазная модель",
+  "category": "models",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/04_MODELS/dpm_multiphase.md:141-202; KB/QA_LOG.md:279-286; KB/04_MODELS/dialogs_walked.md:33-40",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/multiphase/model {{model}}"
+  ],
+  "interactive": "Available options: (\"none\" \"vof\" \"eulerian\" \"mixture\" \"wetsteam\") → Model [\"none\"] → модель",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "model",
+      "type": "enum",
+      "values": [
+        "none",
+        "vof",
+        "eulerian",
+        "mixture",
+        "wetsteam"
+      ],
+      "default": "vof"
+    }
+  ],
+  "notes": "DERIVED: проверен только вопрос диалога (Available options / Model [\"none\"]); журнальная строка — inferred-форма, целиком не выполнялась. Полная цепочка (number-of-phases и т.д.) не снята. После VOF Fluent может сам менять схемы/включать transient (QA_LOG Q-023)."
+}

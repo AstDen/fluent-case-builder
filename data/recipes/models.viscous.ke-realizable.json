@@ -1,0 +1,17 @@
+{
+  "id": "models.viscous.ke-realizable",
+  "title": "Турбулентность realizable k-epsilon",
+  "category": "models",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/04_MODELS/viscous.md:142-158; KB/04_MODELS/viscous.md:383-386",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/viscous ke-realizable? yes"
+  ],
+  "interactive": "Enable the realizable k-epsilon turbulence model? [no] → yes (далее возможны доп. вопросы)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "DERIVED: текст вопроса проверен, журнальная форма — из KB-шаблона «формы из проверенных вопросов»; полная цепочка не снималась (viscous.md §2.5: requires_verification). k-epsilon хуже SST на отрывах; для пристеночных течений нужен near-wall-treatment."
+}

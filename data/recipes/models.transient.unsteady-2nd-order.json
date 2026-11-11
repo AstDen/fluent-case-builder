@@ -1,0 +1,15 @@
+{
+  "id": "models.transient.unsteady-2nd-order",
+  "title": "Нестационарная постановка (2-й порядок)",
+  "category": "models",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/08_TRANSIENT/deep_dive.md:6-44; KB/04_MODELS/models_overview.md:94-110; KB/99_RESEARCH_STATUS/requires_verification.md:1121",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/models/unsteady-2nd-order? → Enable second-order unsteady solution model? [no] → yes (далее transient-controls)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Не выполнялось: переключение steady→unsteady меняет состояние кейса, цепочки /solve/set/transient-controls/* (time-step-size, number-of-time-steps, max-iter-per-step) не сняты (requires_verification). Журнальный пример в KB помечен «типовой, не выполнялся». Нужна live-сессия на scratch-кейсе."
+}

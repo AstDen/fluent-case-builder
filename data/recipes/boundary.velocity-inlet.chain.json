@@ -1,0 +1,30 @@
+{
+  "id": "boundary.velocity-inlet.chain",
+  "title": "Velocity-inlet: цепочка параметров",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:174-179; KB/03_BOUNDARY_CONDITIONS/deep_dive.md:205-206",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/boundary-conditions/velocity-inlet → zone id/name → velocity magnitude → turbulence → species (зависит от моделей)",
+  "requires": [
+    "boundary.zone-type"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string"
+    },
+    {
+      "name": "velocity",
+      "type": "number"
+    },
+    {
+      "name": "temperature",
+      "type": "number"
+    }
+  ],
+  "notes": "Тип зоны задаётся через zone-type, затем команда velocity-inlet. Цепочка параметров в KB НЕ проходилась (deep_dive §9: «Аналогично, через zone-type»; полная цепочка requires_verification). Позиционные аргументы неизвестны — в журнал не выводить до live-сессии."
+}

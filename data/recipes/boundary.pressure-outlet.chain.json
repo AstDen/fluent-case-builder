@@ -1,0 +1,15 @@
+{
+  "id": "boundary.pressure-outlet.chain",
+  "title": "Pressure-outlet: цепочка параметров",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:174-179",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/boundary-conditions/pressure-outlet → zone id/name → gauge pressure → backflow → turbulence/species (зависит от моделей)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Полная цепочка не проходилась: набор вопросов зависит от включённых моделей (энергия, species, турбулентность). Нужна live-сессия; в рабочем проверенный журнал выход задан как wall, а не pressure-outlet."
+}

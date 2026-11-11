@@ -1,0 +1,36 @@
+{
+  "id": "boundary.wall.chain",
+  "title": "Wall с тепловыми условиями и излучением",
+  "category": "boundary",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:152-172; KB/04_MODELS/radiation.md:33-78",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/boundary-conditions wall \"{{zone}}\" no 0 no 0 no yes radiation no no \"{{emissivityExpr}}\" no {{temperature}} no 1"
+  ],
+  "interactive": "zone id/name → Wall Motion → Shear BC → Roughness → Thermal Conditions → Radiation? → Emissivity → Temperature → ...",
+  "requires": [
+    "models.energy",
+    "models.radiation.do"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "emissivityExpr",
+      "type": "string",
+      "default": "External_Emissivity"
+    },
+    {
+      "name": "temperature",
+      "type": "number",
+      "default": 300
+    }
+  ],
+  "notes": "Строка выведена из проверенного журнала; порядок аргументов выверен по нему. ПРЕДУСЛОВИЕ: энергия и излучение включены (иначе ветка radiation невалидна). Тексты тепловых вопросов в KB не сняты — проверьте на своей сессии."
+}

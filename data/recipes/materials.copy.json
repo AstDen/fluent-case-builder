@@ -1,0 +1,33 @@
+{
+  "id": "materials.copy",
+  "title": "Копирование материала из базы",
+  "category": "materials",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/05_MATERIALS/materials.md:141-150; KB/05_MATERIALS/materials.md:270-277",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "copy → Available options (\"fluid\" \"solid\") → Select material type → материал из базы → новое имя",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "type",
+      "type": "enum",
+      "values": [
+        "fluid",
+        "solid"
+      ],
+      "default": "fluid"
+    },
+    {
+      "name": "material",
+      "type": "string"
+    },
+    {
+      "name": "newName",
+      "type": "string"
+    }
+  ],
+  "notes": "Проверен только первый вопрос (`Available options: (\"fluid\" \"solid\")` → `Select material type [\"fluid\"]`); дальнейшая цепочка (имя материала базы, новое имя) не записана — requires_verification. Для изменения уже существующего материала использовать change-create."
+}

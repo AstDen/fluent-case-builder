@@ -1,0 +1,19 @@
+{
+  "id": "models.viscous.laminar",
+  "title": "Ламинарная модель",
+  "category": "models",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/04_MODELS/viscous.md:92-102; KB/04_MODELS/energy.md:96-124",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/viscous laminar yes"
+  ],
+  "interactive": "Enable the laminar flow model? [yes] → yes",
+  "requires": [],
+  "conflicts": [
+    "models.viscous.kw-sst"
+  ],
+  "params": [],
+  "notes": "В новой сессии laminar уже включён по умолчанию; строка фиксирует состояние явно. В проверенном рабочем журнале setup_case.jou ВСЕГДА ламинарный, турбулентность включается позже в runtime при Re>5000 (ИНСТРУКЦИЯ-ПО-СОЗДАНИЮ-КЕЙСА.md)."
+}

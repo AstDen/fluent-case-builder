@@ -1,0 +1,29 @@
+{
+  "id": "boundary.zone-name",
+  "title": "Переименование зоны",
+  "category": "boundary",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:14-33; KB/01_MESH/deep_dive.md:54-60",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/boundary-conditions zone-name \"{{oldName}}\" \"{{newName}}\"",
+    "/mesh/modify-zones zone-name \"{{oldName}}\" \"{{newName}}\""
+  ],
+  "interactive": "/…/zone-name → старое имя → новое имя (в журнале два аргумента в кавычках)",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "oldName",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "newName",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "В рабочем журнале используются обе формы: /define/boundary-conditions zone-name (для BC-зон) и /mesh/modify-zones zone-name (для mesh-зон); обе в меню 2026 R1. Порядок аргументов «старое → новое» подтверждён журналом."
+}

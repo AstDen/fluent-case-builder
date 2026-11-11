@@ -1,0 +1,25 @@
+{
+  "dataDir": "/path/to/fluent-case-builder/data",
+  "profileDirs": [
+    "/home/user/fluent-profiles"
+  ],
+  "kbRoot": "/path/to/ansys-fluent-tui-kb",
+  "indexDir": "/path/to/ansys-fluent-tui-kb/90_RAW_TUI_OUTPUT/_data",
+  "caseRoots": [
+    "/home/user/fluent-cases"
+  ],
+  "templateRoots": {
+    "my-project": "/path/to/my-project/templates"
+  },
+  "profileRoots": {
+    "my-project": "/path/to/my-project/solutions"
+  },
+  "reportDir": "/home/user/fluent-cases/reports",
+  "registryPath": "/home/user/.cache/fluent-case-builder/cases.jsonl",
+  "allowRun": false,
+  "fluentPath": "/opt/ansys_inc/v261/fluent/bin/fluent",
+  "licenseHost": "1055@license.example.com",
+  "timeoutMs": 600000,
+  "maxOutputChars": 20000,
+  "maxLogLines": 800
+}

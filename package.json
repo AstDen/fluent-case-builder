@@ -1,0 +1,60 @@
+{
+  "name": "fluent-case-builder",
+  "version": "0.3.0",
+  "private": false,
+  "description": "Универсальный конструктор расчётных кейсов ANSYS Fluent для DeepSeek Harness: интервью, рекомендации моделей, генерация журналов и кейсов, проверка по базе знаний, контролируемый запуск и отчёты для петли обучения.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "data",
+    "docs",
+    "examples",
+    "scripts",
+    "locale",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "ansys",
+    "fluent",
+    "tui",
+    "cfd",
+    "case-builder",
+    "interactive-journal",
+    "simulation"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.5"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OWNER/REPO.git"
+  },
+  "scripts": {
+    "smoke": "node scripts/smoke.mjs",
+    "ingest": "node scripts/ingest-report.mjs"
+  }
+}

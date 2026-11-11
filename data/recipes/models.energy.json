@@ -1,0 +1,17 @@
+{
+  "id": "models.energy",
+  "title": "Уравнение энергии",
+  "category": "models",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/04_MODELS/energy.md:21-57; KB/QA_LOG.md:104-117",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models energy yes no no no yes"
+  ],
+  "interactive": "Enable energy model? [no] → yes; Compute viscous energy work? [no]; Include pressure work in energy equation? [no]; Include kinetic energy in energy equation? [no]; Include diffusion at inlets? [yes]",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Цепочка из 5 вопросов расшифрована полностью (energy.md §1.1); проверенный рабочий журнал: `energy yes no no no yes`. Компилятор вызывает без параметров. Для высокоскоростных/сжимаемых задач ответы pressureWork/kineticEnergy могут быть yes — это меняет физику; отдельный рецепт не заведён, нужна проверка."
+}

@@ -1,0 +1,21 @@
+{
+  "id": "boundary.pressure-outlet",
+  "title": "Pressure-outlet (alias для compile.js)",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:174-179",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/boundary-conditions/pressure-outlet → zone id/name → gauge pressure → backflow → turbulence/species (зависит от моделей)",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "ALIAS: compile.js вызывает ['boundary.pressure-outlet'] для role=outlet и передаёт {zone}. Цепочка НЕ проходилась (зависит от моделей); в журнал не включать до live-проверки — попадёт в unsupported."
+}

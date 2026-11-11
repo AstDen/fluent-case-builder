@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "updated": "2026-11-11",
+  "note": "Диагностика ошибок Fluent TUI по логу. Коды используются в отчётах (analysis.findings[].code). Пополняется мейнтейнером по присланным report-файлам.",
+  "patterns": [
+    {
+      "id": "invalid-command-batch-confirm",
+      "match": "invalid command:?\\s+yes",
+      "kind": "batch-confirmation",
+      "severity": "info",
+      "meaning": "После /file/write-case-data \"...\" yes файл уже записан, а последний токен yes отвергнут, потому что в batch-режиме подтверждения перезаписи включены.",
+      "recommendation": "Считать настройку успешной, если .cas.h5/.dat.h5 существуют. При желании убрать хвостовой yes или выставить /file/confirm-overwrite? no перед сохранением.",
+      "source": "живой прогон 2026-11-11, build 10262"
+    },
+    {
+      "id": "journal-aborted",
+      "match": "An error or interrupt occurred while reading the journal file",
+      "kind": "journal-abort",
+      "severity": "error",
+      "meaning": "Журнал оборван: Fluent прекратил выполнять строки после ошибки, остаток файла не выполнен.",
+      "recommendation": "Найти первую ошибку выше по логу, исправить её и перезапустить с начала. Делить журнал на этапы.",
+      "source": "19_SCHEME_JOURNAL/journal_syntax.md"
+    },
+    {
+      "id": "invalid-command",
+      "match": "(?i)(non-fatal Error: )?invalid command",
+      "kind": "syntax",
+      "severity": "error",
+      "meaning": "Команда недоступна в текущей конфигурации (нет сетки/кейса, не включена модель, другое состояние меню) или синтаксис не соответствует версии Fluent.",
+      "recommendation": "Проверить порядок шагов журнала и состояние сессии; для версий до 2026 проверить legacy-пути команд.",
+      "source": "AGENTS.md §4.4; 99_RESEARCH_STATUS/errors.md"
+    },
+    {
+      "id": "wrong-boolean-answer",
+      "match": "Please answer y\\[es\\] or n\\[o\\]",
+      "kind": "dialog",
+      "severity": "error",
+      "meaning": "На boolean-вопрос TUI дан неверный ответ.",
+      "recommendation": "Использовать yes/no (не y/n) в журнале; сверить цепочку вопросов в data/recipes.",
+      "source": "00_GENERAL/tui_structure.md §4"
+    },
+    {
+      "id": "invalid-zone",
+      "match": "(?i)(invalid zone|zone id/name)",
+      "kind": "mesh-zones",
+      "severity": "error",
+      "meaning": "Имя/ID зоны не найдено в текущей сетке — журнал ждёт другие имена зон.",
+      "recommendation": "Снять фактические имена: /define/boundary-conditions/list-zones и /mesh/modify-zones list-zones; обновить профиль/шаблон.",
+      "source": "03_BOUNDARY_CONDITIONS/dialogs_walked.md"
+    },
+    {
+      "id": "license",
+      "match": "(?i)(cannot connect to license server|license.*(error|expired|unavailable)|ANSYSLMD_LICENSE_FILE)",
+      "kind": "license",
+      "severity": "error",
+      "meaning": "Проблема с лицензионным сервером ANSYS.",
+      "recommendation": "Проверить: ss -ltn | grep 1055; systemctl --user status ansyslmd; lmutil lmstat -a -c <server>; переменную ANSYSLMD_LICENSE_FILE.",
+      "source": "00_GENERAL/license_autostart.md"
+    },
+    {
+      "id": "udf-compile",
+      "match": "(?i)(nmake|cl\\.exe|gcc:|g\\+\\+|cannot open source file|error C\\d+|compiled-functions.*(error|fail))",
+      "kind": "udf",
+      "severity": "error",
+      "meaning": "Не удалось скомпилировать/загрузить UDF-библиотеку.",
+      "recommendation": "Проверить наличие компилятора и заголовков Fluent, пути к .c-файлам, права на каталог libudf; собрать вручную в TUI.",
+      "source": "15_UDF/udf_guide.md"
+    },
+    {
+      "id": "mesh-read",
+      "match": "(?i)(cannot read|unable to read|failed to read|file does not exist|no such file)",
+      "kind": "files",
+      "severity": "error",
+      "meaning": "Не найден или не читается файл (сетка, .cas, UDF, TSV, журнал). Проверять пути относительно рабочего каталога Fluent.",
+      "recommendation": "Пути в журнале относительны каталога запуска Fluent; проверить наличие файлов и регистр имён.",
+      "source": "13_FILE_MANAGEMENT/file_management.md"
+    },
+    {
+      "id": "scheme-error",
+      "match": "(?i)(Error: eval: unbound variable|Error Object:|Scheme error)",
+      "kind": "scheme",
+      "severity": "error",
+      "meaning": "Ошибка Scheme-выражения в журнале; журнал после неё обрывается.",
+      "recommendation": "Проверить строки в скобках, отсутствие лишних токенов и доступность RP-переменных; одна форма на строку.",
+      "source": "19_SCHEME_JOURNAL/scheme_automation.md"
+    },
+    {
+      "id": "crash",
+      "match": "(?i)(Fatal error|Segmentation fault|signal \\d+)",
+      "kind": "crash",
+      "severity": "error",
+      "meaning": "Аварийное завершение процесса Fluent.",
+      "recommendation": "Проверить лог/транскрипт, воспроизвести на меньшем кейсе, приложить .trn к отчёту мейнтейнеру.",
+      "source": "90_RAW_TUI_OUTPUT/_run/probe.out"
+    },
+    {
+      "id": "out-of-memory",
+      "match": "(?i)(out of memory|memory allocation|insufficient memory)",
+      "kind": "resources",
+      "severity": "error",
+      "meaning": "Не хватило памяти для сетки/расчёта.",
+      "recommendation": "Уменьшить число процессов/сетку, проверить /mesh/memory-usage и /parallel; учесть лимит лицензии.",
+      "source": "18_PARALLEL/parallel.md"
+    },
+    {
+      "id": "overwrite-confirmation",
+      "match": "Overwrite confirmations \\(/file/set-batch-options",
+      "kind": "batch-confirmation",
+      "severity": "info",
+      "meaning": "Включены подтверждения перезаписи файлов в batch-режиме.",
+      "recommendation": "Для воспроизводимых прогонов выставить /file/confirm-overwrite? no или не передавать лишний yes.",
+      "source": "13_FILE_MANAGEMENT/file_management.md"
+    }
+  ]
+}

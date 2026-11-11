@@ -1,0 +1,49 @@
+{
+  "id": "materials.change-create.udf-property",
+  "title": "Материал с UDF-свойством (change-create, позиционная форма)",
+  "category": "materials",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/05_MATERIALS/materials.md:195-209",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/materials change-create {{baseMaterial}} \"{{name}}\" yes constant {{density}} yes constant {{cp}} yes user-defined \"{{conductivity}}\" yes"
+  ],
+  "interactive": "change-create → существующий материал → новое имя → пары «изменить свойство? yes → метод → значение»",
+  "requires": [
+    "udf.compile-load-hook"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "baseMaterial",
+      "type": "string",
+      "default": "aluminum"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "my_solid"
+    },
+    {
+      "name": "density",
+      "type": "number",
+      "required": true,
+      "default": 1000
+    },
+    {
+      "name": "cp",
+      "type": "number",
+      "required": true,
+      "default": 500
+    },
+    {
+      "name": "conductivity",
+      "type": "string",
+      "required": true,
+      "default": "my_thermal_conductivity::libudf"
+    }
+  ],
+  "notes": "Форма строки выведена из проверенного журнала: change-create <base> <new> yes constant <density> yes constant <cp> yes user-defined <udf-function> yes. Полная цепочка вопросов change-create не снята (requires_verification); значения свойств подставляйте свои."
+}

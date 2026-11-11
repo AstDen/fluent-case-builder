@@ -1,0 +1,17 @@
+{
+  "id": "models.viscous.spalart-allmaras",
+  "title": "Турбулентность Spalart-Allmaras",
+  "category": "models",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/04_MODELS/viscous.md:127-139",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/viscous spalart-allmaras? yes"
+  ],
+  "interactive": "Enable Spalart-Allmaras turbulence model? [no] → yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "DERIVED: журнальная форма зафиксирована в карточке модели (viscous.md §2.4); полная цепочка не проходилась (requires_verification). 1-уравненческая модель для внешней аэродинамики; опции sa-* в наблюдаемой сессии были недоступны."
+}

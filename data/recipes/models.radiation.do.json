@@ -1,0 +1,40 @@
+{
+  "id": "models.radiation.do",
+  "title": "Излучение Discrete Ordinates (DO)",
+  "category": "models",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/04_MODELS/radiation.md:33-78; KB/QA_LOG.md:262-269",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/radiation discrete-ordinates? yes {{thetaDiv}} {{phiDiv}} {{thetaPixels}} {{phiPixels}}"
+  ],
+  "interactive": "Enable the discrete ordinates radiation model? [no] → yes; theta divisions [2]; phi divisions [2]; theta pixels [1]; phi pixels [1]; далее могут быть доп. вопросы",
+  "requires": [
+    "models.energy"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "thetaDiv",
+      "type": "integer",
+      "default": 2
+    },
+    {
+      "name": "phiDiv",
+      "type": "integer",
+      "default": 2
+    },
+    {
+      "name": "thetaPixels",
+      "type": "integer",
+      "default": 1
+    },
+    {
+      "name": "phiPixels",
+      "type": "integer",
+      "default": 1
+    }
+  ],
+  "notes": "DERIVED: первые 5 шагов цепочки сняты walk-протоколом, журнальная строка собрана из ответов yes/2/2/1/1, но целиком не выполнялась; продолжение цепочки после theta/phi не снято (requires_verification). Побочный эффект: Fluent добавляет всем материалам Absorption/Scattering Coefficient и Refractive Index — их надо проверить (/define/materials/list-properties)."
+}

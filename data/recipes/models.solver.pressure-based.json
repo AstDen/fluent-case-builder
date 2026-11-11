@@ -1,0 +1,19 @@
+{
+  "id": "models.solver.pressure-based",
+  "title": "Pressure-based (segregated) решатель",
+  "category": "models",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/04_MODELS/models_overview.md:81-93; KB/QA_LOG.md:43-59; KB/07_SOLVER/deep_dive.md:6-14",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/solver pressure-based yes"
+  ],
+  "interactive": "/define/models/solver/pressure-based → Enable/disable the segregated solver? [no] → yes",
+  "requires": [],
+  "conflicts": [
+    "models.solver.density-based-implicit"
+  ],
+  "params": [],
+  "notes": "Проверено переключение: после density-based-implicit команда pressure-based спрашивает [no] (models_overview §2.1). Дословная журнальная строка `pressure-based yes` в KB не зафиксирована, но форма симметрична проверенной `density-based-implicit yes` — уверенность medium."
+}

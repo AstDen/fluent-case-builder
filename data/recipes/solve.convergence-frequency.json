@@ -1,0 +1,23 @@
+{
+  "id": "solve.convergence-frequency",
+  "title": "Частота проверки сходимости",
+  "category": "reports",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/10_CONVERGENCE/deep_dive.md:17-26; KB/11_MONITORS/monitors.md:120-128",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/convergence-conditions/frequency {{frequency}} q"
+  ],
+  "interactive": "/solve/convergence-conditions/frequency → целое число → q",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "frequency",
+      "type": "integer",
+      "default": 100
+    }
+  ],
+  "notes": "Проверено рабочим журналом (например 100 и 50). Проверка сходимости выполняется реже записи истории (report-files frequency 50), чтобы критерий опирался на записанные значения."
+}

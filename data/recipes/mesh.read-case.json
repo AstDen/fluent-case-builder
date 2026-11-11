@@ -1,0 +1,23 @@
+{
+  "id": "mesh.read-case",
+  "title": "Чтение сетки/кейса (alias для compile.js)",
+  "category": "file",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/01_MESH/deep_dive.md:6-27",
+  "date": "2026-11-11",
+  "journal": [
+    "/file/read-case \"{{caseFile}}\""
+  ],
+  "interactive": "/file/read-case → case file name [\".cas.h5\"] → имя файла (принимает и .msh)",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "caseFile",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "ALIAS: compile.js пробует ['mesh.read-case','file.read-case'] и передаёт {caseFile}. Канонический id по контракту — file.read-case; строки идентичны проверенному журналу пользователя."
+}

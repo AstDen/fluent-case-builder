@@ -1,0 +1,23 @@
+{
+  "id": "mesh.append-mesh",
+  "title": "Присоединение второй сетки",
+  "category": "mesh",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/01_MESH/deep_dive.md:14-17",
+  "date": "2026-11-11",
+  "journal": [
+    "/mesh/modify-zones append-mesh \"{{meshFile}}\""
+  ],
+  "interactive": "/mesh/modify-zones/append-mesh → mesh file name → имя файла",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "meshFile",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "Строка из проверенного рабочего журнала (присоединение solid-сетки к fluid). После append нумерация/имена зон меняются — далее в журнале идут zone-name/zone-type."
+}

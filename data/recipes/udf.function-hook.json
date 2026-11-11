@@ -1,0 +1,42 @@
+{
+  "id": "udf.function-hook",
+  "title": "Привязка функции UDF к хуку",
+  "category": "udf",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/15_UDF/function_hooks.md:20-70; KB/QA_LOG.md:172-182",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/user-defined/function-hooks {{hook}} \"{{function}}::{{library}}\""
+  ],
+  "interactive": "function-hooks <категория> \"<функция>::<библиотека>\" (после load; подменю видно только при загруженной библиотеке)",
+  "requires": [
+    "udf.compile-load-hook"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "hook",
+      "type": "enum",
+      "values": [
+        "initialization",
+        "volume-reaction-rate",
+        "adjust",
+        "execute-at-end",
+        "define-property"
+      ],
+      "default": "initialization"
+    },
+    {
+      "name": "function",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "library",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "Строка из проверенного рабочего журнала: function-hooks initialization \"my_init_function::libudf\" \"\" — у initialization есть второй пустой аргумент; volume-reaction-rate (user) — без него. Имя функции — <имя_в_C>::<имя_библиотеки>. Смысл второго аргумента не зафиксирован."
+}

@@ -1,0 +1,30 @@
+{
+  "id": "boundary.pressure-inlet.chain",
+  "title": "Pressure-inlet: цепочка параметров",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:174-179; KB/03_BOUNDARY_CONDITIONS/deep_dive.md:205-206",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/boundary-conditions/pressure-inlet → zone id/name → gauge total pressure → supersonic/initial gauge pressure → turbulence → species",
+  "requires": [
+    "boundary.zone-type"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string"
+    },
+    {
+      "name": "pressure",
+      "type": "number"
+    },
+    {
+      "name": "temperature",
+      "type": "number"
+    }
+  ],
+  "notes": "Для сжимаемых/сверхзвуковых входов. Цепочка в KB не проходилась; известно, что набор вопросов зависит от моделей (энергия/species/турбулентность) и что /solve/set/previous-defaults содержит опцию про normal Mach number at pressure inlet (00_GENERAL/command_index.md:1657). Нужна live-сессия."
+}

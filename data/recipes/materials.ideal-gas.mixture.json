@@ -1,0 +1,26 @@
+{
+  "id": "materials.ideal-gas.mixture",
+  "title": "Плотность mixture-материала: ideal-gas",
+  "category": "materials",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/05_MATERIALS/materials.md:295-334; KB/QA_LOG.md:191-204",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/materials change-create {{name}} {{name}} no yes ideal-gas no no no no no"
+  ],
+  "interactive": "change-create → mixture-template → то же имя → change Mixture Species? [no] → change Density? yes → ideal-gas → остальные Enter",
+  "requires": [
+    "models.species-transport"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "mixture-template"
+    }
+  ],
+  "notes": "Проверено 2026-11-11 (Q-013). Для mixture на один `no` больше, чем для fluid (сначала Mixture Species). Fluent автоматически включает энергию и печатает Note: Enabling energy equation ..."
+}

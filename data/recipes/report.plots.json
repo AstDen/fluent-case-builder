@@ -1,0 +1,40 @@
+{
+  "id": "report.plots",
+  "title": "График истории отчёта (report-plots/add)",
+  "category": "reports",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/12_REPORTS/reports.md:121-144; KB/11_MONITORS/monitors.md:105-128",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/report-plots/add {{name}} report-defs ({{reportDefs}}) frequency {{frequency}} active? yes q q"
+  ],
+  "interactive": "add → имя rp---… → report-defs (список) → frequency → active? yes → q q",
+  "requires": [
+    "report.definitions"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "rp---report"
+    },
+    {
+      "name": "reportDefs",
+      "type": "array",
+      "items": "string",
+      "required": true,
+      "default": [
+        "rd---average-temp-outlet"
+      ]
+    },
+    {
+      "name": "frequency",
+      "type": "integer",
+      "default": 50
+    }
+  ],
+  "notes": "DERIVED из проверенной строки проверенного рабочего журнала (закрывается двумя `q`). compile.js передаёт {name: rp---<имя отчёта>, reportDef: <имя отчёта>, frequency}. Соглашение проекта: rd---<смысл> для дефиниций, rp---<смысл> для графиков; в batch (-g) график не отображается, но объект создаётся."
+}

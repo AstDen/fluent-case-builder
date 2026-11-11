@@ -1,0 +1,18 @@
+{
+  "id": "mesh.check",
+  "title": "Проверка сетки и качества",
+  "category": "mesh",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/01_MESH/deep_dive.md:28-41; KB/00_GENERAL/ready_commands.md:38-45",
+  "date": "2026-11-11",
+  "journal": [
+    "/mesh/check",
+    "/mesh/quality"
+  ],
+  "interactive": "/mesh/check → выполняется сразу; /mesh/quality → выполняется сразу",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Помечены [T] в ready_commands.md §2; выполнялись после чтения сетки в 01_MESH §1."
+}

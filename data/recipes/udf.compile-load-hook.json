@@ -1,0 +1,41 @@
+{
+  "id": "udf.compile-load-hook",
+  "title": "Компиляция и загрузка UDF (библиотека)",
+  "category": "udf",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/15_UDF/udf_guide.md:104-145; KB/15_UDF/function_hooks.md:20-70; KB/QA_LOG.md:172-182",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/user-defined compiled-functions compile \"{{library}}\" yes {{files}} \"\" \"\"",
+    "/define/user-defined compiled-functions load \"{{library}}\""
+  ],
+  "interactive": "compile → имя библиотеки → yes (вопрос цепочки компиляции) → имена .c файлов → \"\" \"\"; затем load",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "library",
+      "type": "string",
+      "required": true,
+      "default": "libudf"
+    },
+    {
+      "name": "files",
+      "type": "array",
+      "items": "string",
+      "required": true
+    },
+    {
+      "name": "lib",
+      "type": "string",
+      "default": "libudf"
+    },
+    {
+      "name": "sourceFile",
+      "type": "string",
+      "default": ""
+    }
+  ],
+  "notes": "DERIVED: строки из рабочих журналов пользователя (2026 R1 и user). compile.js передаёт {library, files}; expand разворачивает массив через пробел БЕЗ кавычек, поэтому имена .c должны быть без пробелов (в проверенном журнале они в кавычках: `compile \"lib\" yes \"a.c\" \"b.c\" \"\" \"\"`). Параметры lib/sourceFile объявлены для совместимости со старой формой вызова, в строке не используются. Привязка хука — отдельный рецепт udf.function-hook (подменю function-hooks доступно только после load)."
+}

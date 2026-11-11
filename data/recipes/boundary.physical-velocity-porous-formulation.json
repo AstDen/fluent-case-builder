@@ -1,0 +1,17 @@
+{
+  "id": "boundary.physical-velocity-porous-formulation",
+  "title": "Physical velocity formulation для пористых сред",
+  "category": "boundary",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/07_SOLVER/deep_dive.md:92-93",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/boundary-conditions physical-velocity-porous-formulation yes"
+  ],
+  "interactive": "Use physical velocity formulation for porous media? [no] → yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Строка из проверенного рабочего журнала. В KB справка TUI фиксирует вопрос в /solve/set/p-v-controls (Use physical velocity formulation for porous media?), но рабочая журнальная форма — через /define/boundary-conditions. Форма проверена журналом, вопрос — справкой."
+}

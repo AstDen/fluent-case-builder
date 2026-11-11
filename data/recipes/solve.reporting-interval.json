@@ -1,0 +1,23 @@
+{
+  "id": "solve.reporting-interval",
+  "title": "Интервал возврата управления в Scheme",
+  "category": "solution",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/11_MONITORS/monitors.md:148-160; KB/07_SOLVER/deep_dive.md:102-118",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/set/reporting-interval {{interval}} q"
+  ],
+  "interactive": "report iteration in chunks of [1] → целое число → q",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "interval",
+      "type": "integer",
+      "default": 100
+    }
+  ],
+  "notes": "Критичный параметр пакетных расчётов: определяет, через сколько итераций Fluent возвращает управление журналу/Scheme (иначе внешний цикл по параметру не смог бы вклиниться)."
+}

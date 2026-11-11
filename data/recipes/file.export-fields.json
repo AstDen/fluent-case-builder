@@ -1,0 +1,15 @@
+{
+  "id": "file.export-fields",
+  "title": "Выбор полей для экспорта",
+  "category": "file",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/13_FILE_MANAGEMENT/export_import_formats.md:75-113; KB/12_REPORTS/reports.md:88-90",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "отдельной команды выбора полей нет: список полей передаётся позиционно в /file/export/ascii",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "В KB НЕТ TUI-команды выбора полей экспорта: поля — позиционный аргумент `/file/export/ascii <файл> <surfaces> () yes <fields> () yes` (внутренние имена: temperature, velocity-magnitude, x-velocity, pressure, density, specific-heat-cp, thermal-conductivity-lam, viscosity-lam, heat-flux). Рецепт-заглушка под шаг компилятора: реализовать как параметры file.export-ascii, отдельную строку журнала не выводить."
+}

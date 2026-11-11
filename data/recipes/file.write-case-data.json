@@ -1,0 +1,23 @@
+{
+  "id": "file.write-case-data",
+  "title": "Сохранение кейса и данных",
+  "category": "file",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/13_FILE_MANAGEMENT/file_management.md:103-122; KB/QA_LOG.md:215-220",
+  "date": "2026-11-11",
+  "journal": [
+    "/file/write-case-data \"{{name}}\" yes"
+  ],
+  "interactive": "/file/write-case-data → имя файла (без расширения) → подтверждение yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "СКРЫТАЯ команда: отсутствует в меню /file/, в ?write-case-data, в commands.csv, но работает в журналах (проверено двумя рабочими журналами). Без расширения Fluent добавляет .cas.h5. Требует наличия данных решения."
+}

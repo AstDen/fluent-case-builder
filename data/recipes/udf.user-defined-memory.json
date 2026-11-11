@@ -1,0 +1,24 @@
+{
+  "id": "udf.user-defined-memory",
+  "title": "Пользовательская память UDM",
+  "category": "udf",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/15_UDF/udf_guide.md:60-71; KB/QA_LOG.md:184-189",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/user-defined user-defined-memory {{count}}"
+  ],
+  "interactive": "/define/user-defined/user-defined-memory → число UDM",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "count",
+      "type": "integer",
+      "required": true,
+      "default": 2
+    }
+  ],
+  "notes": "Значение должно совпадать с числом Set_User_Memory_Name в UDF, иначе UDF читает не ту память. В проверенных журналах встречались значения 2 и 11 — подставьте своё."
+}

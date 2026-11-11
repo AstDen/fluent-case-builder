@@ -1,0 +1,23 @@
+{
+  "id": "solve.equations.off",
+  "title": "Отключение отдельных уравнений",
+  "category": "solution",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/07_SOLVER/deep_dive.md:31",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/set/equations {{equation}} no"
+  ],
+  "interactive": "/solve/set/equations/ → имя уравнения (flow, kw, energy, species-N, … ) → no",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "equation",
+      "type": "string",
+      "default": "species-0"
+    }
+  ],
+  "notes": "Строки из проверенного рабочего журнала: после species transport отключены species-0..species-3. Список активных уравнений смотреть /solve/set/equations/. Смысл отключения species при включённом механизме в KB не объяснён — вероятно, заморозка части механизма."
+}

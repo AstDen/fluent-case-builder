@@ -1,0 +1,57 @@
+{
+  "id": "report.definitions",
+  "title": "Report Definition (template)",
+  "category": "reports",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/12_REPORTS/reports.md:36-90; KB/QA_LOG.md:222-227",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/report-definitions/add {{name}} {{type}} field {{field}} surface-names ({{surfaces}}) q"
+  ],
+  "interactive": "add → имя объекта → тип отчёта → ключи (field, surface-names/zone-names, define) → q (закрыть подменю объекта)",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "rd---average-temp-outlet"
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": [
+        "surface-areaavg",
+        "surface-massflowrate",
+        "volume-average",
+        "volume-max",
+        "single-val-expression"
+      ],
+      "default": "surface-areaavg"
+    },
+    {
+      "name": "field",
+      "type": "enum",
+      "values": [
+        "temperature",
+        "heat-flux",
+        "velocity-magnitude",
+        "pressure",
+        "density",
+        "specific-heat-cp",
+        "thermal-conductivity-lam",
+        "viscosity-lam"
+      ],
+      "default": "temperature"
+    },
+    {
+      "name": "surfaces",
+      "type": "array",
+      "items": "string",
+      "required": true
+    }
+  ],
+  "notes": "DERIVED: шаблон обобщает проверенную строку surface-areaavg (reports.md §1.2); тип подставляется. ВНИМАНИЕ: surface-massflowrate НЕ принимает field (проверенная строка: `add rd---mass_flow_rate-out surface-massflowrate surface-names (inlet) q`), volume-* используют zone-names, single-val-expression — `define \"имя\"`. Для этих типов обобщённый шаблон неверен — компилятор должен ветвить по type. `q` в конце обязателен, иначе следующая строка журнала уйдёт в меню объекта. Полный список типов TUI не снят."
+}

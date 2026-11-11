@@ -1,0 +1,63 @@
+{
+  "id": "report.conv-reports",
+  "title": "Критерий остановки по отчёту (conv-reports/add)",
+  "category": "reports",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/12_REPORTS/reports.md:299-318; KB/11_MONITORS/monitors.md:143-145; KB/10_CONVERGENCE/deep_dive.md:28-41",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/convergence-conditions/conv-reports/add {{name}}-conv initial-values-to-ignore {{ignore}} print? yes report-defs \"{{name}}\" stop-criterion {{stop}} previous-values-to-consider {{window}} active? yes q q q"
+  ],
+  "interactive": "add → имя критерия → initial-values-to-ignore → print? → report-defs (имя отчёта в кавычках) → stop-criterion → previous-values-to-consider → active? → q q q",
+  "requires": [
+    "report.definitions"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "temp-out"
+    },
+    {
+      "name": "reportDef",
+      "type": "string",
+      "required": true,
+      "default": "rd---average-temp-outlet"
+    },
+    {
+      "name": "stop",
+      "type": "string",
+      "default": "1e-3"
+    },
+    {
+      "name": "ignore",
+      "type": "integer",
+      "default": 50
+    },
+    {
+      "name": "window",
+      "type": "integer",
+      "default": 1000
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "default": "surface-areaavg"
+    },
+    {
+      "name": "field",
+      "type": "string",
+      "default": "temperature"
+    },
+    {
+      "name": "surfaces",
+      "type": "array",
+      "items": "string",
+      "default": []
+    }
+  ],
+  "notes": "DERIVED: порядок ключей и три `q` взяты из проверенного журнала проверенный журнал. reportDef — имя уже созданного report definition (в журнале report.definitions и conv-reports связаны по имени). строгий режим: ignore 50/stop 1e-3/window 1000/freq 100; ослабленный режим: ignore 100/stop 5e-3/window 500/freq 50. Параметры type/field/surfaces объявлены для совместимости с compile.js, в строке не используются."
+}

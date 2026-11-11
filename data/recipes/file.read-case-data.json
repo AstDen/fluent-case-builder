@@ -1,0 +1,15 @@
+{
+  "id": "file.read-case-data",
+  "title": "Чтение кейса вместе с данными",
+  "category": "file",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/01_MESH/deep_dive.md:6-18; KB/13_FILE_MANAGEMENT/file_management.md:50-100",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/file/read-case-data → case file name [\".cas.h5\"] → имя файла",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Команда есть в меню /file/ и справке, но цепочка вопросов не снималась (blocked: чтение файлов в исследовании не выполнялось). Нужна live-проверка перед использованием в spec.mesh.casePath."
+}

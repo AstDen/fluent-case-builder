@@ -1,0 +1,31 @@
+; ============================================================
+; Пример: стационарное ламинарное течение в канале.
+; Это синтетический шаблон, а не воспроизведение чужого расчёта.
+; 1) замените meshFile на путь к своей сетке (.msh);
+; 2) добавьте свои граничные условия (см. fluent_case_interview);
+; 3) добавьте отчёты/поля, если нужны (см. docs/CASE_SPEC.md).
+; Канал: длина {{L}} мм, высота {{h}} мм, середина по высоте y = {{y_mid}} м.
+; ============================================================
+
+; ====================== сетка ======================
+/file/read-case "{{meshFile}}"
+/mesh/check
+
+; ====================== модели ======================
+/define/models/viscous laminar yes
+/define/models/solver pressure-based yes
+
+; ====================== решатель ======================
+/solve/set/p-v-coupling 20
+/solve/set/number-of-iterations {{iterations}} q
+/solve/set/reporting-interval 100 q
+
+; ====================== инициализация ======================
+/solve/initialize/hyb-initialization yes
+
+; ====================== критерии остановки по невязкам ======================
+/solve/monitors/residual convergence-criteria {{residuals}} {{residuals}} {{residuals}} {{residuals}} q q q
+
+; ====================== сохранение ======================
+/file/write-case-data "{{caseFileBase}}" yes
+exit

@@ -1,0 +1,15 @@
+{
+  "id": "init.fmg",
+  "title": "FMG-инициализация",
+  "category": "initialization",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/09_INITIALIZATION/deep_dive.md:38-41",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/solve/initialize/fmg-initialization yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "ПРОТИВОРЕЧИЕ KB: deep_dive §2 утверждает, что FMG в меню /solve/initialize/ 2026 R1 НЕ обнаружен, а проверенный рабочий журнал использует `/solve/initialize fmg-initialization yes` (журнал без даты; возможно 2025 R1). Нужна проверка: существует ли команда в v261 и какова её цепочка."
+}

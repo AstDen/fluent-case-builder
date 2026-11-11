@@ -1,0 +1,23 @@
+{
+  "id": "solver.iterate",
+  "title": "Запуск итераций",
+  "category": "solution",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/07_SOLVER/deep_dive.md:100-118",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/iterate {{iterations}}"
+  ],
+  "interactive": "/solve/iterate → Perform a specified number of iterations; аргумент — число итераций",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "iterations",
+      "type": "integer",
+      "default": 1
+    }
+  ],
+  "notes": "Форма подтверждена рабочими start.sh/start.sh.template пользователя (вызов через Scheme ti-menu-load-string с числом 1000000000). В исследовании команда не выполнялась (запускает расчёт). В движке: только по явной команде пользователя, не в setup-журнале."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "models.dpm.injection",
+  "title": "Дискретная фаза DPM (инжекция + связь)",
+  "category": "models",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/04_MODELS/dpm_multiphase.md:7-49; KB/04_MODELS/dpm_multiphase.md:132-139",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/models/dpm/injections/create-injection → цепочка вопросов не записана; /define/models/dpm/options two-way-coupling yes (derived)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Отдельной команды «включить DPM» нет: модель активируется созданием инжекции. Цепочка create-injection в KB не записана, в журналах пользователя DPM не использован. Нужна live-сессия."
+}

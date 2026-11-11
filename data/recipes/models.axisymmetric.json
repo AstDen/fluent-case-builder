@@ -1,0 +1,15 @@
+{
+  "id": "models.axisymmetric",
+  "title": "Осесимметричная постановка",
+  "category": "models",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/04_MODELS/models_overview.md:70-80; KB/03_BOUNDARY_CONDITIONS/deep_dive.md:68-81; KB/00_GENERAL/version_info.md:10-20",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/models/axisymmetric? → Enable/disable axisymmetric model? (внутреннее дерево; в живом меню не наблюдалось)",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Размерность задаётся при запуске Fluent (2ddp/3ddp); команда axisymmetric? зарегистрирована во внутреннем дереве, но в наблюдаемых конфигурациях скрыта. Тип зоны `axis` есть в списке zone-type (03_BC §3). Цепочка не проверена."
+}

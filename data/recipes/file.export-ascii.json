@@ -1,0 +1,35 @@
+{
+  "id": "file.export-ascii",
+  "title": "ASCII-экспорт поверхностных/объёмных данных",
+  "category": "file",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/13_FILE_MANAGEMENT/export_import_formats.md:75-113; KB/00_GENERAL/ready_commands.md:148-149",
+  "date": "2026-11-11",
+  "journal": [
+    "/file/export/ascii \"{{file}}\" ({{surfaces}}) () yes {{fields}} () yes"
+  ],
+  "interactive": "/file/export/ascii → имя файла → список поверхностей (…) → () → yes → список полей → () → yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "file",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "surfaces",
+      "type": "array",
+      "items": "string",
+      "required": true
+    },
+    {
+      "name": "fields",
+      "type": "array",
+      "items": "string",
+      "required": true
+    }
+  ],
+  "notes": "Проверено на реальных расчётах пользователя (start.sh/start.sh.template). Первая строка файла — заголовок, разделитель — запятая. Смысл литералов `()` и второго `yes` в справке не раскрыт (requires_verification); при неверном числе аргументов журнал обрывается. Внутренние имена полей: temperature, velocity-magnitude, x-velocity, y-velocity, pressure, density, specific-heat-cp, thermal-conductivity-lam, viscosity-lam, heat-flux."
+}

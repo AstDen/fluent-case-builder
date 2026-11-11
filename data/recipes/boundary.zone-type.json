@@ -1,0 +1,40 @@
+{
+  "id": "boundary.zone-type",
+  "title": "Смена типа зоны (BC)",
+  "category": "boundary",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:55-91; KB/QA_LOG.md:138-147",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/boundary-conditions zone-type {{zone}} {{type}}"
+  ],
+  "interactive": "zone id/name/list [] → id/имя; external-type> → новый тип",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "type",
+      "type": "enum",
+      "values": [
+        "mass-flow-inlet",
+        "velocity-inlet",
+        "pressure-inlet",
+        "pressure-outlet",
+        "wall",
+        "symmetry",
+        "interior",
+        "outflow",
+        "fluid",
+        "axis"
+      ],
+      "required": true
+    }
+  ],
+  "notes": "Два последовательных под-приглашения (zone id/name/list, затем external-type). Команды типа BC доступны только при наличии зон этого типа; смена типа сбрасывает параметры BC. Полный список external-type см. 03_BC §3."
+}

@@ -1,0 +1,24 @@
+{
+  "id": "materials.ideal-gas.fluid",
+  "title": "Плотность fluid-материала: ideal-gas",
+  "category": "materials",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/05_MATERIALS/materials.md:291-342; KB/QA_LOG.md:206-213; KB/05_MATERIALS/materials.md:304-311",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/materials change-create {{name}} {{name}} yes ideal-gas no no no no no no"
+  ],
+  "interactive": "change-create → имя материала → то же имя → change Mixture Species? (нет для fluid) → change Density? yes → ideal-gas → остальные свойства Enter",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "air"
+    }
+  ],
+  "notes": "Проверено 2026-11-11 (Q-014): повторный вызов показывает new method [ideal-gas]. Fluent автоматически включает уравнение энергии. Минимум 5 `no` после ideal-gas (Cp, Thermal Conductivity, Viscosity, Mass Diffusivity, Speed of Sound) — число зависит от типа материала; строка точная для fluid."
+}

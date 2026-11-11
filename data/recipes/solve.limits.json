@@ -1,0 +1,38 @@
+{
+  "id": "solve.limits",
+  "title": "Пределы изменения переменных (limits)",
+  "category": "solution",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/07_SOLVER/deep_dive.md:33",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/set limits {{minPressure}} {{maxPressure}} {{minTemperature}} {{maxTemperature}}"
+  ],
+  "interactive": "/solve/set/limits → 4 числа (порядок и смысл позиций в KB не документированы)",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "minPressure",
+      "type": "number",
+      "default": 1
+    },
+    {
+      "name": "maxPressure",
+      "type": "number",
+      "default": 50000000000
+    },
+    {
+      "name": "minTemperature",
+      "type": "number",
+      "default": 250
+    },
+    {
+      "name": "maxTemperature",
+      "type": "number",
+      "default": 3000
+    }
+  ],
+  "notes": "KB фиксирует только вопрос Minimum allowable absolute pressure (in [Pa]) [1]; семантика остальных позиций (максимум давления, min/max температуры) — вывод из проверенной строки, требует проверки. Значения по умолчанию здесь — пример, а не рекомендация: подставьте свои пределы."
+}

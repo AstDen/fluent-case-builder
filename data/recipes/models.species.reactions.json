@@ -1,0 +1,21 @@
+{
+  "id": "models.species.reactions",
+  "title": "Объёмные реакции и stiff chemistry",
+  "category": "models",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/06_SPECIES/species_combustion.md:61-100; KB/06_SPECIES/species_combustion.md:205-227; KB/QA_LOG.md:149-170",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/species volumetric-reactions yes",
+    "/define/models/species multicomponent-diffusion no",
+    "/define/models/species stiff-chemistry yes 1 0.5"
+  ],
+  "interactive": "/define/models/species/volumetric-reactions? → yes; multicomponent-diffusion? → no; stiff-chemistry? → yes 1 0.5",
+  "requires": [
+    "models.species-transport"
+  ],
+  "conflicts": [],
+  "params": [],
+  "notes": "Строки из проверенного журнала user (QA_LOG Q-010); журнал пользователя не датирован v261 — синтаксис помечен как «journal пользователя». Смысл параметров `1 0.5` у stiff-chemistry не расшифрован (requires_verification)."
+}

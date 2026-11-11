@@ -1,0 +1,17 @@
+{
+  "id": "mesh-interfaces.auto-create",
+  "title": "Автосоздание mesh-интерфейсов",
+  "category": "mesh",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/01_MESH/deep_dive.md:82-83",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/mesh-interfaces auto-create"
+  ],
+  "interactive": "/define/mesh-interfaces/auto-create → цепочка вопросов не зафиксирована",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Строка из проверенного рабочего журнала (CHT fluid-solid); KB фиксирует только существование меню /define/mesh-interfaces/ (auto-options/create/edit/delete/list). Текст вопросов не снят."
+}

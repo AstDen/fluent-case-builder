@@ -1,0 +1,23 @@
+{
+  "id": "solve.number-of-iterations",
+  "title": "Число итераций по умолчанию",
+  "category": "solution",
+  "status": "verified",
+  "confidence": "medium",
+  "source": "KB/07_SOLVER/deep_dive.md:100-118",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/set/number-of-iterations {{iterations}} q"
+  ],
+  "interactive": "Number of Iterations [0] → целое число → q",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "iterations",
+      "type": "integer",
+      "default": 500
+    }
+  ],
+  "notes": "Команда проверена (показ текущего значения [0]); рабочая журнальная строка `/solve/set/number-of-iterations 10000000 q`. В исследовании итерации не запускались. В проверенный журнал число заведомо большое, останов — по критериям сходимости."
+}

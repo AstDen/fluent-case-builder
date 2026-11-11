@@ -1,0 +1,42 @@
+{
+  "id": "report.files",
+  "title": "Файл истории отчётов (report-files/add)",
+  "category": "reports",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/12_REPORTS/reports.md:92-119; KB/11_MONITORS/monitors.md:105-128",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/report-files add {{name}} file-name \"{{file}}\" frequency {{frequency}} report-defs ({{reportDefs}}) active? yes q"
+  ],
+  "interactive": "add → имя → file-name → frequency → report-defs (список в скобках) → active? yes → q",
+  "requires": [
+    "report.definitions"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "default": "all_data_file"
+    },
+    {
+      "name": "file",
+      "type": "string",
+      "required": true,
+      "default": "./data/all_data_file.out"
+    },
+    {
+      "name": "frequency",
+      "type": "integer",
+      "default": 50
+    },
+    {
+      "name": "reportDefs",
+      "type": "array",
+      "items": "string",
+      "default": []
+    }
+  ],
+  "notes": "DERIVED из проверенной строки рабочего журнала (14 отчётов, frequency 50). ОГРАНИЧЕНИЕ compile.js: сейчас передаётся только {file}, поэтому reportDefs остаётся пустым → строка `report-defs ()` (в файл ничего не пишется). Движку нужно передавать список rd---имён созданных отчётов. Каталог из file-name должен существовать; `q` обязателен."
+}

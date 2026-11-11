@@ -1,0 +1,10 @@
+{
+  "profiles": [
+    {
+      "id": "example-channel",
+      "path": "data/profiles/example-channel/profile.json",
+      "title": "Пример: ламинарный канал (синтетический шаблон)",
+      "status": "example"
+    }
+  ]
+}

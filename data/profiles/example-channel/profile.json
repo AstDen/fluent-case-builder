@@ -1,0 +1,60 @@
+{
+  "id": "example-channel",
+  "title": "Пример: ламинарный канал (синтетический шаблон)",
+  "description": "Минимальный учебный кейс: сетка + ламинарный решатель + инициализация + сохранение. Показывает формат профиля (параметры, вычисления, пресеты, шаблон журнала); НЕ воспроизводит конкретный научный расчёт. Добавьте свои ГУ и отчёты.",
+  "category": "example",
+  "version": 1,
+  "status": "example",
+  "source": "synthetic",
+  "params": {
+    "meshFile": {
+      "type": "string",
+      "required": true,
+      "default": "/path/to/channel.msh",
+      "description": "путь к вашей сетке .msh (замените)"
+    },
+    "L": {
+      "type": "number",
+      "unit": "mm",
+      "default": 1000,
+      "description": "длина канала"
+    },
+    "h": {
+      "type": "number",
+      "unit": "mm",
+      "default": 10,
+      "description": "высота канала"
+    },
+    "iterations": {
+      "type": "integer",
+      "default": 500,
+      "description": "максимум итераций"
+    }
+  },
+  "computed": {
+    "y_mid": "python: f'{h / 2000:.6f}'"
+  },
+  "naming": "channel_L-{L}mm_h-{h}mm",
+  "caseFileBase": "channel_L-{L}mm_h-{h}mm_start",
+  "presets": {
+    "quick": { "residuals": "1e-3" },
+    "fine": { "residuals": "1e-4" }
+  },
+  "presetWhen": {
+    "quick": "iterations < 1000",
+    "fine": "true"
+  },
+  "assets": [],
+  "directories": ["data", "archive"],
+  "touchFiles": ["workflow.log"],
+  "templates": {
+    "setupJournal": "templates/setup_case.jou.tmpl"
+  },
+  "outputs": ["{{caseFileBase}}.cas.h5", "{{caseFileBase}}.dat.h5"],
+  "verification": {
+    "status": "example",
+    "date": "2026-11-11",
+    "evidence": "Синтетический пример. Журнал собран только из проверенных рецептов (read-case, mesh/check, laminar, solver, p-v-coupling, number-of-iterations, reporting-interval, hyb-initialization, residual criteria, write-case-data), но не воспроизводит чужой расчёт и не содержит чужих данных.",
+    "notes": "Это шаблон для обучения формату профиля. Для реальной задачи используйте fluent_case_interview → fluent_case_plan({spec}) или добавьте свой профиль в data/profiles/ или config.profileDirs."
+  }
+}

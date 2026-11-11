@@ -1,0 +1,35 @@
+{
+  "id": "materials.change-create",
+  "title": "Изменение/создание материала (generic)",
+  "category": "materials",
+  "status": "derived",
+  "confidence": "medium",
+  "source": "KB/05_MATERIALS/materials.md:128-139; KB/05_MATERIALS/materials.md:291-342",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/materials change-create {{name}} {{name}} yes {{densityMethod}} no no no no no no"
+  ],
+  "interactive": "change-create → старое имя → новое имя (то же = изменить) → change Density? yes → метод → остальные свойства Enter",
+  "requires": [],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "air"
+    },
+    {
+      "name": "densityMethod",
+      "type": "enum",
+      "values": [
+        "constant",
+        "ideal-gas",
+        "incompressible-ideal-gas",
+        "user-defined"
+      ],
+      "default": "ideal-gas"
+    }
+  ],
+  "notes": "DERIVED: обобщение проверенной формы materials.ideal-gas.fluid (fluid, без вопроса Mixture Species). Проверена только ветка ideal-gas; для constant/других методов число и порядок вопросов НЕ подтверждены — нужна live-проверка. Для mixture-материала см. materials.ideal-gas.mixture (на один `no` больше)."
+}

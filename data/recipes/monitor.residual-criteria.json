@@ -1,0 +1,38 @@
+{
+  "id": "monitor.residual-criteria",
+  "title": "Критерии сходимости по невязкам",
+  "category": "monitors",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/11_MONITORS/monitors.md:36-85; KB/10_CONVERGENCE/deep_dive.md:43-67",
+  "date": "2026-11-11",
+  "journal": [
+    "/solve/monitors/residual convergence-criteria {{values}} q q q"
+  ],
+  "interactive": "convergence-criteria → пороги по уравнениям в порядке уравнений → q q q",
+  "requires": [
+    "models.energy"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "values",
+      "type": "array",
+      "items": "number",
+      "required": true,
+      "default": [
+        0.5,
+        0.001,
+        0.001,
+        0.001,
+        5e-06
+      ]
+    },
+    {
+      "name": "energyResidual",
+      "type": "number",
+      "default": 5e-06
+    }
+  ],
+  "notes": "Проверено рабочим журналом: `/solve/monitors/residual convergence-criteria 5e-1 1e-3 1e-3 1e-3 5e-6 q q q`. Массив values разворачивается через пробел; порядок из CONVERGENCE_SETTINGS.md: continuity, x/y/z-velocity, energy (последнее значение). Число значений должно совпадать с числом уравнений, иначе журнал обрывается. строгий режим: energy 5e-6; ослабленный режим: energy 5e-4."
+}

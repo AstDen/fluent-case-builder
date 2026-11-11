@@ -1,0 +1,15 @@
+{
+  "id": "models.solver.density-based-explicit",
+  "title": "Density-based explicit (coupled-explicit) решатель",
+  "category": "models",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/04_MODELS/models_overview.md:81-93; KB/07_SOLVER/deep_dive.md:6-14",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "/define/models/solver/density-based-explicit → Enable/disable the coupled-explicit solver? [no] → yes",
+  "requires": [],
+  "conflicts": [],
+  "params": [],
+  "notes": "Команда есть в меню и справке TUI, но переключение в живой сессии НЕ проверялось (проверен только density-based-implicit). Ограничение из KB: density-based-explicit недоступен для некоторых моделей (ряд многофазных). Журнальную строку не выводить до live-проверки."
+}

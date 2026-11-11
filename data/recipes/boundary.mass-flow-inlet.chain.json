@@ -1,0 +1,36 @@
+{
+  "id": "boundary.mass-flow-inlet.chain",
+  "title": "Mass-flow-inlet: позиционная цепочка",
+  "category": "boundary",
+  "status": "unverified",
+  "confidence": "low",
+  "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:181-192; KB/00_GENERAL/ready_commands.md:90-98",
+  "date": "2026-11-11",
+  "journal": [],
+  "interactive": "zone id/name [inlet] → material-name? → Specify source terms? → Specify fixed values? → Mass Flow Rate → ... → turbulence intensity/viscosity ratio → species mass fractions",
+  "requires": [
+    "boundary.zone-type"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "zone",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "massFlow",
+      "type": "number"
+    },
+    {
+      "name": "temperature",
+      "type": "number"
+    },
+    {
+      "name": "species",
+      "type": "array",
+      "items": "string"
+    }
+  ],
+  "notes": "НЕ ВКЛЮЧАТЬ В ЖУРНАЛ ДО ПРОВЕРКИ: позиционные аргументы не расшифрованы (какой ответ на какой вопрос — неизвестно; известно лишь, что имена Named Expressions идут в кавычках). В рабочем журнале пользователя есть две реальные строки: с турбулентностью 10%/30 (`/define/boundary-conditions mass-flow-inlet inlet yes yes no \"Q_inlet\" no \"T_inlet\" no 0 no yes no no yes 10 30 yes no \"Y_species1\" no \"Y_species2\" no \"Y_species3\" no \"Y_species4\"`, J:149) и без турбулентной ветки (J:65). Подстановка {{zone}}/{{massFlow}}/{{temperature}}/{{species}} в позиции — гипотеза: нужна live-сессия со съёмом всех вопросов и их порядка."
+}

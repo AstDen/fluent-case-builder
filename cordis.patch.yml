@@ -1,0 +1,13 @@
+# Bundle patch: подключает плагин fluent-case-builder к профилю.
+# Здесь только переносимые значения по умолчанию. Машинные пути (kbRoot, caseRoots,
+# templateRoots, profileRoots, fluentPath) задавайте во внешнем конфиге:
+#   ~/.config/fluent-case-builder/config.json  (или env FLUENT_CONFIG)
+# либо переопределяйте строку по id в своём cordis.patch.yml:
+#   - id: fluent-case-builder
+#     config: { ... }
+# Приоритет: DEFAULTS → этот config → внешний config.json → env-переменные.
+- insert:
+    - id: fluent-case-builder
+      name: 'fluent-case-builder'
+      config:
+        allowRun: false

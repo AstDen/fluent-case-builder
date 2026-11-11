@@ -1,0 +1,25 @@
+{
+  "id": "models.species-transport",
+  "title": "Species Transport (+ mixture material)",
+  "category": "models",
+  "status": "verified",
+  "confidence": "high",
+  "source": "KB/06_SPECIES/species_combustion.md:46-59; KB/06_SPECIES/species_combustion.md:205-227; KB/QA_LOG.md:149-170",
+  "date": "2026-11-11",
+  "journal": [
+    "/define/models/species species-transport yes \"{{mixtureMaterial}}\""
+  ],
+  "interactive": "Enable the species transport model? [no] → yes; затем имя mixture-материала (подтверждено журналом, текст вопроса не записан)",
+  "requires": [
+    "materials.data-base.udf"
+  ],
+  "conflicts": [],
+  "params": [
+    {
+      "name": "mixtureMaterial",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "notes": "Mixture-материал должен быть заранее импортирован из material DB. После включения появляются уравнения species-0..N и species-ГУ (Y_*) на входах. Для проверенный журнал используется mixture `mixture-material` из базы `my-material`."
+}
