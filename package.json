@@ -1,6 +1,6 @@
 {
   "name": "fluent-case-builder",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": false,
   "description": "Универсальный конструктор расчётных кейсов ANSYS Fluent для DeepSeek Harness: интервью, рекомендации моделей, генерация журналов и кейсов, проверка по базе знаний, контролируемый запуск и отчёты для петли обучения.",
   "type": "module",
@@ -30,7 +30,8 @@
     }
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.5 <0.3.0"
   },
   "keywords": [
     "deepseek-harness",
@@ -45,9 +46,9 @@
     "simulation"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.0.5",
-    "@deepseek-ai/dsh-tools": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-skill": "0.2.1-rc.5"
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.5 <0.3.0",
+    "@deepseek-ai/dsh-skill": ">=0.2.1-rc.5 <0.3.0"
   },
   "license": "MIT",
   "repository": {
