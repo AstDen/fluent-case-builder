@@ -278,6 +278,7 @@ cp /absolute/path/to/fluent-case-builder/examples/config.example.json \
 | Симптом | Причина | Что делать |
 |---|---|---|
 | `pnpm: command not found`, `spawn pnpm ENOENT` при установке | нет pnpm | `corepack enable pnpm`, повторить установку; при отсутствии corepack — установить Node 20+ из официального дистрибутива |
+| После обновления DSH: «вер…… с DSH … несовместим» | у плагина были жёсткие peer-версии `@deepseek-ai/dsh-*`; новый DSH их не удовлетворяет | обновите плагин до 0.5.1+ (`plugin_manager` remove_bundle → install_bundle с тегом `#v0.5.1`) и перезапустите DSH; `fluent_plugin_update` в этом состоянии недоступен |
 | После установки инструментов `fluent_*` нет | DSH не перезапущен; пакет не попал в профиль | перезапустить DSH; проверить `~/.dsh/profiles/web/package.json` и `plugin_manager list_plugins`; при необходимости переустановить |
 | При активации: `failed to import: Cannot find package '@deepseek-ai/dsh-tools'` | установка из git при запущенном DSH: держится старая генерация модулей | перезапустить DSH. Если ошибка повторяется — клонировать репозиторий локально и установить способом 3 (путь к каталогу) |
 | `fluent_kb_search` → `configured.indices: false` | `indexDir` указывает на несуществующий каталог | убрать `indexDir` из конфига (будет встроенный индекс) или исправить путь |
