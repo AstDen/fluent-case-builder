@@ -62,7 +62,7 @@ plugin_manager install_bundle  target: "github:AstDen/fluent-case-builder"
 Или через CLI (тот же pnpm под капотом):
 
 ```bash
-dsh plugin --profile web install github:AstDen/fluent-case-builder
+dsh plugin --profile web add github:AstDen/fluent-case-builder
 ```
 
 Для своего форка замените `AstDen/fluent-case-builder` на `<OWNER>/<REPO>`.
@@ -74,7 +74,7 @@ plugin_manager install_bundle  target: "/absolute/path/to/fluent-case-builder"
 ```
 
 ```bash
-dsh plugin --profile web install /absolute/path/to/fluent-case-builder
+dsh plugin --profile web add /absolute/path/to/fluent-case-builder
 ```
 
 ### После установки
@@ -88,6 +88,45 @@ dsh plugin --profile web install /absolute/path/to/fluent-case-builder
   используйте способ 2: локальный клон и установка по пути — она не зависит от git-резолвинга pnpm.
 - Проверка: вызовите `fluent_case_profiles` — должен вернуться список профилей (в поставке есть
   `example-channel`). Если ответ пустой — см. [docs/INSTALL.md](docs/INSTALL.md), раздел «Типовые проблемы».
+
+### Обновление
+
+Текущая версия — в `CHANGELOG.md` и в `plugin_manager` → `list_bundles`. Обновление **всегда**
+состоит из трёх шагов: заменить пакет → перезапустить DSH → проверить версию.
+
+**Через агента (рекомендуется).** В сессии:
+
+```text
+plugin_manager  action: "remove_bundle"  target: "fluent-case-builder"
+plugin_manager  action: "install_bundle" target: "github:AstDen/fluent-case-builder#v0.4.0"
+```
+
+`install_bundle` отказывает, если пакет уже установлен (`already-installed`), поэтому сначала
+`remove_bundle`. Указывайте тег (`#v0.4.0`) для воспроизводимой версии или `#main` / без рефа —
+для последней. После установки **перезапустите DSH**: до рестарта возможен симптом
+`failed to import: Cannot find package '@deepseek-ai/dsh-tools'` (старая генерация модулей).
+
+**Из терминала.** `dsh plugin` — это pnpm в каталоге профиля с пересборкой списка бандлов:
+
+```bash
+# последняя версия из main
+dsh plugin --profile web update fluent-case-builder
+# или точная версия: удалить и поставить тег
+dsh plugin --profile web remove fluent-case-builder
+dsh plugin --profile web add github:AstDen/fluent-case-builder#v0.4.0
+```
+
+**Откат** — та же процедура с тегом предыдущей версии (`#v0.3.0` и т.д.). Внешний конфиг
+(`~/.config/fluent-case-builder/config.json`), созданные кейсы и реестр при обновлении не
+затрагиваются. Для установки из локального клона хватает `git pull` (данные подхватываются сразу),
+но после изменения кода DSH всё равно нужно перезапустить.
+
+**Проверка после обновления:**
+
+- `plugin_manager` → `list_bundles` показывает новую версию;
+- `fluent_case_profiles` и `fluent_kb_search({query:"k-ω SST"})` отвечают;
+- `fluent_task_report(...)` → `generator.pluginVersion` совпадает с ожидаемой;
+- для локального клона: `node scripts/smoke.mjs`.
 
 Подробная пошаговая инструкция (проверка Fluent и лицензии, smoke-тесты, troubleshooting) —
 в [docs/INSTALL.md](docs/INSTALL.md).

@@ -297,7 +297,8 @@ cp /absolute/path/to/fluent-case-builder/examples/config.example.json \
 
 ## Обновление и удаление
 
-- Обновить: переустановить плагин из git (шаг 3) и перезапустить DSH. Данные кейсов лежат вне
+- Обновить: `remove_bundle` → `install_bundle` с тегом (или `dsh plugin --profile web update fluent-case-builder`),
+  затем перезапустить DSH. Откат — установка предыдущего тега (`#v0.4.0` → `#v0.3.0`). Данные кейсов лежат вне
   пакета (`caseRoots`), поэтому установка их не затрагивает.
 - Удалить: `dsh plugin --profile web remove fluent-case-builder` (или через `plugin_manager`),
   затем перезапустить DSH.
