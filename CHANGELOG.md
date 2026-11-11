@@ -3,6 +3,16 @@
 Все заметные изменения плагина. Формат — [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версии — [semver](https://semver.org/lang/ru/).
 
+## [0.5.0] — 2026-11-11
+
+### Добавлено
+- Инструмент `fluent_plugin_update`: `check` (текущая/последняя версия по git-тегам), `plan`
+  (готовые команды для `plugin_manager` и `dsh plugin`), `script` (исполняемый скрипт обновления),
+  `apply` (обновление через официальный CLI, требует `confirm:true` и `allowSelfUpdate:true`).
+- Конфиг: `updateSource` (источник обновления), `allowSelfUpdate`, `dshCommand`; env
+  `FLUENT_UPDATE_SOURCE`, `FLUENT_ALLOW_SELF_UPDATE`, `FLUENT_DSH_COMMAND`.
+- Встроенный skill дополнен маршрутом обновления.
+
 ## [0.4.0] — 2026-11-11
 
 ### Добавлено

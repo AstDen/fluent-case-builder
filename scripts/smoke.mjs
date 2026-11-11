@@ -75,6 +75,67 @@ await checkAsync('loadCommands + search', async () => {
   assert(hits.some((h) => h.path.includes('viscous')), 'нет viscous в результатах')
 })
 
+const { compareVersions, parseTags, buildUpdateCommands, writeUpdateScript, installedState, applyUpdate } = await import(join(root, 'lib/update.js'))
+
+check('update: сравнение версий', () => {
+  assert(compareVersions('v0.5.0', 'v0.4.0') === 1, 'v0.5.0 > v0.4.0')
+  assert(compareVersions('v0.4.0', 'v0.4.0') === 0, 'равные версии')
+  assert(compareVersions('0.3.9', 'v0.4.0') === -1, '0.3.9 < 0.4.0')
+})
+check('update: разбор git-тегов', () => {
+  const tags = parseTags('abc\trefs/tags/v0.3.0\ndef\trefs/tags/v0.5.0\nghi\trefs/tags/v0.5.0^{}\njkl\trefs/tags/not-semver')
+  assert(tags[0] === 'v0.5.0', `первый тег: ${tags[0]}`)
+  assert(tags.length === 2, `уникальных тегов: ${tags.length}`)
+})
+check('update: команды обновления', () => {
+  const pinned = buildUpdateCommands({ version: 'v0.5.0', profile: 'web' })
+  assert(pinned.spec.endsWith('#v0.5.0'), pinned.spec)
+  assert(pinned.pluginManager[0].action === 'remove_bundle', 'нет remove_bundle')
+  assert(pinned.pluginManager[1].target.includes('#v0.5.0'), 'нет пина в install_bundle')
+  assert(pinned.cli.some((line) => line.includes('dsh plugin --profile web add')), 'нет CLI add')
+  const latest = buildUpdateCommands({ version: 'main' })
+  assert(latest.spec.endsWith('#main'), latest.spec)
+})
+await checkAsync('update: установленное состояние профиля', async () => {
+  const dir = join(root, '.smoke-profile')
+  await rm(dir, { recursive: true, force: true })
+  await mkdir(dir, { recursive: true })
+  await writeFile(join(dir, 'package.json'), JSON.stringify({
+    name: 'smoke-profile', dependencies: { 'fluent-case-builder': 'github:AstDen/fluent-case-builder' },
+    dsh: { profile: { bundles: ['fluent-case-builder'] } },
+  }))
+  const previous = process.env.DSH_PROFILE_DIR
+  process.env.DSH_PROFILE_DIR = dir
+  try {
+    const state = installedState('smoke')
+    assert(state.spec.includes('github:'), `spec: ${state.spec}`)
+    assert(state.bundled === true, 'bundle не распознан')
+  } finally {
+    if (previous === undefined) delete process.env.DSH_PROFILE_DIR; else process.env.DSH_PROFILE_DIR = previous
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+await checkAsync('update: скрипт и защита apply', async () => {
+  const dir = join(root, '.smoke-update')
+  await rm(dir, { recursive: true, force: true })
+  await mkdir(dir, { recursive: true })
+  try {
+    const written = writeUpdateScript({ caseRoots: [dir] }, { version: 'v0.5.0', outputDir: dir })
+    assert(existsSync(written.file), 'скрипт не создан')
+    const text = await readFile(written.file, 'utf8')
+    assert(text.includes('dsh plugin --profile') && text.includes('#v0.5.0'), 'скрипт без команд/пина')
+    let guarded = false
+    try { applyUpdate({ allowSelfUpdate: false }, { version: 'v0.5.0', confirm: true }) } catch { guarded = true }
+    assert(guarded, 'apply без allowSelfUpdate должен падать')
+    let noConfirm = false
+    try { applyUpdate({ allowSelfUpdate: true }, { version: 'v0.5.0' }) } catch { noConfirm = true }
+    assert(noConfirm, 'apply без confirm должен падать')
+    const dry = applyUpdate({ allowSelfUpdate: true }, { version: 'v0.5.0', confirm: true, dryRun: true })
+    assert(dry.dryRun === true && dry.restartRequired === true, 'dryRun не сработал')
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
 await checkAsync('встроенный индекс команд', async () => {
   const bundled = join(root, 'data', 'index', 'commands.csv')
   assert(existsSync(bundled), 'нет встроенного data/index/commands.csv')

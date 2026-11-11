@@ -34,6 +34,7 @@
 | **Контролируемый запуск** | Fluent в фоне с логом, статусом и остановкой; бэкап журналов/результатов перед каждым запуском; `allowRun` + `confirm:true` |
 | **Отчёты для мейнтейнера** | самодостаточный JSON + Markdown: окружение, версия Fluent, постановка, интервью, кейс, запуск, автоматический анализ ошибок, пробелы KB |
 | **Расширение данными** | новый профиль/рецепт/правило/вопрос/диагностика — это новый JSON в `data/`, код не меняется |
+| **Обновление из чата** | `fluent_plugin_update`: проверка версии по git-тегам, план, скрипт или применение через официальный `dsh plugin` |
 
 ## Требования
 
@@ -94,11 +95,23 @@ dsh plugin --profile web add /absolute/path/to/fluent-case-builder
 Текущая версия — в `CHANGELOG.md` и в `plugin_manager` → `list_bundles`. Обновление **всегда**
 состоит из трёх шагов: заменить пакет → перезапустить DSH → проверить версию.
 
-**Через агента (рекомендуется).** В сессии:
+**Через инструмент плагина.** В сессии:
+
+```text
+fluent_plugin_update({ action: "check" })                       # текущая и последняя версия
+fluent_plugin_update({ action: "plan", version: "v0.5.0" })     # готовые команды
+fluent_plugin_update({ action: "apply", version: "v0.5.0", confirm: true })
+```
+
+`apply` выключен по умолчанию: включите `allowSelfUpdate: true` в конфиге. Он вызывает официальный
+`dsh plugin` и после установки требует перезапуска DSH. Если включить не хочется — используйте
+`plan`/`script` и выполните команды вручную.
+
+**Через агента (plugin_manager).** В сессии:
 
 ```text
 plugin_manager  action: "remove_bundle"  target: "fluent-case-builder"
-plugin_manager  action: "install_bundle" target: "github:AstDen/fluent-case-builder#v0.4.0"
+plugin_manager  action: "install_bundle" target: "github:AstDen/fluent-case-builder#v0.5.0"
 ```
 
 `install_bundle` отказывает, если пакет уже установлен (`already-installed`), поэтому сначала
@@ -192,6 +205,9 @@ $XDG_CONFIG_HOME/fluent-case-builder/config.json
 | `timeoutMs` | `600000` | таймаут одной команды TUI, мс |
 | `maxOutputChars` | `20000` | лимит вывода в ответе инструмента, символов |
 | `maxLogLines` | `800` | сколько последних строк лога включать в отчёт |
+| `updateSource` | `github:AstDen/fluent-case-builder` | источник обновления плагина |
+| `allowSelfUpdate` | `false` | разрешить `fluent_plugin_update({action:"apply"})` менять профиль |
+| `dshCommand` | `dsh` | исполняемый файл DSH для самообновления |
 
 ### Переменные окружения
 
@@ -207,6 +223,9 @@ $XDG_CONFIG_HOME/fluent-case-builder/config.json
 | `FLUENT_REGISTRY_PATH` | `registryPath` |
 | `FLUENT_REPORT_DIR` | `reportDir` |
 | `FLUENT_ALLOW_RUN` | `allowRun` (`1/true/yes/on`) |
+| `FLUENT_UPDATE_SOURCE` | `updateSource` |
+| `FLUENT_ALLOW_SELF_UPDATE` | `allowSelfUpdate` |
+| `FLUENT_DSH_COMMAND` | `dshCommand` |
 
 ### Переопределение строки плагина по id
 
@@ -308,7 +327,7 @@ fluent_task_report({
 
 ## Инструменты
 
-В плагине 12 инструментов; все ответы — JSON.
+В плагине 13 инструментов; все ответы — JSON.
 
 | № | Инструмент | Что делает | Пишет на диск |
 |---|---|---|---|
@@ -324,6 +343,7 @@ fluent_task_report({
 | 10 | `fluent_kb_get` | чтение документа KB по относительному пути (`path`, `offset`, `limit`) | нет |
 | 11 | `fluent_task_report` | самодостаточный отчёт JSON + Markdown для мейнтейнера; подхватывает `task-notes.jsonl` | да, JSON+MD |
 | 12 | `fluent_task_log` | заметка исполнителя в `task-notes.jsonl` (`message`, `kind`, `author`) | да, JSONL |
+| 13 | `fluent_plugin_update` | `check`/`plan`/`script`/`apply` — проверка и обновление плагина (apply требует `confirm` и `allowSelfUpdate`) | да, скрипт/профиль |
 
 ## Как задать вопрос про функцию Fluent
 
@@ -454,8 +474,8 @@ under-relaxation: для них нет проверенных журнальны
 ## Структура репозитория
 
 ```text
-index.js                 регистрация 12 инструментов
-lib/                     движок: config, profile, engine, rules, compile, analyze, report, run, kb, util
+index.js                 регистрация 13 инструментов
+lib/                     движок: config, profile, engine, rules, compile, analyze, report, run, kb, update, util
 data/index/              встроенный индекс TUI-команд (commands.csv) + сводка
 data/profiles/<id>/      профили кейсов: profile.json + шаблоны журналов
 data/recipes/*.json      проверенные блоки журнала (единица компиляции spec)

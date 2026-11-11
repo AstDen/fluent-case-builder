@@ -23,6 +23,7 @@ import { loadCommands, readKbFile, searchCommands } from './lib/kb.js'
 import { startRun, runStatus, stopRun } from './lib/run.js'
 import { jsonSafe } from './lib/util.js'
 import { PKG_VERSION } from './lib/version.js'
+import { applyUpdate, buildUpdateCommands, checkUpdate, DEFAULT_UPDATE_SOURCE, writeUpdateScript } from './lib/update.js'
 import { appendTaskNote, createReport } from './lib/report.js'
 
 
@@ -459,6 +460,41 @@ export function apply(ctx, rawConfig = {}) {
     output: jsonOutput,
     async execute(args) {
       return createReport(config, args)
+    },
+  }))
+
+
+  // ---- 13. Обновление плагина ----
+  safeRegister(defineTool({
+    name: 'fluent_plugin_update',
+    description: 'Проверить и обновить сам плагин fluent-case-builder. action=check — текущая и последняя '
+      + 'версия (git-теги), есть ли обновление; action=plan — готовые команды для plugin_manager и CLI; '
+      + 'action=script — записать исполняемый скрипт обновления; action=apply — выполнить обновление через '
+      + 'официальный `dsh plugin` (требует confirm:true и allowSelfUpdate:true, после обновления нужен '
+      + 'перезапуск DSH). Версию можно закрепить тегом (например "v0.5.0").',
+    parameters: {
+      action: { type: 'string', enum: ['check', 'plan', 'script', 'apply'], description: 'check (default) | plan | script | apply' },
+      version: { type: 'string', description: 'тег (v0.5.0) или main (по умолчанию main)' },
+      profile: { type: 'string', description: 'DSH-профиль (по умолчанию из DSH_PROFILE или web)' },
+      confirm: { type: 'boolean', description: 'для apply: явное подтверждение' },
+      dryRun: { type: 'boolean', description: 'для apply: только показать команды, ничего не менять' },
+      outputDir: { type: 'string', description: 'для script: куда писать скрипт (внутри caseRoots)' },
+    },
+    output: jsonOutput,
+    async execute(args) {
+      const base = { currentVersion: PKG_VERSION, source: config.updateSource ?? DEFAULT_UPDATE_SOURCE }
+      if (args.action === 'plan') {
+        return { ...base, ...buildUpdateCommands({ source: base.source, version: args.version ?? 'main', profile: args.profile ?? process.env.DSH_PROFILE ?? 'web' }) }
+      }
+      if (args.action === 'script') {
+        const written = writeUpdateScript(config, { version: args.version, profile: args.profile, outputDir: args.outputDir })
+        return { ...base, file: written.file, spec: written.commands.spec, note: written.commands.restart }
+      }
+      if (args.action === 'apply') {
+        const result = applyUpdate(config, { version: args.version, profile: args.profile, confirm: Boolean(args.confirm), dryRun: Boolean(args.dryRun) })
+        return { ...base, ...result }
+      }
+      return { ...base, ...checkUpdate(config) }
     },
   }))
 
