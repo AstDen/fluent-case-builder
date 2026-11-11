@@ -18,12 +18,54 @@ import { kbHint, normalizeConfig } from './lib/config.js'
 import { caseStatus, generateCase, generateFromSpec, listCases, planCase, validateJournal } from './lib/engine.js'
 import { discoverProfiles, describeParams, loadProfile } from './lib/profile.js'
 import { applyRules, buildFacts, completeness, draftSpec, loadKnowledge, nextQuestions } from './lib/rules.js'
-import { compileSpec, loadRecipes } from './lib/compile.js'
+import { compileSpec, loadRecipes, searchRecipes } from './lib/compile.js'
 import { loadCommands, readKbFile, searchCommands } from './lib/kb.js'
 import { startRun, runStatus, stopRun } from './lib/run.js'
 import { jsonSafe } from './lib/util.js'
 import { PKG_VERSION } from './lib/version.js'
 import { appendTaskNote, createReport } from './lib/report.js'
+
+
+/** Встроенный skill: маршрутизация вопросов по Fluent в базу знаний плагина. */
+const KB_SKILL = {
+  name: 'fluent-tui-knowledge',
+  description: 'ANSYS Fluent TUI: поиск проверенных команд и рецептов, настройка кейсов, отчёты для мейнтейнера',
+  whenToUse: 'любые вопросы про ANSYS Fluent, TUI-команды, включение моделей/BC/материалов/решателя, создание и проверка расчётных кейсов, journal-автоматизация',
+  source: 'bundled',
+  content: `# ANSYS Fluent — работа через плагин fluent-case-builder
+
+## Железные правила
+1. **Синтаксис TUI не выдумывать.** Сначала ищи факт в плагине, только потом отвечай.
+2. **Сначала поиск, потом ответ.** Для вопроса «как включить/задать/найти в Fluent» вызывай
+   \`fluent_kb_search({ query, scope: "all" })\` — он возвращает и команды из индекса TUI, и
+   проверенные рецепты (journal-строки со статусом).
+3. **Статус обязателен.** \`verified\` — проверено в живой сессии/журнале; \`derived\` — выведено из
+   справки (проверить вживую); \`unverified\` — не проверено, не выдавать за факт.
+4. **Указывай источник.** Путь в KB (\`KB/04_MODELS/viscous.md:160-181\`, \`QA_LOG Q-007\`) или рецепт.
+5. **Если факта нет** — так и скажи: «в базе нет подтверждённого ответа, нужна проверка в живой
+   сессии», и предложи проверить через \`fluent_case_run\`/journal.
+
+## Формат ответа на вопрос «как включить X»
+1) journal-строка (готовая, с аргументами);
+2) интерактивная последовательность (путь → вопросы → ответы);
+3) зависимости (энергия/модели/сетка/лицензия);
+4) как проверить, что применилось;
+5) статус ✅/🟡/🔴 и источник.
+
+## Создание кейса
+- Непонятна задача → \`fluent_case_interview\` (вопросы + рекомендации моделей по Re/Mach/теплообмену).
+- Есть спецификация → \`fluent_case_plan({spec})\` (сухой прогон) → \`fluent_case_generate({spec, outputDir})\`
+  (журнал только из проверенных рецептов; непроверенные шаги перечисляются в \`unsupported\`).
+- Повторяемый профиль → \`fluent_case_profiles\` → \`fluent_case_plan/generate\`.
+- Проверка журнала → \`fluent_case_validate\`; запуск → \`fluent_case_run\` (только по явной просьбе,
+  с \`confirm:true\`; \`allowRun\` в конфиге).
+- Трудности/вопросы → \`fluent_task_log\`; итоговый отчёт мейнтейнеру → \`fluent_task_report\`.
+
+## Если инструмент вернул configured:false
+Скажи пользователю, что не настроен путь к базе знаний (\`kbRoot\`/\`indexDir\`), приведи hint из ответа
+и не подменяй KB собственной памятью.
+`,
+}
 
 /** Уникальное имя cordis-плагина. */
 export const name = 'fluent-case-builder'
@@ -32,7 +74,7 @@ export const name = 'fluent-case-builder'
 export const version = PKG_VERSION
 
 /** Требуемые сервисы Harness. */
-export const inject = ['tools']
+export const inject = ['tools', 'skills']
 
 const text = (value) => [{
   type: 'text',
@@ -56,6 +98,11 @@ async function resolveCaseDir(config, args) {
 
 /** Плагин: регистрирует инструменты. */
 export function apply(ctx, rawConfig = {}) {
+  // Встроенный skill: агент сам выбирает KB-инструменты для вопросов по Fluent.
+  if (ctx.skills?.register) {
+    try { ctx.skills.register(KB_SKILL) } catch (error) { /* skill не критичен для работы плагина */ }
+  }
+
   // Любой ответ инструмента приводим к lossless JSON (undefined/NaN недопустимы в output-схеме).
   const safeRegister = (definition) => ctx.tools.register({
     ...definition,
@@ -338,21 +385,49 @@ export function apply(ctx, rawConfig = {}) {
   // ---- 9. Поиск по KB ----
   safeRegister(defineTool({
     name: 'fluent_kb_search',
-    description: 'Поиск по базе знаний Fluent TUI: команды, help, вопросы TUI, признак blocked. '
-      + 'Используйте, чтобы проверить синтаксис и понять, проверена ли команда в живой сессии.',
+    description: 'Поиск по знаниям плагина: (1) индекс TUI-команд — путь, вопрос, default, blocked, help; '
+      + '(2) проверенные рецепты — готовые journal-строки «как включить/сделать X» со статусом '
+      + 'verified/derived/unverified и источником. Это первый инструмент для любого вопроса про Fluent.',
     parameters: {
-      query: { type: 'string', required: true, description: 'имя команды, /путь/, или ключевое слово' },
-      limit: { type: 'integer', description: 'максимум результатов (10)' },
-      category: { type: 'string', description: 'ограничить категорию, например 04_MODELS' },
+      query: { type: 'string', required: true, description: 'что нужно: «включить k-omega SST», /define/... , ключевое слово' },
+      limit: { type: 'integer', description: 'сколько результатов на раздел (10)' },
+      category: { type: 'string', description: 'ограничить категорию индекса, например 04_MODELS' },
+      scope: { type: 'string', enum: ['all', 'commands', 'recipes'], description: 'all (default) | commands | recipes' },
     },
     output: jsonOutput,
     async execute(args) {
-      if (!config.indexDir) return { configured: false, hint: kbHint(config), results: [] }
-      const commands = await loadCommands(config.indexDir)
-      return {
-        query: args.query,
-        results: searchCommands(commands, args.query, { limit: args.limit ?? 10, category: args.category }),
+      const limit = args.limit ?? 10
+      const scope = args.scope ?? 'all'
+      const result = { query: args.query, scope, commands: [], recipes: [], configured: {} }
+      if (scope !== 'recipes') {
+        if (!config.indexDir) {
+          result.configured.indices = false
+          result.hint = kbHint(config)
+        } else {
+          try {
+            const commands = await loadCommands(config.indexDir)
+            result.commands = searchCommands(commands, args.query, { limit, category: args.category })
+            result.configured.indices = true
+          } catch (error) {
+            result.configured.indices = false
+            result.hint = error.message
+          }
+        }
       }
+      if (scope !== 'commands') {
+        try {
+          const { recipes } = await loadRecipes(config.dataDir)
+          result.recipes = searchRecipes(recipes, args.query, { limit })
+          result.configured.recipes = recipes.size > 0
+        } catch (error) {
+          result.configured.recipes = false
+        }
+      }
+      const empty = !result.commands.length && !result.recipes.length
+      result.hint = result.hint ?? (empty
+        ? 'в индексе и рецептах ничего не найдено; уточните запрос или проверьте факт в живой сессии'
+        : 'journal-строка рецепта — готовый ответ; статус и source обязательны в ответе')
+      return result
     },
   }))
 

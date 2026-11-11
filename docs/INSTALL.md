@@ -280,7 +280,8 @@ cp /absolute/path/to/fluent-case-builder/examples/config.example.json \
 | `pnpm: command not found`, `spawn pnpm ENOENT` при установке | нет pnpm | `corepack enable pnpm`, повторить установку; при отсутствии corepack — установить Node 20+ из официального дистрибутива |
 | После установки инструментов `fluent_*` нет | DSH не перезапущен; пакет не попал в профиль | перезапустить DSH; проверить `~/.dsh/profiles/web/package.json` и `plugin_manager list_plugins`; при необходимости переустановить |
 | При активации: `failed to import: Cannot find package '@deepseek-ai/dsh-tools'` | установка из git при запущенном DSH: держится старая генерация модулей | перезапустить DSH. Если ошибка повторяется — клонировать репозиторий локально и установить способом 3 (путь к каталогу) |
-| `fluent_kb_search` / `fluent_kb_get` → `{"configured": false, "hint": …}` | не задан `kbRoot`/`indexDir` | задать оба ключа (пути к KB и к каталогу с `commands.csv`) в config.json или env, перезапустить DSH |
+| `fluent_kb_search` → `configured.indices: false` | `indexDir` указывает на несуществующий каталог | убрать `indexDir` из конфига (будет встроенный индекс) или исправить путь |
+| `fluent_kb_get` → `{"configured": false, "hint": …}` | не задан `kbRoot` | это нормально для поиска команд; задайте `kbRoot`, если нужны полные deep_dive-документы |
 | `fluent_case_validate` → `verdict: "skipped"` | не задан `indexDir` | это не ошибка: оффлайн-проверка отключена. Задайте `indexDir` для проверки |
 | Ошибка при старте: `внешний конфиг …: …` | невалидный JSON/JSON-массив в config.json | проверить JSON: `node -e "JSON.parse(require('fs').readFileSync(process.env.HOME + '/.config/fluent-case-builder/config.json','utf8'))"`, исправить, перезапустить |
 | `… вне разрешённых корней: …` | путь записи вне `caseRoots` | добавить корень в `caseRoots` или выбрать `outputRoot`/`outputDir` внутри разрешённого |

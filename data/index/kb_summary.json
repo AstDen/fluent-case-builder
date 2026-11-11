@@ -1,0 +1,95 @@
+{
+  "menus": 361,
+  "leaves": 1736,
+  "walks": 23,
+  "by_category": {
+    "00_GENERAL": {
+      "menus": 21,
+      "leaves": 42
+    },
+    "01_MESH": {
+      "menus": 34,
+      "leaves": 185
+    },
+    "02_GEOMETRY_SURFACES": {
+      "menus": 4,
+      "leaves": 28
+    },
+    "03_BOUNDARY_CONDITIONS": {
+      "menus": 16,
+      "leaves": 86
+    },
+    "04_MODELS": {
+      "menus": 30,
+      "leaves": 117
+    },
+    "05_MATERIALS": {
+      "menus": 2,
+      "leaves": 9
+    },
+    "06_SPECIES": {
+      "menus": 1,
+      "leaves": 11
+    },
+    "07_SOLVER": {
+      "menus": 25,
+      "leaves": 83
+    },
+    "08_TRANSIENT": {
+      "menus": 0,
+      "leaves": 0
+    },
+    "09_INITIALIZATION": {
+      "menus": 6,
+      "leaves": 17
+    },
+    "10_CONVERGENCE": {
+      "menus": 1,
+      "leaves": 3
+    },
+    "11_MONITORS": {
+      "menus": 1,
+      "leaves": 2
+    },
+    "12_REPORTS": {
+      "menus": 12,
+      "leaves": 58
+    },
+    "13_FILE_MANAGEMENT": {
+      "menus": 22,
+      "leaves": 124
+    },
+    "14_POSTPROCESSING": {
+      "menus": 88,
+      "leaves": 587
+    },
+    "15_UDF": {
+      "menus": 2,
+      "leaves": 15
+    },
+    "16_EXPRESSIONS": {
+      "menus": 2,
+      "leaves": 8
+    },
+    "17_UDS_UDM": {
+      "menus": 0,
+      "leaves": 2
+    },
+    "18_PARALLEL": {
+      "menus": 9,
+      "leaves": 45
+    },
+    "19_SCHEME_JOURNAL": {
+      "menus": 0,
+      "leaves": 0
+    },
+    "20_SPECIAL_FEATURES": {
+      "menus": 85,
+      "leaves": 314
+    }
+  },
+  "passes": [
+    "A",
+    "B"
+  ]
+}

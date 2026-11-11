@@ -75,6 +75,26 @@ await checkAsync('loadCommands + search', async () => {
   assert(hits.some((h) => h.path.includes('viscous')), 'нет viscous в результатах')
 })
 
+await checkAsync('встроенный индекс команд', async () => {
+  const bundled = join(root, 'data', 'index', 'commands.csv')
+  assert(existsSync(bundled), 'нет встроенного data/index/commands.csv')
+  const commands = await loadCommands(join(root, 'data', 'index'))
+  assert(commands.length > 1500, `мало команд: ${commands.length}`)
+  const hits = searchCommands(commands, 'kw-sst', { limit: 3 })
+  assert(hits.some((h) => h.path.includes('viscous')), 'поиск kw-sst не работает по встроенному индексу')
+})
+await checkAsync('поиск по рецептам', async () => {
+  const { loadRecipes, searchRecipes } = await import(join(root, 'lib/compile.js'))
+  const { recipes } = await loadRecipes(join(root, 'data'))
+  const hits = searchRecipes(recipes, 'k-omega SST', { limit: 5 })
+  const recipe = hits.find((h) => h.id === 'models.viscous.kw-sst')
+  assert(recipe, `рецепт kw-sst не найден: ${hits.map((h) => h.id).join(',')}`)
+  assert(recipe.status === 'verified', `статус: ${recipe.status}`)
+  assert(recipe.journal.some((line) => line.includes('kw-sst')), 'нет journal-строки')
+  assert(recipe.source, 'нет источника')
+  const porous = searchRecipes(recipes, 'porous zone', { limit: 5 })
+  assert(porous.some((h) => h.status === 'unverified'), 'нет unverified-рецепта (пористая зона)')
+})
 await checkAsync('validateJournal', async () => {
   if (!existsSync(join(config.indexDir, 'commands.csv'))) throw new Error('нет commands.csv — пропуск')
   const result = await validateJournal(config, [

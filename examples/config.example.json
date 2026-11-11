@@ -4,7 +4,7 @@
     "/home/user/fluent-profiles"
   ],
   "kbRoot": "/path/to/ansys-fluent-tui-kb",
-  "indexDir": "/path/to/ansys-fluent-tui-kb/90_RAW_TUI_OUTPUT/_data",
+  "indexDir": "",
   "caseRoots": [
     "/home/user/fluent-cases"
   ],

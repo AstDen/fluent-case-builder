@@ -3,6 +3,23 @@
 Все заметные изменения плагина. Формат — [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версии — [semver](https://semver.org/lang/ru/).
 
+## [0.4.0] — 2026-11-11
+
+### Добавлено
+- **Встроенный индекс TUI-команд** (`data/index/commands.csv`, 1736 команд): `fluent_kb_search`
+  работает сразу после установки, без настройки KB. `kbRoot` остаётся опциональным — для полных
+  deep_dive-документов.
+- **Поиск по проверенным рецептам:** `fluent_kb_search` с `scope: "recipes"` (или `"all"`) возвращает
+  готовые journal-строки «как включить/сделать X» со статусом verified/derived/unverified,
+  параметрами и источником.
+- **Встроенный skill `fluent-tui-knowledge`**: агент автоматически выбирает KB-инструменты для
+  вопросов по Fluent, не выдумывает синтаксис и указывает статус/источник в ответе.
+
+### Изменено
+- `fluent_kb_search` принимает `scope: all | commands | recipes`; результат разделён на
+  `commands` и `recipes`.
+- Требование `@deepseek-ai/dsh-skill` в peer-зависимостях.
+
 ## [0.3.0] — 2026-11-11
 
 ### Изменено
