@@ -1,6 +1,6 @@
 {
   "id": "models.viscous.kw-sst",
-  "title": "Турбулентность k-omega SST",
+  "title": "k-omega SST turbulence",
   "category": "models",
   "status": "verified",
   "confidence": "high",
@@ -9,9 +9,9 @@
   "journal": [
     "/define/models/viscous kw-sst? yes q q"
   ],
-  "interactive": "Enable the SST k-omega turbulence model? [no] → yes, затем q q (выход из подменю)",
+  "interactive": "Enable the SST k-omega turbulence model? [no] → yes, then q q (exit the submenu)",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Проверено в TUI и в рабочих журналах (2025 R1 и 2026 R1). Какие именно подменю закрывают два `q` — не документировано (viscous.md §2.6: requires_verification). В проверенный журнал включается в runtime из switch_to_turbulence.jou при Re>5000."
+  "notes": "Verified in the TUI and in the working journals (2025 R1 and 2026 R1). Which submenus the two `q` close is not documented (viscous.md §2.6: requires_verification). It is included in the verified journal at runtime from switch_to_turbulence.jou when Re>5000."
 }

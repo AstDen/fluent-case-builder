@@ -1,15 +1,15 @@
 {
   "id": "mesh.scale",
-  "title": "Масштабирование сетки",
+  "title": "Mesh scaling",
   "category": "mesh",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/00_GENERAL/ready_commands.md:42; KB/01_MESH/deep_dive.md:19-26; KB/99_RESEARCH_STATUS/requires_verification.md:631",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/mesh/scale → точные вопросы и порядок аргументов не зафиксированы",
+  "interactive": "/mesh/scale → the exact questions and argument order were not recorded",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "В ready_commands.md строка `/mesh/scale 0.001 0.001 0.001` помечена «[В: аргументы]», а сама команда — в requires_verification (blocked). Неизвестно, сколько аргументов (3 множителя? единицы?) и как TUI переспрашивает. Нужна живая проверка на scratch-кейсе. Для universal builder: единицы сетки спрашивать в интервью и не писать /mesh/scale до проверки."
+  "notes": "In ready_commands.md the line `/mesh/scale 0.001 0.001 0.001` is marked '[V: arguments]', and the command itself is under requires_verification (blocked). It is unknown how many arguments (3 factors? units?) and how the TUI re-asks. A live check on a scratch case is needed. For the universal builder: ask for the mesh units in the interview and do not write /mesh/scale until verified."
 }

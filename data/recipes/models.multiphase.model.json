@@ -1,6 +1,6 @@
 {
   "id": "models.multiphase.model",
-  "title": "Многофазная модель (alias для compile.js)",
+  "title": "Multiphase model (alias for compile.js)",
   "category": "models",
   "status": "derived",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/models/multiphase/model {{model}}"
   ],
-  "interactive": "Available options: (\"none\" \"vof\" \"eulerian\" \"mixture\" \"wetsteam\") → Model [\"none\"] → модель",
+  "interactive": "Available options: (\"none\" \"vof\" \"eulerian\" \"mixture\" \"wetsteam\") → Model [\"none\"] → model",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -26,5 +26,5 @@
       "default": "vof"
     }
   ],
-  "notes": "ALIAS: compile.js вызывает ['models.multiphase.model'] и передаёт {model}; канонический id — models.multiphase. DERIVED: проверен вопрос, строка inferred; number-of-phases и полная цепочка не сняты."
+  "notes": "ALIAS: compile.js calls ['models.multiphase.model'] and passes {model}; the canonical id is models.multiphase. DERIVED: the question is verified, the line is inferred; number-of-phases and the full chain were not captured."
 }

@@ -1,6 +1,6 @@
 {
   "id": "udf.compile-load-hook",
-  "title": "Компиляция и загрузка UDF (библиотека)",
+  "title": "Compile and load a UDF (library)",
   "category": "udf",
   "status": "derived",
   "confidence": "medium",
@@ -10,7 +10,7 @@
     "/define/user-defined compiled-functions compile \"{{library}}\" yes {{files}} \"\" \"\"",
     "/define/user-defined compiled-functions load \"{{library}}\""
   ],
-  "interactive": "compile → имя библиотеки → yes (вопрос цепочки компиляции) → имена .c файлов → \"\" \"\"; затем load",
+  "interactive": "compile → library name → yes (compilation chain question) → names of .c files → \"\" \"\"; then load",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -37,5 +37,5 @@
       "default": ""
     }
   ],
-  "notes": "DERIVED: строки из рабочих журналов пользователя (2026 R1 и user). compile.js передаёт {library, files}; expand разворачивает массив через пробел БЕЗ кавычек, поэтому имена .c должны быть без пробелов (в проверенном журнале они в кавычках: `compile \"lib\" yes \"a.c\" \"b.c\" \"\" \"\"`). Параметры lib/sourceFile объявлены для совместимости со старой формой вызова, в строке не используются. Привязка хука — отдельный рецепт udf.function-hook (подменю function-hooks доступно только после load)."
+  "notes": "DERIVED: lines from the user's working journals (2026 R1 and user). compile.js passes {library, files}; expand expands the array with spaces WITHOUT quotes, so .c file names must not contain spaces (in the verified journal they are quoted: `compile \"lib\" yes \"a.c\" \"b.c\" \"\" \"\"`). The lib/sourceFile parameters are declared for compatibility with the old call form and are not used in the line. Hook binding is a separate recipe udf.function-hook (the function-hooks submenu is available only after load)."
 }

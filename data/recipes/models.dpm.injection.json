@@ -1,15 +1,15 @@
 {
   "id": "models.dpm.injection",
-  "title": "Дискретная фаза DPM (инжекция + связь)",
+  "title": "Discrete phase DPM (injection + coupling)",
   "category": "models",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/04_MODELS/dpm_multiphase.md:7-49; KB/04_MODELS/dpm_multiphase.md:132-139",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/define/models/dpm/injections/create-injection → цепочка вопросов не записана; /define/models/dpm/options two-way-coupling yes (derived)",
+  "interactive": "/define/models/dpm/injections/create-injection → question chain not recorded; /define/models/dpm/options two-way-coupling yes (derived)",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Отдельной команды «включить DPM» нет: модель активируется созданием инжекции. Цепочка create-injection в KB не записана, в журналах пользователя DPM не использован. Нужна live-сессия."
+  "notes": "There is no separate 'enable DPM' command: the model is activated by creating an injection. The create-injection chain is not recorded in the KB, and DPM was not used in the user journals. A live session is needed."
 }

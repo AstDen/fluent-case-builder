@@ -1,6 +1,6 @@
 {
   "id": "models.solver.density-based-explicit",
-  "title": "Density-based explicit (coupled-explicit) решатель",
+  "title": "Density-based explicit (coupled-explicit) solver",
   "category": "models",
   "status": "unverified",
   "confidence": "low",
@@ -11,5 +11,5 @@
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Команда есть в меню и справке TUI, но переключение в живой сессии НЕ проверялось (проверен только density-based-implicit). Ограничение из KB: density-based-explicit недоступен для некоторых моделей (ряд многофазных). Журнальную строку не выводить до live-проверки."
+  "notes": "The command exists in the menu and in TUI help, but switching was NOT verified in a live session (only density-based-implicit was verified). KB limitation: density-based-explicit is unavailable for some models (several multiphase ones). Do not put the journal line in until a live check."
 }

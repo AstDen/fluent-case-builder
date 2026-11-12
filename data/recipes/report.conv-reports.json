@@ -1,6 +1,6 @@
 {
   "id": "report.conv-reports",
-  "title": "Критерий остановки по отчёту (conv-reports/add)",
+  "title": "Report-based stopping criterion (conv-reports/add)",
   "category": "reports",
   "status": "derived",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/convergence-conditions/conv-reports/add {{name}}-conv initial-values-to-ignore {{ignore}} print? yes report-defs \"{{name}}\" stop-criterion {{stop}} previous-values-to-consider {{window}} active? yes q q q"
   ],
-  "interactive": "add → имя критерия → initial-values-to-ignore → print? → report-defs (имя отчёта в кавычках) → stop-criterion → previous-values-to-consider → active? → q q q",
+  "interactive": "add → criterion name → initial-values-to-ignore → print? → report-defs (report name in quotes) → stop-criterion → previous-values-to-consider → active? → q q q",
   "requires": [
     "report.definitions"
   ],
@@ -59,5 +59,5 @@
       "default": []
     }
   ],
-  "notes": "DERIVED: порядок ключей и три `q` взяты из проверенного журнала проверенный журнал. reportDef — имя уже созданного report definition (в журнале report.definitions и conv-reports связаны по имени). строгий режим: ignore 50/stop 1e-3/window 1000/freq 100; ослабленный режим: ignore 100/stop 5e-3/window 500/freq 50. Параметры type/field/surfaces объявлены для совместимости с compile.js, в строке не используются."
+  "notes": "DERIVED: the key order and the three `q` are taken from the verified journal. reportDef is the name of an already created report definition (report.definitions and conv-reports are linked by name in the journal). strict mode: ignore 50/stop 1e-3/window 1000/freq 100; relaxed mode: ignore 100/stop 5e-3/window 500/freq 50. The type/field/surfaces parameters are declared for compatibility with compile.js and are not used in the line."
 }

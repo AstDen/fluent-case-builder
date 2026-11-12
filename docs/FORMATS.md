@@ -1,23 +1,23 @@
-# Форматы данных плагина `fluent-case-builder`
+# Data formats of the `fluent-case-builder` plugin
 
-Плагин универсален: всё предметное знание вынесено в JSON-данные. Код только исполняет.
-Три вида данных: **профиль** (конкретный проект/кейс), **рецепт** (проверенный блок журнала),
-**правило/вопрос** (инженерные рекомендации и интервью).
+The plugin is generic: all domain knowledge lives in JSON data. The code only executes it.
+Three kinds of data: a **profile** (a specific project/case), a **recipe** (a verified journal
+block), a **rule/question** (engineering recommendations and the interview).
 
-Все JSON — UTF-8, без комментариев, без trailing comma. Плейсхолдеры в строках — `{{name}}`.
+All JSON is UTF-8, no comments, no trailing commas. Placeholders in strings are `{{name}}`.
 
 ---
 
-## 1. Профиль кейса — `data/profiles/<id>/profile.json`
+## 1. Case profile — `data/profiles/<id>/profile.json`
 
-Профиль описывает повторяемый кейс: параметры, вычисляемые величины, имя директории,
-ассеты (сетка/UDF/TSV), подстановки и шаблоны журналов.
+A profile describes a repeatable case: parameters, computed values, the directory name, assets
+(mesh/UDF/TSV), substitutions and journal templates.
 
 ```json
 {
   "id": "example-channel",
-  "title": "Пример: ламинарный канал (синтетический шаблон)",
-  "description": "Минимальный учебный кейс: сетка, модели, инициализация, критерии, сохранение.",
+  "title": "Example: laminar channel (synthetic template)",
+  "description": "Minimal tutorial case: mesh, models, initialization, criteria, save.",
   "category": "example",
   "version": 1,
   "status": "example",
@@ -25,11 +25,11 @@
   "params": {
     "meshFile": {
       "type": "string", "required": true, "default": "/path/to/channel.msh",
-      "description": "путь к вашей сетке .msh"
+      "description": "path to your .msh mesh"
     },
-    "L": { "type": "number", "unit": "mm", "default": 1000, "description": "длина канала" },
-    "h": { "type": "number", "unit": "mm", "default": 10, "description": "высота канала" },
-    "iterations": { "type": "integer", "default": 500, "description": "максимум итераций" }
+    "L": { "type": "number", "unit": "mm", "default": 1000, "description": "channel length" },
+    "h": { "type": "number", "unit": "mm", "default": 10, "description": "channel height" },
+    "iterations": { "type": "integer", "default": 500, "description": "maximum iterations" }
   },
   "computed": {
     "y_mid": "python: f'{h / 2000:.6f}'"
@@ -49,49 +49,49 @@
   "verification": {
     "status": "example",
     "date": "2026-11-11",
-    "evidence": "синтетический пример; журнал собран только из проверенных рецептов",
-    "notes": "шаблон для обучения формату профиля"
+    "evidence": "synthetic example; the journal is assembled only from verified recipes",
+    "notes": "a template for learning the profile format"
   }
 }
 ```
 
-Правила:
+Rules:
 - `params[*].type` ∈ `number | integer | string | boolean | array`.
-- `computed` — арифметика над параметрами (`+ - * / **`, скобки, Math-функции), либо `python: ...` (например, форматирование `y_mid`).
-- `{{animation}}` — вычисляемое имя: `animation_` + `naming` (без параметров), задаётся профилем.
-- `{{templateRoot}}` — конфиг `templateRoots[profileId]` (если профиль копирует свои ассеты).
-- В профиле не должно быть абсолютных путей к данным пользователя, кроме `source`.
+- `computed` — arithmetic over parameters (`+ - * / **`, parentheses, Math functions), or `python: ...` (formatting `y_mid`, for example).
+- `{{animation}}` — a computed name: `animation_` + `naming` (without parameters), defined by the profile.
+- `{{templateRoot}}` — the config `templateRoots[profileId]` (if the profile copies its own assets).
+- A profile must not contain absolute paths to user data, except in `source`.
 
-### Дополнения к формату профиля (реализованы движком)
+### Additions to the profile format (implemented by the engine)
 
-| Поле | Смысл |
+| Field | Meaning |
 |---|---|
-| `outputRoot` | шаблон корня вывода, напр. `"{{solutionsRoot}}/{{project}}"`; `{{solutionsRoot}}` = `config.profileRoots[id]`. Переопределяется параметром инструмента `outputRoot`. |
-| `animation` | шаблон имени animation-каталога, напр. `"animation_{name}"`, `{name}` = `naming`. |
-| `computed.<name> = "python: f'{...}'"` | вычисление через python3 (нужно для точного форматирования чисел в именах и шаблонах); данные профиля доверенные, shell не используется. |
-| `assets[].optional: true` | отсутствующий исходный файл не валит генерацию, а даёт предупреждение. |
-| `assets[].mode` | `copy`, `copyIfExists`, `skip-if-missing`, `unzip`, `unzip-flat` (распаковка с «выравниванием» файлов в корень кейса — нужно для zip с вложенным каталогом). |
-| `params.meshZip` (пример) | параметр-переопределение пути к сетке поверх вычисленного значения. |
+| `outputRoot` | output root template, e.g. `"{{solutionsRoot}}/{{project}}"`; `{{solutionsRoot}}` = `config.profileRoots[id]`. Overridden by the tool's `outputRoot` parameter. |
+| `animation` | animation directory name template, e.g. `"animation_{name}"`, `{name}` = `naming`. |
+| `computed.<name> = "python: f'{...}'"` | computation through python3 (needed for exact number formatting in names and templates); profile data is trusted, no shell is used. |
+| `assets[].optional: true` | a missing source file does not fail generation but produces a warning. |
+| `assets[].mode` | `copy`, `copyIfExists`, `skip-if-missing`, `unzip`, `unzip-flat` (unpacking that flattens files into the case root — needed for zips with a nested directory). |
+| `params.meshZip` (example) | a parameter that overrides the mesh path on top of the computed value. |
 
-### Шаблоны профиля
+### Profile templates
 
-`templates/setup_case.jou.tmpl` — journal, где вместо значений стоят плейсхолдеры
-`{{meshFile}} {{L}} {{h}} {{iterations}} {{residuals}} {{y_mid}} {{caseFileBase}}`,
-`templates/start.sh.tmpl` — bash-скрипт с теми же плейсхолдерами и списком `{{FR}}`
-(разворачивается в пробел-разделённый список `10 20 30 …`).
+`templates/setup_case.jou.tmpl` — the journal where values are replaced by the placeholders
+`{{meshFile}} {{L}} {{h}} {{iterations}} {{residuals}} {{y_mid}} {{caseFileBase}}`;
+`templates/start.sh.tmpl` — a bash script with the same placeholders and the `{{FR}}` list
+(expanded to a space-separated list `10 20 30 …`).
 
 ---
 
-## 2. Рецепт проверенной команды — `data/recipes/<id>.json`
+## 2. Verified command recipe — `data/recipes/<id>.json`
 
-Рецепт — атомарный, проверенный в TUI блок журнала. Универсальный компилятор собирает журнал
-только из рецептов; всё, чего нет в рецептах, помечается «требует проверки» и не попадает в журнал
-молча.
+A recipe is an atomic journal block verified in the TUI. The universal compiler assembles a journal
+only from recipes; anything not covered by a recipe is marked "requires verification" and never
+silently reaches the journal.
 
 ```json
 {
   "id": "models.energy",
-  "title": "Уравнение энергии",
+  "title": "Energy equation",
   "category": "models",
   "status": "verified",
   "confidence": "high",
@@ -102,34 +102,34 @@
   "requires": [],
   "conflicts": ["models.energy-off"],
   "params": [],
-  "notes": "5 вопросов; журнальная форма проверена в рабочем журнале пользователя"
+  "notes": "5 questions; the journal form is verified in the user's working journal"
 }
 ```
 
-Поля:
-- `journal` — массив готовых строк; плейсхолдеры `{{param}}` допустимы, если объявлены в `params`.
+Fields:
+- `journal` — an array of ready-made lines; the `{{param}}` placeholders are allowed if they are declared in `params`.
 - `params` — `[{ "name": "model", "type": "enum", "values": ["kw-sst"], "default": "kw-sst" }]`.
 - `status` ∈ `verified | derived | unverified`; `confidence` ∈ `high | medium | low`.
-- `requires` — id рецептов, которые обязаны идти раньше.
-- `conflicts` — id рецептов, несовместимых с этим.
-- `interactive` — человекочитаемая последовательность вопросов.
+- `requires` — ids of recipes that must come earlier.
+- `conflicts` — ids of recipes incompatible with this one.
+- `interactive` — a human-readable sequence of questions.
 
-Обязательный минимум рецептов (по результатам аудита KB):
+The mandatory minimum of recipes (based on the KB audit):
 `models.solver.pressure-based`, `models.solver.density-based-implicit`,
-`solver.pv-coupling` (коды 20/21/22/24), `models.energy`, `models.viscous.laminar`,
+`solver.pv-coupling` (codes 20/21/22/24), `models.energy`, `models.viscous.laminar`,
 `models.viscous.kw-sst`, `materials.ideal-gas.fluid`, `materials.ideal-gas.mixture`,
-`init.hybrid`, `report.definitions` (пример), `report.conv-reports` (пример), `report.files`,
+`init.hybrid`, `report.definitions` (example), `report.conv-reports` (example), `report.files`,
 `report.plots`, `monitor.residual-criteria`, `solve.number-of-iterations`,
 `solve.reporting-interval`, `solve.iterate`, `file.write-case-data`, `file.export-ascii`,
 `udf.compile-load-hook`, `models.species-transport`, `boundary.mass-flow-inlet.chain`,
 `boundary.fluid.porous`, `boundary.zone-type`, `boundary.zone-name`.
-Для непроверенных — `status: "unverified"` и `journal: []`, с цитатой из KB, что именно неизвестно.
-**Не выдумывать строки.** Если в KB только справка без проверки — рецепт `derived`/`unverified`,
-`journal` пустой или помечен.
+For unverified ones — `status: "unverified"` and `journal: []`, with a quote from the KB saying
+exactly what is unknown. **Do not invent lines.** If the KB has only help without verification, the
+recipe is `derived`/`unverified`, with `journal` empty or flagged.
 
 ---
 
-## 3. Инженерные правила — `data/rules/physics-rules.json`
+## 3. Engineering rules — `data/rules/physics-rules.json`
 
 ```json
 {
@@ -137,30 +137,31 @@
   "rules": [
     {
       "id": "turbulence.re",
-      "title": "Турбулентность при Re > 5000",
+      "title": "Turbulence at Re > 5000",
       "when": { "re": { ">=": 5000 } },
       "recommend": { "physics.turbulence.model": "kw-sst" },
-      "why": "При Re>5000 течение турбулентное; в проверенном рабочем журнале при Re>5000 включается k-ω SST.",
+      "why": "At Re>5000 the flow is turbulent; in the verified working journal k-ω SST is enabled at Re>5000.",
       "status": "derived",
       "confidence": "high",
-      "source": "ИНСТРУКЦИЯ-ПО-СОЗДАНИЮ-КЕЙСА.md; 04_MODELS/viscous.md",
+      "source": "CASE-CREATION-INSTRUCTIONS.md; 04_MODELS/viscous.md",
       "recipes": ["models.viscous.kw-sst"]
     }
   ]
 }
 ```
 
-`when` — объект условий; ключ — путь параметра кейса (`re`, `mach`, `physics.energy`, `combustion`,
-`temperature.max`, `compressible`, `heatTransfer`, `radiation`, `multiphase`, `particles`, `transient`,
-`udf`, …), значение — скаляр (равенство), `{">=",">","<","<=","in":[...]}`.
-Правила упорядочены по приоритету; одинаковые `recommend`-ключи перекрываются последним.
-Обязательно покрыть: сжимаемость/Mach, турбулентность/Re, энергия/теплообмен, горение/химия,
-излучение при высоких T, многофазность, частицы/DPM, transient, UDF, выбор решателя
+`when` is an object of conditions; the key is a case parameter path (`re`, `mach`, `physics.energy`,
+`combustion`, `temperature.max`, `compressible`, `heatTransfer`, `radiation`, `multiphase`,
+`particles`, `transient`, `udf`, …), the value is a scalar (equality) or
+`{">=",">","<","<=","in":[...]}`.
+Rules are ordered by priority; identical `recommend` keys are overridden by the last one.
+Coverage is mandatory for: compressibility/Mach, turbulence/Re, energy/heat transfer, combustion/
+chemistry, radiation at high T, multiphase, particles/DPM, transient, UDF, solver choice
 (pressure-based vs density-based).
 
 ---
 
-## 4. Вопросы интервью — `data/rules/questions.json`
+## 4. Interview questions — `data/rules/questions.json`
 
 ```json
 {
@@ -168,15 +169,15 @@
   "sections": [
     {
       "id": "task",
-      "title": "Задача",
+      "title": "Task",
       "questions": [
         {
           "id": "task.kind",
-          "text": "Какой класс задачи?",
+          "text": "What is the task class?",
           "type": "enum",
           "values": ["hydrodynamics", "gas-dynamics", "combustion", "engines", "supersonic", "chemical-reactions", "heat-transfer", "multiphase", "other"],
           "default": "hydrodynamics",
-          "why": "от класса зависит набор моделей и рекомендаций",
+          "why": "the class determines the set of models and recommendations",
           "specPath": "meta.taskKind",
           "required": true
         }
@@ -186,14 +187,14 @@
 }
 ```
 
-`specPath` — куда ответ попадает в case spec. `type` ∈ `enum|string|number|boolean|array`.
-Вопросы должны покрывать: класс задачи, размерность, сжимаемость/Mach, Re/скорость, теплообмен,
-горение/механизм, излучение, многофазность, частицы, UDF, сетка (файл/единицы/масштаб),
-материалы, ГУ (тип входа/выхода, значения), критерии остановки, бэкапы, выходные поля, ресурсы.
+`specPath` — where the answer lands in the case spec. `type` ∈ `enum|string|number|boolean|array`.
+The questions must cover: task class, dimensionality, compressibility/Mach, Re/velocity, heat
+transfer, combustion/mechanism, radiation, multiphase, particles, UDF, mesh (file/units/scale),
+materials, BCs (inlet/outlet type, values), stopping criteria, backups, output fields, resources.
 
 ---
 
-## 5. Case Spec (его собирает интервью/правила, его исполняет движок)
+## 5. Case Spec (assembled by the interview/rules, executed by the engine)
 
-См. `docs/CASE_SPEC.md`. Профильные кейсы (`example-channel`) используют spec только как
-`{ profile: "example-channel", params: {...} }`; универсальные — полный spec.
+See `docs/CASE_SPEC.md`. Profile cases (`example-channel`) use the spec only as
+`{ profile: "example-channel", params: {...} }`; universal ones use the full spec.

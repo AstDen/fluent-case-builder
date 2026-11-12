@@ -3,7 +3,7 @@
     {
       "id": "example-channel",
       "path": "data/profiles/example-channel/profile.json",
-      "title": "Пример: ламинарный канал (синтетический шаблон)",
+      "title": "Example: laminar channel (synthetic template)",
       "status": "example"
     }
   ]

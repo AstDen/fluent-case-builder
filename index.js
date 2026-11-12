@@ -1,13 +1,13 @@
 /**
- * fluent-case-builder — универсальный конструктор расчётных кейсов ANSYS Fluent.
+ * fluent-case-builder — a universal builder for ANSYS Fluent simulation cases.
  *
- * Плагин не «зашивает» один проект: предметное знание живёт в данных
- * (data/profiles — проектные кейсы, data/recipes — проверенные блоки журнала,
- * data/rules — инженерные правила и вопросы интервью). Код только:
- *  1) проводит интервью и рекомендует модели;
- *  2) собирает план и генерирует файлы кейса;
- *  3) проверяет журнал по базе знаний;
- *  4) запускает Fluent и контролирует выполнение с бэкапами.
+ * The plugin does not hard-code a single project: domain knowledge lives in the data
+ * (data/profiles — project cases, data/recipes — verified journal blocks,
+ * data/rules — engineering rules and interview questions). The code only:
+ *  1) runs the interview and recommends models;
+ *  2) builds the plan and generates case files;
+ *  3) validates the journal against the knowledge base;
+ *  4) launches Fluent and monitors the run with backups.
  *
  * @module fluent-case-builder
  */
@@ -27,54 +27,54 @@ import { applyUpdate, buildUpdateCommands, checkUpdate, DEFAULT_UPDATE_SOURCE, w
 import { appendTaskNote, createReport } from './lib/report.js'
 
 
-/** Встроенный skill: маршрутизация вопросов по Fluent в базу знаний плагина. */
+/** Built-in skill: routes Fluent questions to the plugin knowledge base. */
 const KB_SKILL = {
   name: 'fluent-tui-knowledge',
-  description: 'ANSYS Fluent TUI: поиск проверенных команд и рецептов, настройка кейсов, отчёты для мейнтейнера',
-  whenToUse: 'любые вопросы про ANSYS Fluent, TUI-команды, включение моделей/BC/материалов/решателя, создание и проверка расчётных кейсов, journal-автоматизация',
+  description: 'ANSYS Fluent TUI: find verified commands and recipes, set up cases, produce maintainer reports',
+  whenToUse: 'any questions about ANSYS Fluent, TUI commands, enabling models/BCs/materials/solver, creating and validating simulation cases, journal automation',
   source: 'bundled',
-  content: `# ANSYS Fluent — работа через плагин fluent-case-builder
+  content: `# ANSYS Fluent — working through the fluent-case-builder plugin
 
-## Железные правила
-1. **Синтаксис TUI не выдумывать.** Сначала ищи факт в плагине, только потом отвечай.
-2. **Сначала поиск, потом ответ.** Для вопроса «как включить/задать/найти в Fluent» вызывай
-   \`fluent_kb_search({ query, scope: "all" })\` — он возвращает и команды из индекса TUI, и
-   проверенные рецепты (journal-строки со статусом).
-3. **Статус обязателен.** \`verified\` — проверено в живой сессии/журнале; \`derived\` — выведено из
-   справки (проверить вживую); \`unverified\` — не проверено, не выдавать за факт.
-4. **Указывай источник.** Путь в KB (\`KB/04_MODELS/viscous.md:160-181\`, \`QA_LOG Q-007\`) или рецепт.
-5. **Если факта нет** — так и скажи: «в базе нет подтверждённого ответа, нужна проверка в живой
-   сессии», и предложи проверить через \`fluent_case_run\`/journal.
+## Hard rules
+1. **Do not invent TUI syntax.** Search the plugin for a fact first, answer only after that.
+2. **Search first, answer second.** For a "how do I enable/set/find X in Fluent" question, call
+   \`fluent_kb_search({ query, scope: "all" })\` — it returns both commands from the TUI index and
+   verified recipes (journal lines with a status).
+3. **Status is mandatory.** \`verified\` — checked in a live session/journal; \`derived\` — inferred from
+   the help (verify live); \`unverified\` — not checked, never present it as fact.
+4. **Cite the source.** A path in the KB (\`KB/04_MODELS/viscous.md:160-181\`, \`QA_LOG Q-007\`) or a recipe.
+5. **If there is no fact** — say so: "the base has no confirmed answer, live-session verification is
+   needed", and suggest verifying through \`fluent_case_run\`/journal.
 
-## Формат ответа на вопрос «как включить X»
-1) journal-строка (готовая, с аргументами);
-2) интерактивная последовательность (путь → вопросы → ответы);
-3) зависимости (энергия/модели/сетка/лицензия);
-4) как проверить, что применилось;
-5) статус ✅/🟡/🔴 и источник.
+## Answer format for "how to enable X"
+1) journal line (ready to use, with arguments);
+2) interactive sequence (path → prompts → answers);
+3) dependencies (energy/models/mesh/license);
+4) how to verify that it was applied;
+5) status ✅/🟡/🔴 and source.
 
-## Создание кейса
-- Непонятна задача → \`fluent_case_interview\` (вопросы + рекомендации моделей по Re/Mach/теплообмену).
-- Есть спецификация → \`fluent_case_plan({spec})\` (сухой прогон) → \`fluent_case_generate({spec, outputDir})\`
-  (журнал только из проверенных рецептов; непроверенные шаги перечисляются в \`unsupported\`).
-- Повторяемый профиль → \`fluent_case_profiles\` → \`fluent_case_plan/generate\`.
-- Проверка журнала → \`fluent_case_validate\`; запуск → \`fluent_case_run\` (только по явной просьбе,
-  с \`confirm:true\`; \`allowRun\` в конфиге).
-- Трудности/вопросы → \`fluent_task_log\`; итоговый отчёт мейнтейнеру → \`fluent_task_report\`.
+## Creating a case
+- Task unclear → \`fluent_case_interview\` (questions + model recommendations by Re/Mach/heat transfer).
+- Have a specification → \`fluent_case_plan({spec})\` (dry run) → \`fluent_case_generate({spec, outputDir})\`
+  (journal only from verified recipes; unverified steps are listed in \`unsupported\`).
+- Reusable profile → \`fluent_case_profiles\` → \`fluent_case_plan/generate\`.
+- Validate the journal → \`fluent_case_validate\`; run → \`fluent_case_run\` (only on an explicit request,
+  with \`confirm:true\`; \`allowRun\` in the config).
+- Difficulties/questions → \`fluent_task_log\`; final report to the maintainer → \`fluent_task_report\`.
 
-## Если инструмент вернул configured:false
-Скажи пользователю, что не настроен путь к базе знаний (\`kbRoot\`/\`indexDir\`), приведи hint из ответа
-и не подменяй KB собственной памятью.
+## If a tool returns configured:false
+Tell the user the knowledge-base path is not configured (\`kbRoot\`/\`indexDir\`), quote the hint from the
+response, and do not substitute the KB with your own memory.
 `,
 }
 
-/** Уникальное имя cordis-плагина. */
+/** Unique cordis plugin name. */
 export const name = 'fluent-case-builder'
 
-/** Версия плагина (для отчётов и диагностики). */
+/** Plugin version (for reports and diagnostics). */
 export const version = PKG_VERSION
 
-/** Требуемые сервисы Harness. */
+/** Required Harness services. */
 export const inject = ['tools', 'skills']
 
 const text = (value) => [{
@@ -87,24 +87,24 @@ const jsonOutput = {
   render: (_args, value) => text(value),
 }
 
-/** Разрешить кейс по caseDir или паре profile+params. */
+/** Resolve the case from caseDir or a profile+params pair. */
 async function resolveCaseDir(config, args) {
   if (args.caseDir) return args.caseDir
   if (args.profile) {
     const plan = await planCase(config, args.profile, args.params ?? {})
     return plan.caseDir
   }
-  throw new Error('укажите caseDir или profile+params')
+  throw new Error('provide caseDir or profile+params')
 }
 
-/** Плагин: регистрирует инструменты. */
+/** Plugin: registers the tools. */
 export function apply(ctx, rawConfig = {}) {
-  // Встроенный skill: агент сам выбирает KB-инструменты для вопросов по Fluent.
+  // Built-in skill: the agent itself picks the KB tools for Fluent questions.
   if (ctx.skills?.register) {
-    try { ctx.skills.register(KB_SKILL) } catch (error) { /* skill не критичен для работы плагина */ }
+    try { ctx.skills.register(KB_SKILL) } catch (error) { /* the skill is not critical for the plugin to work */ }
   }
 
-  // Любой ответ инструмента приводим к lossless JSON (undefined/NaN недопустимы в output-схеме).
+  // Reduce every tool result to lossless JSON (undefined/NaN are not allowed in the output schema).
   const safeRegister = (definition) => ctx.tools.register({
     ...definition,
     execute: async (args, exec) => jsonSafe(await definition.execute(args, exec)),
@@ -113,17 +113,17 @@ export function apply(ctx, rawConfig = {}) {
   try {
     config = normalizeConfig(rawConfig ?? {})
   } catch (error) {
-    throw new Error(`fluent-case-builder: некорректный конфиг: ${error.message}`)
+    throw new Error(`fluent-case-builder: invalid config: ${error.message}`)
   }
 
-  // ---- 1. Профили ----
+  // ---- 1. Profiles ----
   safeRegister(defineTool({
     name: 'fluent_case_profiles',
-    description: 'Список готовых профилей расчётных кейсов (проектных шаблонов) с их параметрами. '
-      + 'Профиль — самый надёжный путь: он воспроизводит проверенный кейс из параметров. '
-      + 'Начните с него, если задача похожа на существующий проект; иначе используйте интервью/спецификацию.',
+    description: 'List of ready-made simulation case profiles (project templates) with their parameters. '
+      + 'A profile is the most reliable path: it reproduces a verified case from parameters. '
+      + 'Start with it when the task resembles an existing project; otherwise use the interview/specification.',
     parameters: {
-      profile: { type: 'string', description: 'id профиля — вернуть подробности; пусто — список всех' },
+      profile: { type: 'string', description: 'profile id — return details; empty — list all' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -150,25 +150,25 @@ export function apply(ctx, rawConfig = {}) {
           status: p.status ?? (p.error ? `error: ${p.error}` : null),
           paramCount: Object.keys(p.params ?? {}).length,
         })),
-        hint: 'fluent_case_plan({profile, params}) — сухой прогон без записи; fluent_case_generate — создать файлы',
+        hint: 'fluent_case_plan({profile, params}) — dry run without writing; fluent_case_generate — create the files',
       }
     },
   }))
 
-  // ---- 2. Интервью ----
+  // ---- 2. Interview ----
   safeRegister(defineTool({
     name: 'fluent_case_interview',
-    description: 'Провести интервью по задаче и получить: следующие вопросы пользователю, рекомендации моделей '
-      + '(турбулентность по Re, решатель по Mach, энергия, горение, излучение и т.д.), полноту ответов и '
-      + 'черновик спецификации кейса. Вызывайте многократно, передавая накопленные answers. '
-      + 'Плагин сам ничего у пользователя не спрашивает — вопросы задаёт агент.',
+    description: 'Run a task interview and return: the next questions for the user, model recommendations '
+      + '(turbulence by Re, solver by Mach, energy, combustion, radiation, etc.), answer completeness and '
+      + 'a draft case spec. Call it repeatedly, passing the accumulated answers. '
+      + 'The plugin never asks the user anything itself — the agent asks the questions.',
     parameters: {
       answers: {
         type: 'object', additionalProperties: true,
-        description: 'Накопленные ответы: {questionId или specPath: значение}. Пример: {"task.kind":"gas-dynamics","mach":2.5,"reynolds":30000}',
+        description: 'Accumulated answers: {questionId or specPath: value}. Example: {"task.kind":"gas-dynamics","mach":2.5,"reynolds":30000}',
       },
-      spec: { type: 'object', additionalProperties: true, description: 'Текущий черновик case spec (см. docs/CASE_SPEC.md)' },
-      limit: { type: 'integer', description: 'Сколько вопросов вернуть (по умолчанию 5)' },
+      spec: { type: 'object', additionalProperties: true, description: 'Current draft case spec (see docs/CASE_SPEC.md)' },
+      limit: { type: 'integer', description: 'How many questions to return (default 5)' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -188,23 +188,23 @@ export function apply(ctx, rawConfig = {}) {
         })),
         warnings: draft.warnings,
         draftSpec: draft.spec,
-        hint: 'задайте пользователю next[].text, затем повторите вызов с новыми answers',
+        hint: 'ask the user next[].text, then call again with the new answers',
       }
     },
   }))
 
-  // ---- 3. План ----
+  // ---- 3. Plan ----
   safeRegister(defineTool({
     name: 'fluent_case_plan',
-    description: 'Сухой прогон без записи на диск: профиль+параметры → директория кейса, вычисляемые величины, '
-      + 'пресет (например quick/fine), список файлов, предпросмотр журнала; либо универсальный case spec → собранный '
-      + 'журнал и список непроверенных шагов. Всегда вызывайте перед generate.',
+    description: 'Dry run without writing to disk: profile+params → case directory, computed values, '
+      + 'preset (e.g. quick/fine), file list, journal preview; or a generic case spec → assembled '
+      + 'journal and a list of unverified steps. Always call before generate.',
     parameters: {
-      profile: { type: 'string', description: 'id профиля (например example-channel)' },
-      params: { type: 'object', additionalProperties: true, description: 'Параметры профиля {R:50, L:1500, phi:0.8, ...}' },
-      spec: { type: 'object', additionalProperties: true, description: 'Универсальная спецификация кейса (альтернатива profile)' },
-      outputRoot: { type: 'string', description: 'переопределить корень вывода (должен быть внутри caseRoots)' },
-      includeJournal: { type: 'boolean', description: 'Вернуть полный журнал, а не только предпросмотр' },
+      profile: { type: 'string', description: 'profile id (e.g. example-channel)' },
+      params: { type: 'object', additionalProperties: true, description: 'Profile parameters {R:50, L:1500, phi:0.8, ...}' },
+      spec: { type: 'object', additionalProperties: true, description: 'Generic case spec (alternative to profile)' },
+      outputRoot: { type: 'string', description: 'override the output root (must be inside caseRoots)' },
+      includeJournal: { type: 'boolean', description: 'Return the full journal, not just the preview' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -224,7 +224,7 @@ export function apply(ctx, rawConfig = {}) {
           validation,
         }
       }
-      if (!args.profile) throw new Error('укажите profile или spec')
+      if (!args.profile) throw new Error('provide profile or spec')
       const plan = await planCase(config, args.profile, args.params ?? {}, { outputRoot: args.outputRoot })
       const validation = plan.journal
         ? await validateJournal(config, plan.journal.split('\n')).catch((error) => ({ error: error.message }))
@@ -235,26 +235,26 @@ export function apply(ctx, rawConfig = {}) {
     },
   }))
 
-  // ---- 4. Генерация ----
+  // ---- 4. Generation ----
   safeRegister(defineTool({
     name: 'fluent_case_generate',
-    description: 'Создать файлы кейса на диске: по профилю+параметрам (директории, копии UDF/TSV/сетки, '
-      + 'setup_case.jou, start.sh, манифест case.json, бэкап старой версии) ИЛИ по универсальной спецификации '
-      + '(setup_case.jou только из проверенных рецептов + case.json; нужен outputDir). Идемпотентно: '
-      + 'существующий кейс не перезаписывается без force. Ничего не запускает.',
+    description: 'Create case files on disk: from profile+params (directories, UDF/TSV/mesh copies, '
+      + 'setup_case.jou, start.sh, case.json manifest, backup of the previous version) OR from a generic '
+      + 'specification (setup_case.jou only from verified recipes + case.json; outputDir is required). '
+      + 'Idempotent: an existing case is not overwritten without force. Does not launch anything.',
     parameters: {
-      profile: { type: 'string', description: 'id профиля (вместо spec)' },
-      params: { type: 'object', additionalProperties: true, description: 'Параметры профиля' },
-      spec: { type: 'object', additionalProperties: true, description: 'универсальная спецификация кейса (вместо profile)' },
-      outputDir: { type: 'string', description: 'каталог для spec-кейса (внутри caseRoots)' },
-      name: { type: 'string', description: 'имя кейса/файлов для spec (по умолчанию spec.meta.name)' },
-      force: { type: 'boolean', description: 'Пересоздать существующий кейс (старая версия профиля уйдёт в archive/)' },
-      outputRoot: { type: 'string', description: 'переопределить корень вывода профиля (внутри caseRoots)' },
+      profile: { type: 'string', description: 'profile id (instead of spec)' },
+      params: { type: 'object', additionalProperties: true, description: 'Profile parameters' },
+      spec: { type: 'object', additionalProperties: true, description: 'generic case spec (instead of profile)' },
+      outputDir: { type: 'string', description: 'directory for the spec case (inside caseRoots)' },
+      name: { type: 'string', description: 'case/file name for spec (defaults to spec.meta.name)' },
+      force: { type: 'boolean', description: 'Recreate an existing case (the old profile version goes to archive/)' },
+      outputRoot: { type: 'string', description: 'override the profile output root (inside caseRoots)' },
     },
     output: jsonOutput,
     async execute(args) {
       if (args.spec) {
-        if (!args.outputDir) throw new Error('для spec-кейса укажите outputDir')
+        if (!args.outputDir) throw new Error('for a spec case provide outputDir')
         const result = await generateFromSpec(config, args.spec, {
           outputDir: args.outputDir, force: Boolean(args.force), name: args.name,
         })
@@ -262,31 +262,31 @@ export function apply(ctx, rawConfig = {}) {
         const validation = await validateJournal(config, (await readFile(result.journalPath, 'utf8')).split(/\r?\n/))
         return { ...result, validation }
       }
-      if (!args.profile) throw new Error('укажите profile+params или spec+outputDir')
+      if (!args.profile) throw new Error('provide profile+params or spec+outputDir')
       const result = await generateCase(config, args.profile, args.params ?? {}, { force: Boolean(args.force), outputRoot: args.outputRoot })
       const validation = await validateJournal(config, (await renderFullJournal(config, await planCase(config, args.profile, args.params ?? {}, { outputRoot: args.outputRoot }))).split('\n')).catch((error) => ({ error: error.message }))
       return { ...result, validation }
     },
   }))
 
-  // ---- 5. Валидация ----
+  // ---- 5. Validation ----
   safeRegister(defineTool({
     name: 'fluent_case_validate',
-    description: 'Оффлайн-проверка журнала по индексу команд Fluent TUI (commands.csv): какие строки точно есть, '
-      + 'какие скрытые/подтверждённые журналами, какие неизвестны. Не заменяет живую проверку — динамические '
-      + 'меню и скрытые команды дают предупреждения.',
+    description: 'Offline check of the journal against the Fluent TUI command index (commands.csv): which lines '
+      + 'definitely exist, which are hidden/confirmed by journals, which are unknown. Does not replace live '
+      + 'verification — dynamic menus and hidden commands produce warnings.',
     parameters: {
-      profile: { type: 'string', description: 'проверить журнал профиля' },
-      params: { type: 'object', additionalProperties: true, description: 'параметры профиля' },
-      caseDir: { type: 'string', description: 'проверить существующий кейс (setup_case.jou)' },
-      journal: { type: 'array', items: { type: 'string' }, description: 'проверить произвольные строки журнала' },
+      profile: { type: 'string', description: 'validate the profile journal' },
+      params: { type: 'object', additionalProperties: true, description: 'profile parameters' },
+      caseDir: { type: 'string', description: 'validate an existing case (setup_case.jou)' },
+      journal: { type: 'array', items: { type: 'string' }, description: 'validate arbitrary journal lines' },
     },
     output: jsonOutput,
     async execute(args) {
       let lines = args.journal
       if (!lines && args.caseDir) {
         const file = join(args.caseDir, 'setup_case.jou')
-        if (!existsSync(file)) throw new Error(`нет setup_case.jou в ${args.caseDir}`)
+        if (!existsSync(file)) throw new Error(`no setup_case.jou in ${args.caseDir}`)
         const { readFile } = await import('node:fs/promises')
         lines = (await readFile(file, 'utf8')).split(/\r?\n/)
       }
@@ -294,22 +294,22 @@ export function apply(ctx, rawConfig = {}) {
         const plan = await planCase(config, args.profile, args.params ?? {}, { outputRoot: args.outputRoot })
         lines = (await renderFullJournal(config, plan)).split(/\r?\n/)
       }
-      if (!lines) throw new Error('укажите profile+params, caseDir или journal')
+      if (!lines) throw new Error('provide profile+params, caseDir or journal')
       return validateJournal(config, lines)
     },
   }))
 
-  // ---- 6. Статус ----
+  // ---- 6. Status ----
   safeRegister(defineTool({
     name: 'fluent_case_status',
-    description: 'Статус кейса: манифест, параметры, наличие ожидаемых результатов (.cas.h5/.dat.h5), '
-      + 'состояние последних запусков и хвост лога.',
+    description: 'Case status: manifest, parameters, presence of expected results (.cas.h5/.dat.h5), '
+      + 'state of recent runs and the log tail.',
     parameters: {
-      caseDir: { type: 'string', description: 'директория кейса' },
-      profile: { type: 'string', description: 'или профиль+params для вычисления пути' },
+      caseDir: { type: 'string', description: 'case directory' },
+      profile: { type: 'string', description: 'or profile+params to compute the path' },
       params: { type: 'object', additionalProperties: true },
-      run: { type: 'string', description: 'имя запуска для лога (по умолчанию setup)' },
-      lines: { type: 'integer', description: 'строк лога (по умолчанию 40)' },
+      run: { type: 'string', description: 'run name for the log (default setup)' },
+      lines: { type: 'integer', description: 'log lines (default 40)' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -321,13 +321,13 @@ export function apply(ctx, rawConfig = {}) {
     },
   }))
 
-  // ---- 7. Реестр ----
+  // ---- 7. Registry ----
   safeRegister(defineTool({
     name: 'fluent_case_list',
-    description: 'Последние созданные плагином кейсы из реестра (с параметрами и статусом).',
+    description: 'Recent cases created by the plugin, from the registry (with parameters and status).',
     parameters: {
-      limit: { type: 'integer', description: 'сколько вернуть (по умолчанию 20)' },
-      profile: { type: 'string', description: 'фильтр по профилю' },
+      limit: { type: 'integer', description: 'how many to return (default 20)' },
+      profile: { type: 'string', description: 'filter by profile' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -335,33 +335,33 @@ export function apply(ctx, rawConfig = {}) {
     },
   }))
 
-  // ---- 8. Запуск ----
+  // ---- 8. Run ----
   safeRegister(defineTool({
     name: 'fluent_case_run',
-    description: 'Запуск Fluent с журналом в фоне и контроль: action=start (нужен confirm:true и allowRun), '
-      + 'action=status (лог, ошибки, результаты), action=stop (остановить группу процессов). '
-      + 'Перед запуском автоматически делает бэкап журналов и результатов в archive/. '
-      + 'ВНИМАНИЕ: это запускает реальный расчёт/настройку — только по явной просьбе пользователя.',
+    description: 'Launch Fluent with a journal in the background and monitor it: action=start (requires confirm:true and allowRun), '
+      + 'action=status (log, errors, results), action=stop (stop the process group). '
+      + 'Before launching, automatically backs up journals and results to archive/. '
+      + 'WARNING: this starts a real run/setup — only on an explicit user request.',
     parameters: {
       action: { type: 'string', required: true, description: 'start | status | stop' },
-      caseDir: { type: 'string', description: 'директория кейса' },
-      profile: { type: 'string', description: 'или профиль+params' },
+      caseDir: { type: 'string', description: 'case directory' },
+      profile: { type: 'string', description: 'or profile+params' },
       params: { type: 'object', additionalProperties: true },
-      journal: { type: 'string', description: 'файл журнала относительно кейса (setup_case.jou)' },
-      name: { type: 'string', description: 'имя запуска для лога/записи (setup)' },
+      journal: { type: 'string', description: 'journal file relative to the case (setup_case.jou)' },
+      name: { type: 'string', description: 'run name for the log/record (setup)' },
       dimension: { type: 'string', description: '3ddp | 2ddp | 3d | 2d' },
-      threads: { type: 'integer', description: 'число процессов' },
+      threads: { type: 'integer', description: 'number of processes' },
       mpi: { type: 'string', description: 'intel | msmpi | none' },
       affinity: { type: 'string', description: 'core | none' },
-      lines: { type: 'integer', description: 'строк лога в status' },
-      confirm: { type: 'boolean', description: 'явное подтверждение запуска (start)' },
+      lines: { type: 'integer', description: 'log lines in status' },
+      confirm: { type: 'boolean', description: 'explicit launch confirmation (start)' },
     },
     output: jsonOutput,
     async execute(args) {
       const caseDir = await resolveCaseDir(config, args)
       const name = args.name ?? 'setup'
       if (args.action === 'start') {
-        if (!args.confirm) throw new Error('запуск требует confirm:true — подтвердите у пользователя, что можно запускать Fluent')
+        if (!args.confirm) throw new Error('launch requires confirm:true — confirm with the user that Fluent may be started')
         const result = await startRun(config, {
           caseDir,
           journalFile: args.journal ?? 'setup_case.jou',
@@ -371,7 +371,7 @@ export function apply(ctx, rawConfig = {}) {
           mpi: args.mpi ?? 'intel',
           affinity: args.affinity ?? 'core',
         })
-        return { action: 'start', caseDir, ...result, hint: 'проверяйте fluent_case_run({action:"status"})' }
+        return { action: 'start', caseDir, ...result, hint: 'check with fluent_case_run({action:"status"})' }
       }
       if (args.action === 'status') {
         return { action: 'status', ...(await runStatus(config, caseDir, name, { lines: args.lines ?? 60 })) }
@@ -379,20 +379,20 @@ export function apply(ctx, rawConfig = {}) {
       if (args.action === 'stop') {
         return { action: 'stop', ...(await stopRun(caseDir, name)) }
       }
-      throw new Error(`неизвестное действие: ${args.action}`)
+      throw new Error(`unknown action: ${args.action}`)
     },
   }))
 
-  // ---- 9. Поиск по KB ----
+  // ---- 9. KB search ----
   safeRegister(defineTool({
     name: 'fluent_kb_search',
-    description: 'Поиск по знаниям плагина: (1) индекс TUI-команд — путь, вопрос, default, blocked, help; '
-      + '(2) проверенные рецепты — готовые journal-строки «как включить/сделать X» со статусом '
-      + 'verified/derived/unverified и источником. Это первый инструмент для любого вопроса про Fluent.',
+    description: 'Search the plugin knowledge: (1) the TUI command index — path, question, default, blocked, help; '
+      + '(2) verified recipes — ready journal lines "how to enable/do X" with status '
+      + 'verified/derived/unverified and a source. This is the first tool for any Fluent question.',
     parameters: {
-      query: { type: 'string', required: true, description: 'что нужно: «включить k-omega SST», /define/... , ключевое слово' },
-      limit: { type: 'integer', description: 'сколько результатов на раздел (10)' },
-      category: { type: 'string', description: 'ограничить категорию индекса, например 04_MODELS' },
+      query: { type: 'string', required: true, description: 'what you need: "enable k-omega SST", /define/... , a keyword' },
+      limit: { type: 'integer', description: 'results per section (10)' },
+      category: { type: 'string', description: 'restrict the index category, e.g. 04_MODELS' },
       scope: { type: 'string', enum: ['all', 'commands', 'recipes'], description: 'all (default) | commands | recipes' },
     },
     output: jsonOutput,
@@ -426,36 +426,36 @@ export function apply(ctx, rawConfig = {}) {
       }
       const empty = !result.commands.length && !result.recipes.length
       result.hint = result.hint ?? (empty
-        ? 'в индексе и рецептах ничего не найдено; уточните запрос или проверьте факт в живой сессии'
-        : 'journal-строка рецепта — готовый ответ; статус и source обязательны в ответе')
+        ? 'nothing found in the index or recipes; refine the query or verify the fact in a live session'
+        : 'a recipe journal line is a ready answer; status and source are mandatory in the answer')
       return result
     },
   }))
 
-  // ---- 11. Отчёт о задаче (для мейнтейнера) ----
+  // ---- 11. Task report (for the maintainer) ----
   safeRegister(defineTool({
     name: 'fluent_task_report',
-    description: 'Создать самодостаточный отчёт о задаче (JSON + Markdown) для мейнтейнера плагина: '
-      + 'окружение и версия Fluent, постановка задачи, ответы интервью и рекомендации, кейс/спека, '
-      + 'проверка журнала по KB, лог запуска, автоматический анализ ошибок и список пробелов. '
-      + 'Коллега генерирует отчёт и присылает файл; мейнтейнер агрегирует отчёты скриптом '
-      + 'scripts/ingest-report.mjs и обновляет плагин. Секретов/лицензионных ключей в отчёте нет.',
+    description: 'Create a self-contained task report (JSON + Markdown) for the plugin maintainer: '
+      + 'environment and Fluent version, task statement, interview answers and recommendations, case/spec, '
+      + 'journal check against the KB, run log, automatic error analysis and a list of gaps. '
+      + 'The colleague generates the report and sends the file; the maintainer aggregates reports with the '
+      + 'scripts/ingest-report.mjs script and updates the plugin. The report contains no secrets/license keys.',
     parameters: {
-      caseDir: { type: 'string', description: 'каталог кейса плагина (case.json)' },
-      profile: { type: 'string', description: 'или профиль кейса' },
-      params: { type: 'object', additionalProperties: true, description: 'параметры профиля' },
-      spec: { type: 'object', additionalProperties: true, description: 'или универсальная спецификация кейса' },
-      answers: { type: 'object', additionalProperties: true, description: 'ответы интервью {id вопроса: значение}' },
-      title: { type: 'string', description: 'как назвать задачу' },
-      kind: { type: 'string', description: 'класс задачи (hydrodynamics, gas-dynamics, combustion, …)' },
-      description: { type: 'string', description: 'что считали и зачем' },
-      expectations: { type: 'string', description: 'какой результат был нужен' },
-      notes: { type: 'array', items: { type: 'string' }, description: 'заметки по ходу работы' },
-      questions: { type: 'array', items: { type: 'string' }, description: 'вопросы мейнтейнеру' },
-      includeLogs: { type: 'boolean', description: 'включать лог запуска (default true)' },
-      outputDir: { type: 'string', description: 'каталог отчёта (внутри caseRoots/reportDir/кейса)' },
-      runName: { type: 'string', description: 'какой запуск брать (setup)' },
-      outputRoot: { type: 'string', description: 'корень вывода кейса, если задан profile' },
+      caseDir: { type: 'string', description: 'plugin case directory (case.json)' },
+      profile: { type: 'string', description: 'or the case profile' },
+      params: { type: 'object', additionalProperties: true, description: 'profile parameters' },
+      spec: { type: 'object', additionalProperties: true, description: 'or a generic case spec' },
+      answers: { type: 'object', additionalProperties: true, description: 'interview answers {question id: value}' },
+      title: { type: 'string', description: 'what to name the task' },
+      kind: { type: 'string', description: 'task class (hydrodynamics, gas-dynamics, combustion, ...)' },
+      description: { type: 'string', description: 'what was computed and why' },
+      expectations: { type: 'string', description: 'what result was needed' },
+      notes: { type: 'array', items: { type: 'string' }, description: 'notes made along the way' },
+      questions: { type: 'array', items: { type: 'string' }, description: 'questions for the maintainer' },
+      includeLogs: { type: 'boolean', description: 'include the run log (default true)' },
+      outputDir: { type: 'string', description: 'report directory (inside caseRoots/reportDir/case)' },
+      runName: { type: 'string', description: 'which run to take (setup)' },
+      outputRoot: { type: 'string', description: 'case output root when profile is given' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -464,21 +464,21 @@ export function apply(ctx, rawConfig = {}) {
   }))
 
 
-  // ---- 13. Обновление плагина ----
+  // ---- 13. Plugin update ----
   safeRegister(defineTool({
     name: 'fluent_plugin_update',
-    description: 'Проверить и обновить сам плагин fluent-case-builder. action=check — текущая и последняя '
-      + 'версия (git-теги), есть ли обновление; action=plan — готовые команды для plugin_manager и CLI; '
-      + 'action=script — записать исполняемый скрипт обновления; action=apply — выполнить обновление через '
-      + 'официальный `dsh plugin` (требует confirm:true и allowSelfUpdate:true, после обновления нужен '
-      + 'перезапуск DSH). Версию можно закрепить тегом (например "v0.5.0").',
+    description: 'Check and update the fluent-case-builder plugin itself. action=check — current and latest '
+      + 'version (git tags) and whether an update is available; action=plan — ready-to-run commands for plugin_manager and the CLI; '
+      + 'action=script — write an executable update script; action=apply — perform the update through the '
+      + 'official `dsh plugin` (requires confirm:true and allowSelfUpdate:true; DSH must be restarted '
+      + 'after the update). The version can be pinned to a tag (e.g. "v0.5.0").',
     parameters: {
       action: { type: 'string', enum: ['check', 'plan', 'script', 'apply'], description: 'check (default) | plan | script | apply' },
-      version: { type: 'string', description: 'тег (v0.5.0) или main (по умолчанию main)' },
-      profile: { type: 'string', description: 'DSH-профиль (по умолчанию из DSH_PROFILE или web)' },
-      confirm: { type: 'boolean', description: 'для apply: явное подтверждение' },
-      dryRun: { type: 'boolean', description: 'для apply: только показать команды, ничего не менять' },
-      outputDir: { type: 'string', description: 'для script: куда писать скрипт (внутри caseRoots)' },
+      version: { type: 'string', description: 'tag (v0.5.0) or main (default main)' },
+      profile: { type: 'string', description: 'DSH profile (defaults to DSH_PROFILE or web)' },
+      confirm: { type: 'boolean', description: 'for apply: explicit confirmation' },
+      dryRun: { type: 'boolean', description: 'for apply: only show the commands, change nothing' },
+      outputDir: { type: 'string', description: 'for script: where to write the script (inside caseRoots)' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -498,18 +498,18 @@ export function apply(ctx, rawConfig = {}) {
     },
   }))
 
-  // ---- 12. Заметка исполнителя ----
+  // ---- 12. Executor note ----
   safeRegister(defineTool({
     name: 'fluent_task_log',
-    description: 'Дописать заметку исполнителя в журнал задачи (task-notes.jsonl рядом с будущим отчётом). '
-      + 'Заметки автоматически попадают в отчёт fluent_task_report как пробелы/запросы мейнтейнеру. '
-      + 'Используйте по ходу работы: что не получилось, что пришлось обходить, какие вопросы остались.',
+    description: 'Append an executor note to the task log (task-notes.jsonl next to the future report). '
+      + 'Notes automatically end up in the fluent_task_report as gaps/requests for the maintainer. '
+      + 'Use it as you work: what failed, what had to be worked around, what questions remain.',
     parameters: {
-      message: { type: 'string', required: true, description: 'текст заметки' },
+      message: { type: 'string', required: true, description: 'note text' },
       kind: { type: 'string', description: 'note | question | error | blocked | idea (default note)' },
-      caseDir: { type: 'string', description: 'каталог кейса' },
-      outputDir: { type: 'string', description: 'каталог журнала (внутри caseRoots/reportDir/кейса)' },
-      author: { type: 'string', description: 'кто пишет (по умолчанию USER)' },
+      caseDir: { type: 'string', description: 'case directory' },
+      outputDir: { type: 'string', description: 'log directory (inside caseRoots/reportDir/case)' },
+      author: { type: 'string', description: 'who is writing (default USER)' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -517,14 +517,14 @@ export function apply(ctx, rawConfig = {}) {
     },
   }))
 
-  // ---- 10. Документ KB ----
+  // ---- 10. KB document ----
   safeRegister(defineTool({
     name: 'fluent_kb_get',
-    description: 'Прочитать документ базы знаний Fluent TUI по относительному пути (например 04_MODELS/viscous.md).',
+    description: 'Read a Fluent TUI knowledge-base document by relative path (e.g. 04_MODELS/viscous.md).',
     parameters: {
-      path: { type: 'string', required: true, description: 'путь относительно корня KB' },
-      offset: { type: 'integer', description: 'первая строка (1)' },
-      limit: { type: 'integer', description: 'сколько строк (400)' },
+      path: { type: 'string', required: true, description: 'path relative to the KB root' },
+      offset: { type: 'integer', description: 'first line (1)' },
+      limit: { type: 'integer', description: 'how many lines (400)' },
     },
     output: jsonOutput,
     async execute(args) {
@@ -534,7 +534,7 @@ export function apply(ctx, rawConfig = {}) {
   }))
 }
 
-/** Отрендерить полный журнал профиля (план читает шаблон). */
+/** Render the full profile journal (the plan reads the template). */
 async function renderFullJournal(config, plan) {
   const { readFile } = await import('node:fs/promises')
   const { loadProfile } = await import('./lib/profile.js')
@@ -548,7 +548,7 @@ async function renderFullJournal(config, plan) {
     solutionsRoot: config.profileRoots?.[profile.id],
   }
   const template = profile.templates?.setupJournal
-  if (!template) throw new Error(`профиль ${profile.id}: нет templates.setupJournal`)
+  if (!template) throw new Error(`profile ${profile.id}: no templates.setupJournal`)
   const source = template.startsWith('/') ? template : join(profile.dir, template)
   return renderTemplate(await readFile(source, 'utf8'), scope, 'setupJournal')
 }

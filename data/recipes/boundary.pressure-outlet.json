@@ -1,13 +1,13 @@
 {
   "id": "boundary.pressure-outlet",
-  "title": "Pressure-outlet (alias для compile.js)",
+  "title": "Pressure-outlet (alias for compile.js)",
   "category": "boundary",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:174-179",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/define/boundary-conditions/pressure-outlet → zone id/name → gauge pressure → backflow → turbulence/species (зависит от моделей)",
+  "interactive": "/define/boundary-conditions/pressure-outlet → zone id/name → gauge pressure → backflow → turbulence/species (depends on models)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -17,5 +17,5 @@
       "required": true
     }
   ],
-  "notes": "ALIAS: compile.js вызывает ['boundary.pressure-outlet'] для role=outlet и передаёт {zone}. Цепочка НЕ проходилась (зависит от моделей); в журнал не включать до live-проверки — попадёт в unsupported."
+  "notes": "ALIAS: compile.js calls ['boundary.pressure-outlet'] for role=outlet and passes {zone}. The chain was NOT walked (depends on models); do not include it in the journal before a live check — it will end up in unsupported."
 }

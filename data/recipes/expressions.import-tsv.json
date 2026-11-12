@@ -1,6 +1,6 @@
 {
   "id": "expressions.import-tsv",
-  "title": "Импорт Named Expressions из TSV",
+  "title": "Import Named Expressions from TSV",
   "category": "expressions",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/named-expressions import-from-tsv \"{{tsvFile}}\""
   ],
-  "interactive": "/define/named-expressions/import-from-tsv → имя файла TSV",
+  "interactive": "/define/named-expressions/import-from-tsv → TSV file name",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -20,5 +20,5 @@
       "default": "example-expressions.tsv"
     }
   ],
-  "notes": "Проверено рабочим журналом (файл должен лежать в рабочей директории Fluent). Пробельная и слэш-форма эквивалентны. Имена выражений затем используются в BC в кавычках (\"Q_inlet\")."
+  "notes": "Verified by the working journal (the file must be in the Fluent working directory). The space and slash forms are equivalent. The expression names are then used in BCs in quotes (\"Q_inlet\")."
 }

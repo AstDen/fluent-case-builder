@@ -1,6 +1,6 @@
 {
   "id": "models.solver.pressure-based",
-  "title": "Pressure-based (segregated) решатель",
+  "title": "Pressure-based (segregated) solver",
   "category": "models",
   "status": "verified",
   "confidence": "medium",
@@ -15,5 +15,5 @@
     "models.solver.density-based-implicit"
   ],
   "params": [],
-  "notes": "Проверено переключение: после density-based-implicit команда pressure-based спрашивает [no] (models_overview §2.1). Дословная журнальная строка `pressure-based yes` в KB не зафиксирована, но форма симметрична проверенной `density-based-implicit yes` — уверенность medium."
+  "notes": "Switching verified: after density-based-implicit the pressure-based command asks [no] (models_overview §2.1). The verbatim journal line `pressure-based yes` is not recorded in the KB, but the form is symmetric to the verified `density-based-implicit yes` — confidence medium."
 }

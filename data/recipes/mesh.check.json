@@ -1,6 +1,6 @@
 {
   "id": "mesh.check",
-  "title": "Проверка сетки и качества",
+  "title": "Mesh and quality check",
   "category": "mesh",
   "status": "verified",
   "confidence": "high",
@@ -10,9 +10,9 @@
     "/mesh/check",
     "/mesh/quality"
   ],
-  "interactive": "/mesh/check → выполняется сразу; /mesh/quality → выполняется сразу",
+  "interactive": "/mesh/check → executes immediately; /mesh/quality → executes immediately",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Помечены [T] в ready_commands.md §2; выполнялись после чтения сетки в 01_MESH §1."
+  "notes": "Marked [T] in ready_commands.md §2; executed after reading the mesh in 01_MESH §1."
 }

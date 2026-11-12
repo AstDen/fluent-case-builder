@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Смоук-тест движка без DSH: util, kb, rules, compile, profile (если профиль готов).
- * Запуск: node scripts/smoke.mjs
+ * Engine smoke test without DSH: util, kb, rules, compile, profile (if a profile is ready).
+ * Run: node scripts/smoke.mjs
  */
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -14,7 +14,7 @@ const ok = []
 const check = (name, fn) => {
   try {
     const value = fn()
-    if (value instanceof Promise) throw new Error('используйте checkAsync')
+    if (value instanceof Promise) throw new Error('use checkAsync')
     ok.push(name)
   } catch (error) {
     failures.push(`${name}: ${error.message}`)
@@ -32,8 +32,8 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
 
 const { evalExpression, renderTemplate, isInside, coerceParam } = await import(join(root, 'lib/util.js'))
 
-check('evalExpression: арифметика', () => {
-  assert(evalExpression('(a - b) / 1000', { a: 50, b: 10 }) === 0.04, '(50-10)/1000 должно быть 0.04')
+check('evalExpression: arithmetic', () => {
+  assert(evalExpression('(a - b) / 1000', { a: 50, b: 10 }) === 0.04, '(50-10)/1000 must be 0.04')
   assert(evalExpression('1 * L / 6000', { L: 1500 }) === 0.25, 'l1')
   assert(evalExpression('iterations >= 1000 || level >= 0.7', { iterations: 1500, level: 0.2 }) === true, 'preset fine')
   assert(evalExpression('iterations >= 1000 || level >= 0.7', { iterations: 500, level: 0.2 }) === false, 'preset quick')
@@ -42,15 +42,15 @@ check('evalExpression: арифметика', () => {
 })
 check('renderTemplate', () => {
   const out = renderTemplate('L={{L}} y={{y1}} FR={{FR}}', { L: 1500, y1: 0.04, FR: [10, 20, 30] })
-  assert(out === 'L=1500 y=0.04 FR=10 20 30', `получено: ${out}`)
+  assert(out === 'L=1500 y=0.04 FR=10 20 30', `got: ${out}`)
 })
 check('isInside', () => {
-  assert(isInside('/a/b', '/a/b/c') === true, 'вложенный путь')
-  assert(isInside('/a/b', '/a/c') === false, 'соседний путь')
+  assert(isInside('/a/b', '/a/b/c') === true, 'nested path')
+  assert(isInside('/a/b', '/a/c') === false, 'sibling path')
 })
 check('coerceParam', () => {
-  assert(coerceParam('R', '50', { type: 'number' }) === 50, 'строка→число')
-  assert(JSON.stringify(coerceParam('FR', '10 20 30', { type: 'array', items: 'number' })) === '[10,20,30]', 'массив')
+  assert(coerceParam('R', '50', { type: 'number' }) === 50, 'string→number')
+  assert(JSON.stringify(coerceParam('FR', '10 20 30', { type: 'array', items: 'number' })) === '[10,20,30]', 'array')
 })
 
 const { loadCommands, searchCommands } = await import(join(root, 'lib/kb.js'))
@@ -67,36 +67,36 @@ if (!config.kbRoot) {
 }
 
 await checkAsync('loadCommands + search', async () => {
-  if (!existsSync(join(config.indexDir, 'commands.csv'))) throw new Error('нет commands.csv — пропуск')
+  if (!existsSync(join(config.indexDir, 'commands.csv'))) throw new Error('no commands.csv — skipping')
   const commands = await loadCommands(config.indexDir)
-  assert(commands.length > 1000, `мало команд: ${commands.length}`)
+  assert(commands.length > 1000, `too few commands: ${commands.length}`)
   const hits = searchCommands(commands, 'kw-sst', { limit: 5 })
-  assert(hits.length > 0, 'поиск kw-sst пуст')
-  assert(hits.some((h) => h.path.includes('viscous')), 'нет viscous в результатах')
+  assert(hits.length > 0, 'kw-sst search is empty')
+  assert(hits.some((h) => h.path.includes('viscous')), 'no viscous in results')
 })
 
 const { compareVersions, parseTags, buildUpdateCommands, writeUpdateScript, installedState, applyUpdate } = await import(join(root, 'lib/update.js'))
 
-check('update: сравнение версий', () => {
+check('update: version comparison', () => {
   assert(compareVersions('v0.5.0', 'v0.4.0') === 1, 'v0.5.0 > v0.4.0')
-  assert(compareVersions('v0.4.0', 'v0.4.0') === 0, 'равные версии')
+  assert(compareVersions('v0.4.0', 'v0.4.0') === 0, 'equal versions')
   assert(compareVersions('0.3.9', 'v0.4.0') === -1, '0.3.9 < 0.4.0')
 })
-check('update: разбор git-тегов', () => {
+check('update: git tag parsing', () => {
   const tags = parseTags('abc\trefs/tags/v0.3.0\ndef\trefs/tags/v0.5.0\nghi\trefs/tags/v0.5.0^{}\njkl\trefs/tags/not-semver')
-  assert(tags[0] === 'v0.5.0', `первый тег: ${tags[0]}`)
-  assert(tags.length === 2, `уникальных тегов: ${tags.length}`)
+  assert(tags[0] === 'v0.5.0', `first tag: ${tags[0]}`)
+  assert(tags.length === 2, `unique tags: ${tags.length}`)
 })
-check('update: команды обновления', () => {
+check('update: update commands', () => {
   const pinned = buildUpdateCommands({ version: 'v0.5.0', profile: 'web' })
   assert(pinned.spec.endsWith('#v0.5.0'), pinned.spec)
-  assert(pinned.pluginManager[0].action === 'remove_bundle', 'нет remove_bundle')
-  assert(pinned.pluginManager[1].target.includes('#v0.5.0'), 'нет пина в install_bundle')
-  assert(pinned.cli.some((line) => line.includes('dsh plugin --profile web add')), 'нет CLI add')
+  assert(pinned.pluginManager[0].action === 'remove_bundle', 'missing remove_bundle')
+  assert(pinned.pluginManager[1].target.includes('#v0.5.0'), 'no pin in install_bundle')
+  assert(pinned.cli.some((line) => line.includes('dsh plugin --profile web add')), 'no CLI add')
   const latest = buildUpdateCommands({ version: 'main' })
   assert(latest.spec.endsWith('#main'), latest.spec)
 })
-await checkAsync('update: установленное состояние профиля', async () => {
+await checkAsync('update: installed profile state', async () => {
   const dir = join(root, '.smoke-profile')
   await rm(dir, { recursive: true, force: true })
   await mkdir(dir, { recursive: true })
@@ -109,63 +109,63 @@ await checkAsync('update: установленное состояние проф
   try {
     const state = installedState('smoke')
     assert(state.spec.includes('github:'), `spec: ${state.spec}`)
-    assert(state.bundled === true, 'bundle не распознан')
+    assert(state.bundled === true, 'bundle not recognized')
   } finally {
     if (previous === undefined) delete process.env.DSH_PROFILE_DIR; else process.env.DSH_PROFILE_DIR = previous
     await rm(dir, { recursive: true, force: true })
   }
 })
-await checkAsync('update: скрипт и защита apply', async () => {
+await checkAsync('update: script and apply guard', async () => {
   const dir = join(root, '.smoke-update')
   await rm(dir, { recursive: true, force: true })
   await mkdir(dir, { recursive: true })
   try {
     const written = writeUpdateScript({ caseRoots: [dir] }, { version: 'v0.5.0', outputDir: dir })
-    assert(existsSync(written.file), 'скрипт не создан')
+    assert(existsSync(written.file), 'script not created')
     const text = await readFile(written.file, 'utf8')
-    assert(text.includes('dsh plugin --profile') && text.includes('#v0.5.0'), 'скрипт без команд/пина')
+    assert(text.includes('dsh plugin --profile') && text.includes('#v0.5.0'), 'script without commands/pin')
     let guarded = false
     try { applyUpdate({ allowSelfUpdate: false }, { version: 'v0.5.0', confirm: true }) } catch { guarded = true }
-    assert(guarded, 'apply без allowSelfUpdate должен падать')
+    assert(guarded, 'apply without allowSelfUpdate must fail')
     let noConfirm = false
     try { applyUpdate({ allowSelfUpdate: true }, { version: 'v0.5.0' }) } catch { noConfirm = true }
-    assert(noConfirm, 'apply без confirm должен падать')
+    assert(noConfirm, 'apply without confirm must fail')
     const dry = applyUpdate({ allowSelfUpdate: true }, { version: 'v0.5.0', confirm: true, dryRun: true })
-    assert(dry.dryRun === true && dry.restartRequired === true, 'dryRun не сработал')
+    assert(dry.dryRun === true && dry.restartRequired === true, 'dryRun did not work')
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
 })
-await checkAsync('встроенный индекс команд', async () => {
+await checkAsync('bundled command index', async () => {
   const bundled = join(root, 'data', 'index', 'commands.csv')
-  assert(existsSync(bundled), 'нет встроенного data/index/commands.csv')
+  assert(existsSync(bundled), 'no bundled data/index/commands.csv')
   const commands = await loadCommands(join(root, 'data', 'index'))
-  assert(commands.length > 1500, `мало команд: ${commands.length}`)
+  assert(commands.length > 1500, `too few commands: ${commands.length}`)
   const hits = searchCommands(commands, 'kw-sst', { limit: 3 })
-  assert(hits.some((h) => h.path.includes('viscous')), 'поиск kw-sst не работает по встроенному индексу')
+  assert(hits.some((h) => h.path.includes('viscous')), 'kw-sst search does not work on the bundled index')
 })
-await checkAsync('поиск по рецептам', async () => {
+await checkAsync('recipe search', async () => {
   const { loadRecipes, searchRecipes } = await import(join(root, 'lib/compile.js'))
   const { recipes } = await loadRecipes(join(root, 'data'))
   const hits = searchRecipes(recipes, 'k-omega SST', { limit: 5 })
   const recipe = hits.find((h) => h.id === 'models.viscous.kw-sst')
-  assert(recipe, `рецепт kw-sst не найден: ${hits.map((h) => h.id).join(',')}`)
-  assert(recipe.status === 'verified', `статус: ${recipe.status}`)
-  assert(recipe.journal.some((line) => line.includes('kw-sst')), 'нет journal-строки')
-  assert(recipe.source, 'нет источника')
+  assert(recipe, `kw-sst recipe not found: ${hits.map((h) => h.id).join(',')}`)
+  assert(recipe.status === 'verified', `status: ${recipe.status}`)
+  assert(recipe.journal.some((line) => line.includes('kw-sst')), 'no journal line')
+  assert(recipe.source, 'no source')
   const porous = searchRecipes(recipes, 'porous zone', { limit: 5 })
-  assert(porous.some((h) => h.status === 'unverified'), 'нет unverified-рецепта (пористая зона)')
+  assert(porous.some((h) => h.status === 'unverified'), 'no unverified recipe (porous zone)')
 })
 await checkAsync('validateJournal', async () => {
-  if (!existsSync(join(config.indexDir, 'commands.csv'))) throw new Error('нет commands.csv — пропуск')
+  if (!existsSync(join(config.indexDir, 'commands.csv'))) throw new Error('no commands.csv — skipping')
   const result = await validateJournal(config, [
     '/file/write-case-data "case" yes',
     '/solve/set/p-v-coupling 20',
     '/nonexistent/command x',
   ])
-  assert(result.exact >= 1, 'нет точных совпадений')
-  assert(result.hiddenKnown.includes('/file/write-case-data "case" yes'), 'write-case-data не распознан как скрытый')
-  assert(result.unknown.length === 1, `ожидалась 1 неизвестная команда, получено ${result.unknown.length}`)
+  assert(result.exact >= 1, 'no exact matches')
+  assert(result.hiddenKnown.includes('/file/write-case-data "case" yes'), 'write-case-data not recognized as hidden')
+  assert(result.unknown.length === 1, `expected 1 unknown command, got ${result.unknown.length}`)
 })
 
 const { applyRules, buildFacts, nextQuestions, completeness, draftSpec } = await import(join(root, 'lib/rules.js'))
@@ -176,21 +176,21 @@ check('applyRules', () => {
   }]
   const facts = buildFacts({ physics: { reynolds: 12000 } })
   const applied = applyRules(rules, facts)
-  assert(applied.recommendations['physics.turbulence.model'] === 'kw-sst', 'правило не сработало')
+  assert(applied.recommendations['physics.turbulence.model'] === 'kw-sst', 'rule did not match')
 })
 check('nextQuestions/completeness', () => {
-  const questions = [{ id: 'task', title: 'Задача', questions: [
-    { id: 'task.kind', text: 'Класс?', required: true, specPath: 'meta.taskKind' },
-    { id: 'task.dim', text: 'Размерность?', required: false },
+  const questions = [{ id: 'task', title: 'Task', questions: [
+    { id: 'task.kind', text: 'Kind?', required: true, specPath: 'meta.taskKind' },
+    { id: 'task.dim', text: 'Dimensions?', required: false },
   ] }]
   const next = nextQuestions(questions, { 'task.kind': 'gas-dynamics' })
-  assert(next.next.length === 1 && next.next[0].id === 'task.dim', 'неверные следующие вопросы')
+  assert(next.next.length === 1 && next.next[0].id === 'task.dim', 'wrong next questions')
   const c = completeness(questions, { 'task.kind': 'x' })
-  assert(c.requiredAnswered === 1 && c.answered === 1, `полнота: ${JSON.stringify(c)}`)
+  assert(c.requiredAnswered === 1 && c.answered === 1, `completeness: ${JSON.stringify(c)}`)
 })
 
 const { compileSpec, loadRecipes } = await import(join(root, 'lib/compile.js'))
-await checkAsync('compileSpec (builtin рецепты)', async () => {
+await checkAsync('compileSpec (builtin recipes)', async () => {
   const { recipes } = await loadRecipes(config.dataDir)
   const spec = {
     meta: { name: 'smoke-case' },
@@ -202,51 +202,51 @@ await checkAsync('compileSpec (builtin рецепты)', async () => {
     run: { stages: [{ name: 'main', iterate: 500 }] },
   }
   const compiled = compileSpec(spec, recipes)
-  assert(compiled.journal.length > 0, 'журнал пуст')
-  assert(compiled.journal.some((l) => /\/file[\/ ]read-case/.test(l)), 'нет чтения сетки')
-  assert(compiled.journal.some((l) => l.includes('/file/write-case-data')), 'нет сохранения')
-  assert(compiled.sections.some((s) => s.recipe === 'init.hybrid'), 'нет шага init.hybrid')
+  assert(compiled.journal.length > 0, 'journal is empty')
+  assert(compiled.journal.some((l) => /\/file[\/ ]read-case/.test(l)), 'no mesh read')
+  assert(compiled.journal.some((l) => l.includes('/file/write-case-data')), 'no save')
+  assert(compiled.sections.some((s) => s.recipe === 'init.hybrid'), 'no init.hybrid step')
 })
 
 
-// ---------- отчёты и анализ задачи ----------
+// ---------- reports and task analysis ----------
 const { loadDiagnostics, detectFluentInfo, parseRunLog, findingsFromLog } = await import(join(root, 'lib/analyze.js'))
 const { createReport, appendTaskNote } = await import(join(root, 'lib/report.js'))
 const { validateJournal: validateNoIndex } = await import(join(root, 'lib/engine.js'))
 
-await checkAsync('diagnostics: загрузка таблицы', async () => {
+await checkAsync('diagnostics: table loading', async () => {
   const diagnostics = await loadDiagnostics(config.dataDir)
-  assert(diagnostics.patterns.length >= 8, `мало диагностик: ${diagnostics.patterns.length}`)
-  assert(diagnostics.patterns.every((p) => p.regex), 'есть паттерны без regex')
+  assert(diagnostics.patterns.length >= 8, `too few diagnostics: ${diagnostics.patterns.length}`)
+  assert(diagnostics.patterns.every((p) => p.regex), 'some patterns have no regex')
 })
-check('detectFluentInfo: версия и лицензия из лога', () => {
+check('detectFluentInfo: version and license from the log', () => {
   const info = detectFluentInfo({ fluentPath: '/opt/ansys_inc/v261/fluent/bin/fluent', licenseHost: '1055@localhost' },
     'Welcome to ANSYS Fluent 2026 R1\nBuild Id: 10262\nConnected License Server List:\t1055@localhost\nInfo: Your license enables 4-way parallel execution.')
   assert(info.version === '2026 R1', `version=${info.version}`)
   assert(info.build === '10262', `build=${info.build}`)
-  assert(info.license.server.includes('1055@localhost'), 'лицензия не распознана')
-  assert(info.source === 'run-log', 'источник версии')
+  assert(info.license.server.includes('1055@localhost'), 'license not recognized')
+  assert(info.source === 'run-log', 'version source')
 })
-check('parseRunLog: стадии и объёмы', () => {
+check('parseRunLog: stages and sizes', () => {
   const parsed = parseRunLog('Reading "mesh.msh"\n120000 cells, 3 zones ...\nPairing interface zones...\nWriting to x.cas.h5 ...\nTotal Transcript Time: 1 Minute 19 Second.')
   assert(parsed.cells === 120000 && parsed.zones === 3, 'cells/zones')
   assert(parsed.durationSec === 79, `duration=${parsed.durationSec}`)
   const save = parsed.stages.find((s) => s.stage === 'save-case-data')
-  assert(save.status === 'seen', 'стадия сохранения не найдена')
+  assert(save.status === 'seen', 'save stage not found')
 })
-await checkAsync('findingsFromLog: batch-confirm и fatal', async () => {
+await checkAsync('findingsFromLog: batch-confirm and fatal', async () => {
   const diagnostics = await loadDiagnostics(config.dataDir)
   const findings = findingsFromLog('Overwrite confirmations (/file/set-batch-options ...)\nare on -- will therefore ignore the following journal\nError: invalid command: yes', diagnostics)
-  assert(findings.some((f) => f.code === 'invalid-command-batch-confirm'), 'не распознан batch-confirm')
-  assert(findings.find((f) => f.code === 'invalid-command-batch-confirm').severity === 'info', 'серьёзность batch-confirm')
+  assert(findings.some((f) => f.code === 'invalid-command-batch-confirm'), 'batch-confirm not recognized')
+  assert(findings.find((f) => f.code === 'invalid-command-batch-confirm').severity === 'info', 'batch-confirm severity')
   const fatal = findingsFromLog('Fatal error has happened to some of the processes!', diagnostics)
-  assert(fatal.some((f) => f.code === 'crash'), 'не распознан crash')
+  assert(fatal.some((f) => f.code === 'crash'), 'crash not recognized')
 })
-await checkAsync('validateJournal: без индекса — skipped', async () => {
+await checkAsync('validateJournal: no index — skipped', async () => {
   const result = await validateNoIndex({ ...config, indexDir: '' }, ['/file/read-case "x"'])
   assert(result.verdict === 'skipped', `verdict=${result.verdict}`)
 })
-await checkAsync('createReport: JSON+MD, анализ, заметки', async () => {
+await checkAsync('createReport: JSON+MD, analysis, notes', async () => {
   const caseDir = join(root, '.smoke-case')
   await rm(caseDir, { recursive: true, force: true })
   await mkdir(join(caseDir, '.run'), { recursive: true })
@@ -271,26 +271,26 @@ await checkAsync('createReport: JSON+MD, анализ, заметки', async ()
     logFile, command: 'fluent 3ddp -g -t2 -i setup_case.jou', status: 'running',
   }))
   const configReport = { ...config, caseRoots: [root], kbRoot: '', indexDir: '', reportDir: '', maxLogLines: 50 }
-  await appendTaskNote(configReport, { caseDir, message: 'inlet BC не сгенерировался', kind: 'question' })
+  await appendTaskNote(configReport, { caseDir, message: 'inlet BC was not generated', kind: 'question' })
   const result = await createReport(configReport, {
-    caseDir, title: 'Дымовой тест', kind: 'gas-dynamics', description: 'проверка отчёта',
-    questions: ['как поддержать inlet BC?'],
+    caseDir, title: 'Smoke test', kind: 'gas-dynamics', description: 'report check',
+    questions: ['how to support inlet BC?'],
   })
-  assert(existsSync(result.jsonPath) && existsSync(result.mdPath), 'файлы отчёта не созданы')
+  assert(existsSync(result.jsonPath) && existsSync(result.mdPath), 'report files were not created')
   assert(result.report.schema === 'fluent-case-builder/report@1', 'schema')
-  assert(result.report.environment.fluent.version === '2026 R1', 'версия в отчёте')
+  assert(result.report.environment.fluent.version === '2026 R1', 'version in the report')
   assert(result.report.analysis.verdict === 'configured', `verdict=${result.report.analysis.verdict}`)
-  assert(result.report.analysis.findings.some((f) => f.code === 'invalid-command-batch-confirm'), 'нет находки в отчёте')
-  assert(result.report.analysis.gaps.some((g) => g.detail.includes('inlet BC')), 'заметка не попала в пробелы')
-  assert(result.report.analysis.gaps.some((g) => g.detail.includes('inlet BC?')), 'вопрос не попал в пробелы')
+  assert(result.report.analysis.findings.some((f) => f.code === 'invalid-command-batch-confirm'), 'no finding in the report')
+  assert(result.report.analysis.gaps.some((g) => g.detail.includes('inlet BC')), 'note did not get into the gaps')
+  assert(result.report.analysis.gaps.some((g) => g.detail.includes('inlet BC?')), 'question did not get into the gaps')
   const md = await readFile(result.mdPath, 'utf8')
-  assert(md.includes('# Отчёт о задаче') && md.includes('Находки'), 'markdown неполный')
+  assert(md.includes('# Task report') && md.includes('Findings'), 'markdown is incomplete')
   await rm(caseDir, { recursive: true, force: true })
 })
 
 const dataProfiles = join(config.dataDir, 'profiles')
-await checkAsync('профили: план example-channel', async () => {
-  if (!existsSync(join(dataProfiles, 'example-channel', 'profile.json'))) throw new Error('нет профиля example-channel')
+await checkAsync('profiles: plan example-channel', async () => {
+  if (!existsSync(join(dataProfiles, 'example-channel', 'profile.json'))) throw new Error('no example-channel profile')
   const { planCase } = await import(join(root, 'lib/engine.js'))
   const plan = await planCase({
     ...config,
@@ -299,18 +299,18 @@ await checkAsync('профили: план example-channel', async () => {
     reportDir: '',
   }, 'example-channel', { meshFile: '/tmp/channel.msh', L: 1000, h: 10, iterations: 500 })
   assert(plan.caseDir.includes('channel_L-1000mm_h-10mm'), `caseDir: ${plan.caseDir}`)
-  assert(plan.preset.name === 'quick', `пресет: ${plan.preset.name}`)
-  assert(plan.journalPreview && plan.journalPreview.includes('read-case'), 'нет журнала')
+  assert(plan.preset.name === 'quick', `preset: ${plan.preset.name}`)
+  assert(plan.journalPreview && plan.journalPreview.includes('read-case'), 'no journal')
   assert(plan.computed.y_mid === '0.005000', `y_mid: ${plan.computed.y_mid}`)
-  assert(plan.files.some((f) => f.name === 'setupJournal'), 'нет setup_case.jou')
+  assert(plan.files.some((f) => f.name === 'setupJournal'), 'no setup_case.jou')
 })
 
-console.log(`\n✔ успешно: ${ok.length}`)
+console.log(`\n✔ passed: ${ok.length}`)
 for (const name of ok) console.log(`  ✓ ${name}`)
 if (failures.length) {
-  console.log(`\n✘ провалено: ${failures.length}`)
+  console.log(`\n✘ failed: ${failures.length}`)
   for (const failure of failures) console.log(`  ✗ ${failure}`)
   process.exitCode = 1
 } else {
-  console.log('\nВсе проверки пройдены.')
+  console.log('\nAll checks passed.')
 }

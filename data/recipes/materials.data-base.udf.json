@@ -1,6 +1,6 @@
 {
   "id": "materials.data-base.udf",
-  "title": "Импорт пользовательской базы материалов (.src)",
+  "title": "Import a user material database (.src)",
   "category": "materials",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/materials/data-base database-type user-defined \"{{dbFile}}\""
   ],
-  "interactive": "Available Types: (fluent-database granta-mds user-defined) → Database Type [user-defined] → имя файла .src",
+  "interactive": "Available Types: (fluent-database granta-mds user-defined) → Database Type [user-defined] → .src file name",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -20,5 +20,5 @@
       "default": "my-material"
     }
   ],
-  "notes": "Два независимых проверенных примера: две библиотеки материалов (пример). После импорта материалы доступны, но зонам не назначены (назначение — material-name в BC или change-create)."
+  "notes": "Two independent verified examples: two material libraries (example). After import the materials are available but are not assigned to zones (assignment is material-name in BC or change-create)."
 }

@@ -1,6 +1,6 @@
 {
   "id": "mesh.read-case",
-  "title": "Чтение сетки/кейса (alias для compile.js)",
+  "title": "Read mesh/case (alias for compile.js)",
   "category": "file",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/file/read-case \"{{caseFile}}\""
   ],
-  "interactive": "/file/read-case → case file name [\".cas.h5\"] → имя файла (принимает и .msh)",
+  "interactive": "/file/read-case → case file name [\".cas.h5\"] → file name (accepts .msh too)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "required": true
     }
   ],
-  "notes": "ALIAS: compile.js пробует ['mesh.read-case','file.read-case'] и передаёт {caseFile}. Канонический id по контракту — file.read-case; строки идентичны проверенному журналу пользователя."
+  "notes": "ALIAS: compile.js tries ['mesh.read-case','file.read-case'] and passes {caseFile}. The canonical id by contract is file.read-case; the lines are identical to the verified user journal."
 }

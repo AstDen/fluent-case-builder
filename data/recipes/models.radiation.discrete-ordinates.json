@@ -1,6 +1,6 @@
 {
   "id": "models.radiation.discrete-ordinates",
-  "title": "Излучение DO (alias для compile.js)",
+  "title": "DO radiation (alias for compile.js)",
   "category": "models",
   "status": "derived",
   "confidence": "medium",
@@ -36,5 +36,5 @@
       "default": 1
     }
   ],
-  "notes": "ALIAS: compile.js вызывает ['models.radiation.discrete-ordinates'] и передаёт theta/phi-параметры; канонический id — models.radiation.do. DERIVED: строка собрана из walk-ответов yes/2/2/1/1, целиком не выполнялась; продолжение цепочки не снято."
+  "notes": "ALIAS: compile.js calls ['models.radiation.discrete-ordinates'] and passes theta/phi parameters; the canonical id is models.radiation.do. DERIVED: the line is assembled from the walk answers yes/2/2/1/1, never executed end-to-end; the continuation of the chain was not captured."
 }

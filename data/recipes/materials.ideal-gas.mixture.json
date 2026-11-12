@@ -1,6 +1,6 @@
 {
   "id": "materials.ideal-gas.mixture",
-  "title": "Плотность mixture-материала: ideal-gas",
+  "title": "Mixture material density: ideal-gas",
   "category": "materials",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/materials change-create {{name}} {{name}} no yes ideal-gas no no no no no"
   ],
-  "interactive": "change-create → mixture-template → то же имя → change Mixture Species? [no] → change Density? yes → ideal-gas → остальные Enter",
+  "interactive": "change-create → mixture-template → same name → change Mixture Species? [no] → change Density? yes → ideal-gas → remaining Enter",
   "requires": [
     "models.species-transport"
   ],
@@ -22,5 +22,5 @@
       "default": "mixture-template"
     }
   ],
-  "notes": "Проверено 2026-11-11 (Q-013). Для mixture на один `no` больше, чем для fluid (сначала Mixture Species). Fluent автоматически включает энергию и печатает Note: Enabling energy equation ..."
+  "notes": "Verified 2026-11-11 (Q-013). For a mixture there is one more `no` than for a fluid (Mixture Species comes first). Fluent enables energy automatically and prints Note: Enabling energy equation ... For reacting mixtures (volumetric reactions enabled), change-create asks Reaction and Mechanism before Density: add two more 'no' answers or use materials.mixture-density-method.reacting."
 }

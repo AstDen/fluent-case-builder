@@ -1,15 +1,15 @@
 {
   "id": "init.set-defaults",
-  "title": "Ручные значения инициализации (set-defaults)",
+  "title": "Manual initialization values (set-defaults)",
   "category": "initialization",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/09_INITIALIZATION/deep_dive.md:51-62",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/solve/initialize/set-defaults/{pressure,x-velocity,y-velocity,z-velocity,k,omega} <значение>; /solve/initialize/list-defaults",
+  "interactive": "/solve/initialize/set-defaults/{pressure,x-velocity,y-velocity,z-velocity,k,omega} <value>; /solve/initialize/list-defaults",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Команды и поля перечислены в KB, но точный интерактивный вид приглашений и журнальная форма не проверены (только типовой пример). Проверка безопасна: /solve/initialize/list-defaults — только печать."
+  "notes": "The commands and fields are listed in the KB, but the exact interactive prompt form and the journal form are not verified (only a typical example). Checking is safe: /solve/initialize/list-defaults only prints."
 }

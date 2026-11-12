@@ -1,6 +1,6 @@
 {
   "id": "boundary.wall.chain",
-  "title": "Wall с тепловыми условиями и излучением",
+  "title": "Wall with thermal conditions and radiation",
   "category": "boundary",
   "status": "derived",
   "confidence": "medium",
@@ -32,5 +32,5 @@
       "default": 300
     }
   ],
-  "notes": "Строка выведена из проверенного журнала; порядок аргументов выверен по нему. ПРЕДУСЛОВИЕ: энергия и излучение включены (иначе ветка radiation невалидна). Тексты тепловых вопросов в KB не сняты — проверьте на своей сессии."
+  "notes": "The line is derived from the verified journal; the argument order was cross-checked against it. PRECONDITION: energy and radiation are enabled (otherwise the radiation branch is invalid). The thermal question texts were not captured in the KB — check in your own session."
 }

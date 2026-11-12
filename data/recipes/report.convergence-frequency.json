@@ -1,6 +1,6 @@
 {
   "id": "report.convergence-frequency",
-  "title": "Частота проверки сходимости (alias для compile.js)",
+  "title": "Convergence check frequency (alias for compile.js)",
   "category": "reports",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/convergence-conditions/frequency {{frequency}} q"
   ],
-  "interactive": "/solve/convergence-conditions/frequency → целое число → q",
+  "interactive": "/solve/convergence-conditions/frequency → integer → q",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "default": 100
     }
   ],
-  "notes": "ALIAS: compile.js вызывает ['report.convergence-frequency'] и передаёт {frequency}; канонический id по контракту — solve.convergence-frequency. Строка проверена рабочим журналом."
+  "notes": "ALIAS: compile.js calls ['report.convergence-frequency'] and passes {frequency}; the canonical id by contract is solve.convergence-frequency. The line is verified by the working journal."
 }

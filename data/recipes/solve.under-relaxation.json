@@ -7,9 +7,9 @@
   "source": "KB/07_SOLVER/deep_dive.md:94-98",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/solve/set/relaxation-method → выбор метода релаксации; коэффициенты — в подменю",
+  "interactive": "/solve/set/relaxation-method → choose the relaxation method; the coefficients are in the submenu",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "ПРОТИВОРЕЧИЕ KB: в меню /solve/set/ 2026 R1 зафиксирован только `relaxation-method` (07_SOLVER §5), а проверенный рабочий журнал содержит строки `/solve/set/under-relaxation pressure 0.2`, `temperature 0.9`, `density 0.7`, `mom 0.7`. Либо путь существует скрыто, либо журнал от 2025 R1. Нужна live-проверка; в setup-журнал не выводить до подтверждения."
+  "notes": "KB CONTRADICTION: the 2026 R1 /solve/set/ menu records only `relaxation-method` (07_SOLVER §5), while the verified working journal contains the lines `/solve/set/under-relaxation pressure 0.2`, `temperature 0.9`, `density 0.7`, `mom 0.7`. Either the path exists hidden, or the journal is from 2025 R1. A live check is needed; do not emit it into the setup journal before confirmation."
 }

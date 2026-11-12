@@ -1,6 +1,6 @@
 {
   "id": "models.solver.density-based-implicit",
-  "title": "Density-based implicit (coupled) решатель",
+  "title": "Density-based implicit (coupled) solver",
   "category": "models",
   "status": "verified",
   "confidence": "high",
@@ -15,5 +15,5 @@
     "models.solver.pressure-based"
   ],
   "params": [],
-  "notes": "Проверено 2026-11-11 в живой сессии (QA_LOG Q-001): после включения pressure-based спрашивает [no]. Смена решателя сбрасывает часть настроек дискретизации/релаксации."
+  "notes": "Verified 2026-11-11 in a live session (QA_LOG Q-001): after pressure-based is enabled it asks [no]. Changing the solver resets part of the discretization/relaxation settings."
 }

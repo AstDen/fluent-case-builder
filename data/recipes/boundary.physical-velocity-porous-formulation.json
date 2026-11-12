@@ -1,6 +1,6 @@
 {
   "id": "boundary.physical-velocity-porous-formulation",
-  "title": "Physical velocity formulation для пористых сред",
+  "title": "Physical velocity formulation for porous media",
   "category": "boundary",
   "status": "verified",
   "confidence": "medium",
@@ -13,5 +13,5 @@
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Строка из проверенного рабочего журнала. В KB справка TUI фиксирует вопрос в /solve/set/p-v-controls (Use physical velocity formulation for porous media?), но рабочая журнальная форма — через /define/boundary-conditions. Форма проверена журналом, вопрос — справкой."
+  "notes": "Line from the verified working journal. In the KB, TUI help records the question in /solve/set/p-v-controls (Use physical velocity formulation for porous media?), but the working journal form goes through /define/boundary-conditions. The form is verified by the journal, the question by help."
 }

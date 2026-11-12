@@ -1,6 +1,6 @@
 {
   "id": "boundary.zone-name",
-  "title": "Переименование зоны",
+  "title": "Rename a zone",
   "category": "boundary",
   "status": "verified",
   "confidence": "high",
@@ -10,7 +10,7 @@
     "/define/boundary-conditions zone-name \"{{oldName}}\" \"{{newName}}\"",
     "/mesh/modify-zones zone-name \"{{oldName}}\" \"{{newName}}\""
   ],
-  "interactive": "/…/zone-name → старое имя → новое имя (в журнале два аргумента в кавычках)",
+  "interactive": "/…/zone-name → old name → new name (two quoted arguments in the journal)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -25,5 +25,5 @@
       "required": true
     }
   ],
-  "notes": "В рабочем журнале используются обе формы: /define/boundary-conditions zone-name (для BC-зон) и /mesh/modify-zones zone-name (для mesh-зон); обе в меню 2026 R1. Порядок аргументов «старое → новое» подтверждён журналом."
+  "notes": "Both forms are used in the working journal: /define/boundary-conditions zone-name (for BC zones) and /mesh/modify-zones zone-name (for mesh zones); both are in the 2026 R1 menu. The argument order 'old → new' is confirmed by the journal."
 }

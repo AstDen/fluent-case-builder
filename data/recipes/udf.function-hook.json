@@ -1,6 +1,6 @@
 {
   "id": "udf.function-hook",
-  "title": "Привязка функции UDF к хуку",
+  "title": "Bind a UDF function to a hook",
   "category": "udf",
   "status": "verified",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/user-defined/function-hooks {{hook}} \"{{function}}::{{library}}\""
   ],
-  "interactive": "function-hooks <категория> \"<функция>::<библиотека>\" (после load; подменю видно только при загруженной библиотеке)",
+  "interactive": "function-hooks <category> \"<function>::<library>\" (after load; the submenu is visible only with a loaded library)",
   "requires": [
     "udf.compile-load-hook"
   ],
@@ -38,5 +38,5 @@
       "required": true
     }
   ],
-  "notes": "Строка из проверенного рабочего журнала: function-hooks initialization \"my_init_function::libudf\" \"\" — у initialization есть второй пустой аргумент; volume-reaction-rate (user) — без него. Имя функции — <имя_в_C>::<имя_библиотеки>. Смысл второго аргумента не зафиксирован."
+  "notes": "Line from the verified working journal: function-hooks initialization \"my_init_function::libudf\" \"\" — initialization has a second empty argument; volume-reaction-rate (user) does not. The function name is <name_in_C>::<library_name>. The meaning of the second argument is not recorded."
 }

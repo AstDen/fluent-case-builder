@@ -1,6 +1,6 @@
 {
   "id": "solve.convergence-frequency",
-  "title": "Частота проверки сходимости",
+  "title": "Convergence check frequency",
   "category": "reports",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/convergence-conditions/frequency {{frequency}} q"
   ],
-  "interactive": "/solve/convergence-conditions/frequency → целое число → q",
+  "interactive": "/solve/convergence-conditions/frequency → integer → q",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "default": 100
     }
   ],
-  "notes": "Проверено рабочим журналом (например 100 и 50). Проверка сходимости выполняется реже записи истории (report-files frequency 50), чтобы критерий опирался на записанные значения."
+  "notes": "Verified by the working journal (e.g. 100 and 50). The convergence check runs less often than the history write (report-files frequency 50), so that the criterion relies on recorded values."
 }

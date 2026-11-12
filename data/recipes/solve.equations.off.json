@@ -1,6 +1,6 @@
 {
   "id": "solve.equations.off",
-  "title": "Отключение отдельных уравнений",
+  "title": "Disable individual equations",
   "category": "solution",
   "status": "verified",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/set/equations {{equation}} no"
   ],
-  "interactive": "/solve/set/equations/ → имя уравнения (flow, kw, energy, species-N, … ) → no",
+  "interactive": "/solve/set/equations/ → equation name (flow, kw, energy, species-N, … ) → no",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "default": "species-0"
     }
   ],
-  "notes": "Строки из проверенного рабочего журнала: после species transport отключены species-0..species-3. Список активных уравнений смотреть /solve/set/equations/. Смысл отключения species при включённом механизме в KB не объяснён — вероятно, заморозка части механизма."
+  "notes": "Lines from the verified working journal: after species transport, species-0..species-3 were disabled. The list of active equations can be seen via /solve/set/equations/. The KB does not explain why species are disabled with the mechanism enabled — probably freezing part of the mechanism."
 }

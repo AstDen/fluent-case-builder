@@ -1,6 +1,6 @@
 {
   "id": "models.energy",
-  "title": "Уравнение энергии",
+  "title": "Energy equation",
   "category": "models",
   "status": "verified",
   "confidence": "high",
@@ -13,5 +13,5 @@
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Цепочка из 5 вопросов расшифрована полностью (energy.md §1.1); проверенный рабочий журнал: `energy yes no no no yes`. Компилятор вызывает без параметров. Для высокоскоростных/сжимаемых задач ответы pressureWork/kineticEnergy могут быть yes — это меняет физику; отдельный рецепт не заведён, нужна проверка."
+  "notes": "The 5-question chain is fully decoded (energy.md §1.1); verified working journal line: `energy yes no no no yes`. The compiler calls it without parameters. For high-speed/compressible cases the pressureWork/kineticEnergy answers may be yes — this changes the physics; no separate recipe has been created, a check is needed."
 }

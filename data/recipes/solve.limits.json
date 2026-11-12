@@ -1,6 +1,6 @@
 {
   "id": "solve.limits",
-  "title": "Пределы изменения переменных (limits)",
+  "title": "Variable limits (limits)",
   "category": "solution",
   "status": "derived",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/set limits {{minPressure}} {{maxPressure}} {{minTemperature}} {{maxTemperature}}"
   ],
-  "interactive": "/solve/set/limits → 4 числа (порядок и смысл позиций в KB не документированы)",
+  "interactive": "/solve/set/limits → 4 numbers (the order and meaning of the positions are not documented in the KB)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -34,5 +34,5 @@
       "default": 3000
     }
   ],
-  "notes": "KB фиксирует только вопрос Minimum allowable absolute pressure (in [Pa]) [1]; семантика остальных позиций (максимум давления, min/max температуры) — вывод из проверенной строки, требует проверки. Значения по умолчанию здесь — пример, а не рекомендация: подставьте свои пределы."
+  "notes": "The KB records only the prompt Minimum allowable absolute pressure (in [Pa]) [1]; the semantics of the remaining positions (maximum pressure, min/max temperature) are inferred from the verified line and require verification. The default values here are an example, not a recommendation: substitute your own limits."
 }

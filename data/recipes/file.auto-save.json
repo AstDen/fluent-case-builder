@@ -1,6 +1,6 @@
 {
   "id": "file.auto-save",
-  "title": "Автосохранение кейса/данных",
+  "title": "Auto-save case/data",
   "category": "file",
   "status": "unverified",
   "confidence": "low",
@@ -11,5 +11,5 @@
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Рабочего синтаксиса нет: в start.sh.template (2025 R1) зафиксировано, что `data-frequency 5000` обрывает журнал, а `case-frequency` ждёт перечисление, не число. В 2026 R1 справка TUI говорит: case-frequency — preference, data-frequency — числовой инкремент. Допустимые значения case-frequency не перечислены → requires_verification; проверять только на scratch-кейсе (обрыв автосохранения останавливает весь пакетный расчёт)."
+  "notes": "There is no working syntax: in start.sh.template (2025 R1) it is recorded that `data-frequency 5000` aborts the journal, and `case-frequency` expects a list, not a number. In 2026 R1 the TUI help says: case-frequency is a preference, data-frequency is a numeric increment. The valid case-frequency values are not listed → requires_verification; verify only on a scratch case (an auto-save abort stops the whole batch run)."
 }

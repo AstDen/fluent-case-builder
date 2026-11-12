@@ -1,6 +1,6 @@
 {
   "id": "materials.change-create",
-  "title": "Изменение/создание материала (generic)",
+  "title": "Change/create a material (generic)",
   "category": "materials",
   "status": "derived",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/materials change-create {{name}} {{name}} yes {{densityMethod}} no no no no no no"
   ],
-  "interactive": "change-create → старое имя → новое имя (то же = изменить) → change Density? yes → метод → остальные свойства Enter",
+  "interactive": "change-create → old name → new name (same = change) → change Density? yes → method → remaining properties Enter",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -31,5 +31,5 @@
       "default": "ideal-gas"
     }
   ],
-  "notes": "DERIVED: обобщение проверенной формы materials.ideal-gas.fluid (fluid, без вопроса Mixture Species). Проверена только ветка ideal-gas; для constant/других методов число и порядок вопросов НЕ подтверждены — нужна live-проверка. Для mixture-материала см. materials.ideal-gas.mixture (на один `no` больше)."
+  "notes": "DERIVED: generalization of the verified materials.ideal-gas.fluid form (fluid, without the Mixture Species question). Only the ideal-gas branch is verified; for constant/other methods the number and order of questions are NOT confirmed — a live check is needed. For a mixture material see materials.ideal-gas.mixture (one more `no`)."
 }

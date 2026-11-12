@@ -1,24 +1,24 @@
 {
   "version": 1,
-  "updated": "2026-11-11",
-  "note": "Диагностика ошибок Fluent TUI по логу. Коды используются в отчётах (analysis.findings[].code). Пополняется мейнтейнером по присланным report-файлам.",
+  "updated": "2026-11-12",
+  "note": "Fluent TUI error diagnostics from the log. The codes are used in reports (analysis.findings[].code). Maintained from report files sent by colleagues.",
   "patterns": [
     {
       "id": "invalid-command-batch-confirm",
       "match": "invalid command:?\\s+yes",
       "kind": "batch-confirmation",
       "severity": "info",
-      "meaning": "После /file/write-case-data \"...\" yes файл уже записан, а последний токен yes отвергнут, потому что в batch-режиме подтверждения перезаписи включены.",
-      "recommendation": "Считать настройку успешной, если .cas.h5/.dat.h5 существуют. При желании убрать хвостовой yes или выставить /file/confirm-overwrite? no перед сохранением.",
-      "source": "живой прогон 2026-11-11, build 10262"
+      "meaning": "After /file/write-case-data \"...\" yes the file is already written, and the trailing yes token is rejected because overwrite confirmations are enabled in batch mode.",
+      "recommendation": "Consider the setup successful if .cas.h5/.dat.h5 exist. If desired, drop the trailing yes or set /file/confirm-overwrite? no before saving.",
+      "source": "live run 2026-11-11, build 10262"
     },
     {
       "id": "journal-aborted",
       "match": "An error or interrupt occurred while reading the journal file",
       "kind": "journal-abort",
       "severity": "error",
-      "meaning": "Журнал оборван: Fluent прекратил выполнять строки после ошибки, остаток файла не выполнен.",
-      "recommendation": "Найти первую ошибку выше по логу, исправить её и перезапустить с начала. Делить журнал на этапы.",
+      "meaning": "The journal was aborted: Fluent stopped executing lines after an error, the rest of the file was not run.",
+      "recommendation": "Find the first error above in the log, fix it and restart from the beginning. Split the journal into stages.",
       "source": "19_SCHEME_JOURNAL/journal_syntax.md"
     },
     {
@@ -26,8 +26,8 @@
       "match": "(?i)(non-fatal Error: )?invalid command",
       "kind": "syntax",
       "severity": "error",
-      "meaning": "Команда недоступна в текущей конфигурации (нет сетки/кейса, не включена модель, другое состояние меню) или синтаксис не соответствует версии Fluent.",
-      "recommendation": "Проверить порядок шагов журнала и состояние сессии; для версий до 2026 проверить legacy-пути команд.",
+      "meaning": "The command is unavailable in the current configuration (no mesh/case, model not enabled, different menu state) or the syntax does not match the Fluent version.",
+      "recommendation": "Check the journal step order and the session state; for pre-2026 versions check the legacy command paths.",
       "source": "AGENTS.md §4.4; 99_RESEARCH_STATUS/errors.md"
     },
     {
@@ -35,8 +35,8 @@
       "match": "Please answer y\\[es\\] or n\\[o\\]",
       "kind": "dialog",
       "severity": "error",
-      "meaning": "На boolean-вопрос TUI дан неверный ответ.",
-      "recommendation": "Использовать yes/no (не y/n) в журнале; сверить цепочку вопросов в data/recipes.",
+      "meaning": "A boolean TUI question received an invalid answer.",
+      "recommendation": "Use yes/no (not y/n) in the journal; cross-check the question chain in data/recipes.",
       "source": "00_GENERAL/tui_structure.md §4"
     },
     {
@@ -44,8 +44,8 @@
       "match": "(?i)(invalid zone|zone id/name)",
       "kind": "mesh-zones",
       "severity": "error",
-      "meaning": "Имя/ID зоны не найдено в текущей сетке — журнал ждёт другие имена зон.",
-      "recommendation": "Снять фактические имена: /define/boundary-conditions/list-zones и /mesh/modify-zones list-zones; обновить профиль/шаблон.",
+      "meaning": "The zone name/ID was not found in the current mesh — the journal expects different zone names.",
+      "recommendation": "Capture the actual names: /define/boundary-conditions/list-zones and /mesh/modify-zones list-zones; update the profile/template.",
       "source": "03_BOUNDARY_CONDITIONS/dialogs_walked.md"
     },
     {
@@ -53,8 +53,8 @@
       "match": "(?i)(cannot connect to license server|license.*(error|expired|unavailable)|ANSYSLMD_LICENSE_FILE)",
       "kind": "license",
       "severity": "error",
-      "meaning": "Проблема с лицензионным сервером ANSYS.",
-      "recommendation": "Проверить: ss -ltn | grep 1055; systemctl --user status ansyslmd; lmutil lmstat -a -c <server>; переменную ANSYSLMD_LICENSE_FILE.",
+      "meaning": "Problem with the ANSYS license server.",
+      "recommendation": "Check: ss -ltn | grep 1055; systemctl --user status ansyslmd; lmutil lmstat -a -c <server>; the ANSYSLMD_LICENSE_FILE variable.",
       "source": "00_GENERAL/license_autostart.md"
     },
     {
@@ -62,8 +62,8 @@
       "match": "(?i)(nmake|cl\\.exe|gcc:|g\\+\\+|cannot open source file|error C\\d+|compiled-functions.*(error|fail))",
       "kind": "udf",
       "severity": "error",
-      "meaning": "Не удалось скомпилировать/загрузить UDF-библиотеку.",
-      "recommendation": "Проверить наличие компилятора и заголовков Fluent, пути к .c-файлам, права на каталог libudf; собрать вручную в TUI.",
+      "meaning": "Failed to compile/load the UDF library.",
+      "recommendation": "Check that the compiler and Fluent headers are available, the paths to the .c files, and the permissions on the libudf directory; build manually in the TUI.",
       "source": "15_UDF/udf_guide.md"
     },
     {
@@ -71,8 +71,8 @@
       "match": "(?i)(cannot read|unable to read|failed to read|file does not exist|no such file)",
       "kind": "files",
       "severity": "error",
-      "meaning": "Не найден или не читается файл (сетка, .cas, UDF, TSV, журнал). Проверять пути относительно рабочего каталога Fluent.",
-      "recommendation": "Пути в журнале относительны каталога запуска Fluent; проверить наличие файлов и регистр имён.",
+      "meaning": "A file (mesh, .cas, UDF, TSV, journal) was not found or cannot be read. Check the paths relative to the Fluent working directory.",
+      "recommendation": "Journal paths are relative to the Fluent launch directory; check that the files exist and the case of the names.",
       "source": "13_FILE_MANAGEMENT/file_management.md"
     },
     {
@@ -80,8 +80,8 @@
       "match": "(?i)(Error: eval: unbound variable|Error Object:|Scheme error)",
       "kind": "scheme",
       "severity": "error",
-      "meaning": "Ошибка Scheme-выражения в журнале; журнал после неё обрывается.",
-      "recommendation": "Проверить строки в скобках, отсутствие лишних токенов и доступность RP-переменных; одна форма на строку.",
+      "meaning": "A Scheme expression error in the journal; the journal aborts after it.",
+      "recommendation": "Check the lines in parentheses, the absence of extra tokens and the availability of RP variables; one form per line.",
       "source": "19_SCHEME_JOURNAL/scheme_automation.md"
     },
     {
@@ -89,8 +89,8 @@
       "match": "(?i)(Fatal error|Segmentation fault|signal \\d+)",
       "kind": "crash",
       "severity": "error",
-      "meaning": "Аварийное завершение процесса Fluent.",
-      "recommendation": "Проверить лог/транскрипт, воспроизвести на меньшем кейсе, приложить .trn к отчёту мейнтейнеру.",
+      "meaning": "Abnormal termination of the Fluent process.",
+      "recommendation": "Check the log/transcript, reproduce on a smaller case, attach the .trn to the report to the maintainer.",
       "source": "90_RAW_TUI_OUTPUT/_run/probe.out"
     },
     {
@@ -98,8 +98,8 @@
       "match": "(?i)(out of memory|memory allocation|insufficient memory)",
       "kind": "resources",
       "severity": "error",
-      "meaning": "Не хватило памяти для сетки/расчёта.",
-      "recommendation": "Уменьшить число процессов/сетку, проверить /mesh/memory-usage и /parallel; учесть лимит лицензии.",
+      "meaning": "Not enough memory for the mesh/run.",
+      "recommendation": "Reduce the number of processes/mesh size, check /mesh/memory-usage and /parallel; take the license limit into account.",
       "source": "18_PARALLEL/parallel.md"
     },
     {
@@ -107,9 +107,27 @@
       "match": "Overwrite confirmations \\(/file/set-batch-options",
       "kind": "batch-confirmation",
       "severity": "info",
-      "meaning": "Включены подтверждения перезаписи файлов в batch-режиме.",
-      "recommendation": "Для воспроизводимых прогонов выставить /file/confirm-overwrite? no или не передавать лишний yes.",
+      "meaning": "Overwrite confirmations are enabled in batch mode.",
+      "recommendation": "For reproducible runs set /file/confirm-overwrite? no or do not pass an extra yes.",
       "source": "13_FILE_MANAGEMENT/file_management.md"
+    },
+    {
+      "id": "dialog-misalignment",
+      "match": "eval: unbound variable",
+      "kind": "dialog-sync",
+      "severity": "error",
+      "meaning": "A journal answer did not match the current TUI prompt (the dialog has more or fewer questions in this case state); the token was parsed as a Scheme expression.",
+      "recommendation": "Check the prompt chain for this case state. For reacting mixtures, change-create asks Reaction and Mechanism before Density (+2 'no'). Run the command interactively once and record the exact chain, then use the matching recipe (materials.mixture-density-method[.reacting]).",
+      "source": "live 2026-11-11/12 tests; data/recipes/materials.mixture-density-method.reacting.json"
+    },
+    {
+      "id": "invalid-integer-dialog",
+      "match": "Invalid integer",
+      "kind": "dialog-sync",
+      "severity": "error",
+      "meaning": "The TUI expected an integer but received a different token, usually because the journal answers are shifted by one relative to the prompt chain.",
+      "recommendation": "Align the journal with the actual dialogs (see dialog-misalignment); for reacting mixtures the mixture property chain includes Reaction and Mechanism prompts.",
+      "source": "live 2026-11-11/12 tests"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "monitor.residual-criteria",
-  "title": "Критерии сходимости по невязкам",
+  "title": "Residual convergence criteria",
   "category": "monitors",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/monitors/residual convergence-criteria {{values}} q q q"
   ],
-  "interactive": "convergence-criteria → пороги по уравнениям в порядке уравнений → q q q",
+  "interactive": "convergence-criteria → thresholds per equation in equation order → q q q",
   "requires": [
     "models.energy"
   ],
@@ -34,5 +34,5 @@
       "default": 5e-06
     }
   ],
-  "notes": "Проверено рабочим журналом: `/solve/monitors/residual convergence-criteria 5e-1 1e-3 1e-3 1e-3 5e-6 q q q`. Массив values разворачивается через пробел; порядок из CONVERGENCE_SETTINGS.md: continuity, x/y/z-velocity, energy (последнее значение). Число значений должно совпадать с числом уравнений, иначе журнал обрывается. строгий режим: energy 5e-6; ослабленный режим: energy 5e-4."
+  "notes": "Verified by the working journal: `/solve/monitors/residual convergence-criteria 5e-1 1e-3 1e-3 1e-3 5e-6 q q q`. The values array is expanded with spaces; the order from CONVERGENCE_SETTINGS.md: continuity, x/y/z-velocity, energy (last value). The number of values must match the number of equations, otherwise the journal aborts. strict mode: energy 5e-6; relaxed mode: energy 5e-4."
 }

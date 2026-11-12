@@ -1,6 +1,6 @@
 {
   "id": "file.read-case",
-  "title": "Чтение сетки/кейса",
+  "title": "Read mesh/case",
   "category": "file",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/file/read-case \"{{file}}\""
   ],
-  "interactive": "/file/read-case → case file name [\".cas.h5\"] → имя файла (принимает и .msh)",
+  "interactive": "/file/read-case → case file name [\".cas.h5\"] → file name (accepts .msh too)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "required": true
     }
   ],
-  "notes": "Строка из рабочего журнала пользователя (в нём — пробельная форма `/file read-case`; слэш-форма эквивалентна, 19_SCHEME_JOURNAL/journal_syntax.md §2.1). В KB команда числится в requires_verification (99_RESEARCH_STATUS:515), но рабочий журнал и прогон 01_MESH §1 подтверждают чтение .msh."
+  "notes": "Line from the user's working journal (it uses the space form `/file read-case`; the slash form is equivalent, 19_SCHEME_JOURNAL/journal_syntax.md §2.1). In the KB the command is listed under requires_verification (99_RESEARCH_STATUS:515), but the working journal and the 01_MESH §1 run confirm reading .msh."
 }

@@ -1,189 +1,200 @@
-# Как пользоваться `fluent-case-builder`
+# How to use `fluent-case-builder`
 
-Плагин живёт в этом профиле DSH и вызывается из чата обычными фразами. Ниже — рабочие сценарии,
-порядок вызовов и что появится на диске.
+The plugin lives in this DSH profile and is invoked from chat with ordinary phrases. Below are the
+workflows, the order of calls and what will appear on disk.
 
-## 0. Три режима работы
+## 0. Three modes of operation
 
-| Режим | Когда | Надёжность |
+| Mode | When | Reliability |
 |---|---|---|
-| **Профиль** (`example-channel`) | повторяемый кейс из параметров: сетка, модели, шаблон журнала | ✅ пример + формат; свои профили — в `data/profiles` или `profileDirs` |
-| **Универсальная спецификация** (case spec) | новая задача: гидро/газодинамика, горение, сверхзвук и т.д. | 🟡 только проверенные шаги; непроверенные явно перечисляются |
-| **Интервью + правила** | когда непонятно, что нужно: класс задачи, Mach/Re, теплообмен, горение… | рекомендации со статусом и источником |
+| **Profile** (`example-channel`) | a repeatable case from parameters: mesh, models, journal template | ✅ example + format; your own profiles go to `data/profiles` or `profileDirs` |
+| **Universal spec** (case spec) | a new task: hydrodynamics/gas dynamics, combustion, supersonic flow, etc. | 🟡 verified steps only; unverified ones are listed explicitly |
+| **Interview + rules** | when it is unclear what is needed: task class, Mach/Re, heat transfer, combustion… | recommendations with status and source |
 
-## 1. Пример профиля `example-channel` (быстрый старт)
+## 1. The `example-channel` example profile (quick start)
 
-В поставке есть **синтетический** профиль-пример: сетка → ламинарный решатель → инициализация →
-критерии по невязкам → сохранение. Он не воспроизводит чужой расчёт и не содержит чужих данных.
+The distribution includes a **synthetic** example profile: mesh → laminar solver → initialization →
+residual criteria → save. It does not reproduce someone else's computation and contains no
+third-party data.
 
-> «Создай тестовый кейс по профилю example-channel, сетка /path/to/channel.msh»
+> "Create a test case from the example-channel profile, mesh /path/to/channel.msh"
 
-1. `fluent_case_profiles({profile:"example-channel"})` — параметры и значения по умолчанию.
+1. `fluent_case_profiles({profile:"example-channel"})` — parameters and default values.
 2. `fluent_case_plan({profile:"example-channel", params:{meshFile:"/path/to/channel.msh"}})` —
-   сухой прогон **без записи**: имя каталога, вычисляемое `y_mid`, пресет `quick`/`fine`,
-   список файлов, полный журнал, оффлайн-проверка.
-3. `fluent_case_generate({profile:"example-channel", params:{...}})` — создаёт каталог кейса.
-4. `fluent_case_validate({caseDir})` — проверяет `setup_case.jou` по индексу команд.
-5. `fluent_case_run({action:"start", caseDir, confirm:true})` — запускает Fluent с журналом.
-6. `fluent_case_run({action:"status", caseDir})` — лог, ошибки, наличие `.cas.h5/.dat.h5`.
+   a dry run **with nothing written**: the directory name, the computed `y_mid`, the
+   `quick`/`fine` preset, the file list, the full journal, the offline validation.
+3. `fluent_case_generate({profile:"example-channel", params:{...}})` — creates the case directory.
+4. `fluent_case_validate({caseDir})` — validates `setup_case.jou` against the command index.
+5. `fluent_case_run({action:"start", caseDir, confirm:true})` — launches Fluent with the journal.
+6. `fluent_case_run({action:"status", caseDir})` — log, errors, presence of `.cas.h5/.dat.h5`.
 
-### Что создаётся в каталоге кейса
+### What is created in the case directory
 
 ```
 <caseRoots[0]>/channel_L-1000mm_h-10mm/
-├── setup_case.jou     # журнал: read-case, mesh/check, laminar, solver, init, residual criteria, save
-├── case.json          # манифест: параметры, пресет, файлы, ожидаемые результаты
-├── data/, archive/    # рабочие каталоги
-└── workflow.log       # файл-маркер (не папка)
+├── setup_case.jou     # journal: read-case, mesh/check, laminar, solver, init, residual criteria, save
+├── case.json          # manifest: parameters, preset, files, expected results
+├── data/, archive/    # working directories
+└── workflow.log       # marker file (not a directory)
 ```
 
-### Параметры профиля
+### Profile parameters
 
-| Параметр | По умолчанию | Смысл |
+| Parameter | Default | Meaning |
 |---|---|---|
-| `meshFile` | `/path/to/channel.msh` | путь к вашей сетке `.msh` (обязательно заменить) |
-| `L` | 1000 | длина канала, мм (в имени кейса) |
-| `h` | 10 | высота канала, мм (в имени кейса и в вычислении `y_mid`) |
-| `iterations` | 500 | максимум итераций |
+| `meshFile` | `/path/to/channel.msh` | path to your `.msh` mesh (you must replace it) |
+| `L` | 1000 | channel length, mm (used in the case name) |
+| `h` | 10 | channel height, mm (used in the case name and in the `y_mid` computation) |
+| `iterations` | 500 | iteration limit |
 
-Пресет выбирается автоматически по `presetWhen`: при `iterations < 1000` — `quick`
-(критерий невязок `1e-3`), иначе `fine` (`1e-4`).
+The preset is chosen automatically via `presetWhen`: with `iterations < 1000` — `quick`
+(residual criterion `1e-3`), otherwise `fine` (`1e-4`).
 
-### Свой профиль
+### Your own profile
 
-Скопируйте `data/profiles/example-channel`, переименуйте `id`, опишите параметры/вычисления/ассеты
-и шаблоны по контракту `docs/FORMATS.md` §1. Приватные проектные профили удобно держать вне
-репозитория и подключать через `config.profileDirs`.
+Copy `data/profiles/example-channel`, rename the `id`, describe the parameters/computations/assets
+and templates according to the contract in `docs/FORMATS.md` §1. Private project profiles are best
+kept outside the repository and connected through `config.profileDirs`.
 
-## 1.1. Вопрос про функцию Fluent (самый частый сценарий)
+## 1.1. A question about a Fluent feature (the most common scenario)
 
-Достаточно открыть сессию и спросить. Для надёжности укажите инструмент явно:
+It is enough to open a session and ask. For reliability, name the tool explicitly:
 
-> «Как включить k-ω SST? Через `fluent_kb_search`, покажи journal-строку, статус и источник.»
+> "How do I enable k-ω SST? Through `fluent_kb_search`, show the journal line, the status and the
+> source."
 
-Порядок, который выполняет агент:
+The sequence the agent follows:
 
-1. `fluent_kb_search({query:"k-ω SST", scope:"all"})` — встроенный индекс команд + проверенные
-   рецепты (journal-строки со статусом и источником).
-2. При необходимости `fluent_kb_get({path:"KB/04_MODELS/viscous.md"})` — полный документ
-   (требует `kbRoot`; без него инструмент вернёт подсказку).
-3. Ответ: journal-строка → интерактивная цепочка → зависимости → как проверить → статус → источник.
+1. `fluent_kb_search({query:"k-ω SST", scope:"all"})` — the built-in command index + verified
+   recipes (journal lines with status and source).
+2. If needed, `fluent_kb_get({path:"KB/04_MODELS/viscous.md"})` — the full document
+   (requires `kbRoot`; without it the tool returns a hint).
+3. The answer: journal line → interactive chain → dependencies → how to verify → status → source.
 
-**Проверка, что ответ из KB плагина:**
+**Checking that the answer comes from the plugin KB:**
 
-- в сессии видны вызовы `fluent_kb_search`/`fluent_kb_get` (карточки инструментов в Web UI);
-- в ответе есть поля `status` (verified/derived/unverified) и `source` (путь KB или id рецепта);
-- попросите «покажи сырой вывод `fluent_kb_search`» — там будут `path`, `question`, `blocked`,
-  `journal`, `source`;
-- признаки «не из KB»: нет статуса/источника, либо инструмент вернул `configured: false`.
+- the session shows `fluent_kb_search`/`fluent_kb_get` calls (tool cards in the Web UI);
+- the answer has the `status` (verified/derived/unverified) and `source` (a KB path or a recipe id)
+  fields;
+- ask for "show the raw output of `fluent_kb_search`" — it will contain `path`, `question`,
+  `blocked`, `journal`, `source`;
+- signs of "not from the KB": no status/source, or the tool returned `configured: false`.
 
-## 2. Новая задача: интервью и универсальная спецификация
+## 2. A new task: interview and the universal spec
 
-> «Нужен расчёт сверхзвукового течения в сопле, Mach 2.5, сетка есть, хочу поля температуры и давления»
+> "I need a supersonic nozzle flow computation, Mach 2.5, the mesh is ready, I want temperature and
+> pressure fields"
 
-1. `fluent_case_interview({answers:{...}})` — плагин вернёт:
-   - `next[]` — следующие вопросы пользователю (их задаёт агент, не плагин);
-   - `recommendations` — что включить (например `solver.type=density-based-implicit`,
+1. `fluent_case_interview({answers:{...}})` — the plugin returns:
+   - `next[]` — the next questions for the user (the agent asks them, not the plugin);
+   - `recommendations` — what to enable (for example `solver.type=density-based-implicit`,
      `physics.compressible=true`, `physics.turbulence.model=kw-sst`, `physics.energy=true`);
-   - `matchedRules[]` — какие инженерные правила сработали, почему, статус и источник в KB;
-   - `completeness` — сколько ответов собрано, чего не хватает;
-   - `draftSpec` — черновик спецификации кейса.
-2. `fluent_case_plan({spec})` — соберёт журнал из **проверенных рецептов** (сухой прогон):
-   - `sections` — какие рецепты вошли;
-   - `unsupported` — какие шаги нельзя сгенерировать на текущей KB (например inlet/outlet BC,
-     transient, `/mesh/scale`) и почему;
-   - `derived` — шаги, выведенные из справки/журналов (требуют живой проверки);
-   - `validation` — оффлайн-проверка по `commands.csv`.
+   - `matchedRules[]` — which engineering rules fired, why, their status and the KB source;
+   - `completeness` — how many answers were collected and what is missing;
+   - `draftSpec` — a draft of the case spec.
+2. `fluent_case_plan({spec})` — assembles the journal from **verified recipes** (a dry run):
+   - `sections` — which recipes were included;
+   - `unsupported` — which steps cannot be generated with the current KB (inlet/outlet BC,
+     transient, `/mesh/scale`, for example) and why;
+   - `derived` — steps derived from help/journals (they require live verification);
+   - `validation` — the offline check against `commands.csv`.
 
-3. `fluent_case_generate({spec, outputDir, name})` — материализует кейс: пишет `setup_case.jou`
-   (только проверенные шаги) и `case.json` в каталог `outputDir` внутри `caseRoots`.
-   Пути к сетке/UDF берутся из спеки, файлы не копируются — кейс запускается из своего каталога.
+3. `fluent_case_generate({spec, outputDir, name})` — materializes the case: writes `setup_case.jou`
+   (verified steps only) and `case.json` into the `outputDir` directory inside `caseRoots`.
+   Mesh/UDF paths come from the spec and the files are not copied — the case is run from its own
+   directory.
 
-Формат спецификации — `docs/CASE_SPEC.md`. Ключевые блоки: `mesh`, `physics`, `materials`,
-`boundary`, `solver`, `initialization`, `convergence` (критерии остановки!), `outputs`
-(поля для экспорта, бэкапы), `run` (этапы, sweep expression).
+The spec format is in `docs/CASE_SPEC.md`. Key blocks: `mesh`, `physics`, `materials`,
+`boundary`, `solver`, `initialization`, `convergence` (stopping criteria!), `outputs`
+(fields to export, backups), `run` (stages, expression sweep).
 
-## 3. Критерии остановки, бэкапы и выходные поля
+## 3. Stopping criteria, backups and output fields
 
-Плагин поддерживает то, что просили:
+The plugin supports what was asked for:
 
-- **Критерии остановки**: `convergence.residuals` (порог невязок), `convergence.stopping.type`
+- **Stopping criteria**: `convergence.residuals` (residual threshold), `convergence.stopping.type`
   (`iterations | report-criteria | residuals | physical-time | custom`), `reports[].stop` —
-  критерий по интегральному отчёту (conv-reports). В профиле-примере это пресеты `quick`/`fine`.
-- **Бэкапы**: `fluent_case_run` перед каждым запуском копирует журналы/скрипты/существующие
-  `.cas.h5/.dat.h5` в `archive/pre-<name>-<ts>/`; `fluent_case_generate` при `force:true`
-  уводит старую версию кейса в `archive/<naming>.<ts>/`.
-- **Поля для анализа**: `outputs.exports[]` → строки `/file/export/ascii …`; если профиль задаёт экспорт, он выполняется в его run-скрипте.
+  a criterion based on an integral report (conv-reports). In the example profile these are the
+  `quick`/`fine` presets.
+- **Backups**: before every run `fluent_case_run` copies journals/scripts/existing
+  `.cas.h5/.dat.h5` into `archive/pre-<name>-<ts>/`; with `force:true`, `fluent_case_generate`
+  moves the old case version to `archive/<naming>.<ts>/`.
+- **Fields for analysis**: `outputs.exports[]` → `/file/export/ascii …` lines; if the profile
+  defines an export, it runs in its run script.
 
-## 3.1. Отчёт о задаче и заметки (для мейнтейнера)
+## 3.1. The task report and notes (for the maintainer)
 
-Коллега после работы создаёт один файл-отчёт и отправляет его мейнтейнеру:
+After finishing the work, a colleague creates a single report file and sends it to the maintainer:
 
-- `fluent_task_log({caseDir, kind:"question", message:"…"})` — заметки по ходу: что не вышло,
-  чем пришлось обходить, какие вопросы остались. Пишутся в `<caseDir>/analysis/task-notes.jsonl`.
+- `fluent_task_log({caseDir, kind:"question", message:"…"})` — notes along the way: what did not
+  work, what workarounds were needed, what questions remain. They are written to
+  `<caseDir>/analysis/task-notes.jsonl`.
 - `fluent_task_report({caseDir|profile+params|spec, title, kind, description, expectations,
-  notes, questions})` — самодостаточный JSON + Markdown: окружение (ОС, Node, Python, **версия и
-  build Fluent**, лицензия), постановка, интервью и рекомендации, кейс/спека, проверка журнала
-  по KB, лог запуска (усечённый), автоматический анализ стадий и ошибок, список пробелов и
-  вопросов мейнтейнеру. Секретов и лицензионных ключей в отчёте нет.
-- Мейнтейнер складывает JSON в `learning/inbox/` и запускает
+  notes, questions})` — self-contained JSON + Markdown: environment (OS, Node, Python, **Fluent
+  version and build**, license), statement, interview and recommendations, case/spec, KB journal
+  validation, run log (truncated), automatic analysis of stages and errors, a list of gaps and
+  questions for the maintainer. There are no secrets or license keys in the report.
+- The maintainer puts the JSON into `learning/inbox/` and runs
   `node scripts/ingest-report.mjs --out learning` → `learning/backlog.md`.
 
-Формат отчёта и весь цикл обучения — `docs/REPORT_FORMAT.md` и `docs/MAINTAINING.md`.
+The report format and the whole learning cycle are described in `docs/REPORT_FORMAT.md` and
+`docs/MAINTAINING.md`.
 
-## 3.2. Конфигурация
+## 3.2. Configuration
 
-Плагин переносим: машинные пути не «зашиты» в пакет. Приоритет:
-`DEFAULTS → config строки плагина → внешний config.json → env`.
+The plugin is portable: machine paths are not hard-coded into the package. Priority:
+`DEFAULTS → plugin config line → external config.json → env`.
 
-- Внешний файл: `~/.config/fluent-case-builder/config.json` (или `$XDG_CONFIG_HOME/...`);
-  путь можно переопределить `FLUENT_CONFIG`.
-- Переменные: `FLUENT_PATH`, `ANSYSLMD_LICENSE_FILE`, `FLUENT_KB_ROOT`, `FLUENT_KB_INDEX`,
-  `FLUENT_CASE_ROOTS` (через `:`), `FLUENT_PROFILE_DIRS`, `FLUENT_REPORT_DIR`,
+- External file: `~/.config/fluent-case-builder/config.json` (or `$XDG_CONFIG_HOME/...`);
+  the path can be overridden with `FLUENT_CONFIG`.
+- Variables: `FLUENT_PATH`, `ANSYSLMD_LICENSE_FILE`, `FLUENT_KB_ROOT`, `FLUENT_KB_INDEX`,
+  `FLUENT_CASE_ROOTS` (separated by `:`), `FLUENT_PROFILE_DIRS`, `FLUENT_REPORT_DIR`,
   `FLUENT_REGISTRY_PATH`, `FLUENT_ALLOW_RUN`.
-- `caseRoots` по умолчанию — `~/fluent-cases`; `allowRun` по умолчанию `false`.
-- KB необязательна: без `kbRoot`/`indexDir` инструменты KB и оффлайн-валидация отключаются
-  с подсказкой. Профили ищутся в `data/profiles` и `profileDirs`.
+- `caseRoots` defaults to `~/fluent-cases`; `allowRun` defaults to `false`.
+- The KB is optional: without `kbRoot`/`indexDir` the KB tools and offline validation are disabled
+  with a hint. Profiles are looked up in `data/profiles` and `profileDirs`.
 
-## 4. Инструменты (кратко)
+## 4. Tools (briefly)
 
-| Инструмент | Что делает | Пишет на диск |
+| Tool | What it does | Writes to disk |
 |---|---|---|
-| `fluent_case_profiles` | список профилей и параметров | нет |
-| `fluent_case_interview` | вопросы, рекомендации моделей, черновик spec | нет |
-| `fluent_case_plan` | сухой прогон: каталог, вычисления, журнал, проверка | нет |
-| `fluent_case_generate` | создаёт файлы кейса и `case.json` | да (в `caseRoots`) |
-| `fluent_case_validate` | оффлайн-проверка журнала по KB | нет |
-| `fluent_case_status` | манифест, выходы, последний запуск, лог | нет |
-| `fluent_case_list` | реестр созданных кейсов | нет |
-| `fluent_case_run` | `start`/`status`/`stop` процесса Fluent | лог, бэкапы |
-| `fluent_kb_search` | поиск по командам/вопросам KB | нет |
-| `fluent_kb_get` | чтение документа KB | нет |
-| `fluent_task_log` | заметка исполнителя в журнал задачи | да (`task-notes.jsonl`) |
-| `fluent_task_report` | отчёт о задаче JSON+MD для мейнтейнера | да (в `analysis/`) |
-| `fluent_plugin_update` | проверка/план/скрипт/применение обновления плагина | да (скрипт/профиль) |
+| `fluent_case_profiles` | list of profiles and their parameters | no |
+| `fluent_case_interview` | questions, model recommendations, spec draft | no |
+| `fluent_case_plan` | dry run: directory, computations, journal, validation | no |
+| `fluent_case_generate` | creates the case files and `case.json` | yes (into `caseRoots`) |
+| `fluent_case_validate` | offline validation of the journal against the KB | no |
+| `fluent_case_status` | manifest, outputs, last run, log | no |
+| `fluent_case_list` | registry of generated cases | no |
+| `fluent_case_run` | `start`/`status`/`stop` of the Fluent process | log, backups |
+| `fluent_kb_search` | search across KB commands/questions | no |
+| `fluent_kb_get` | read a KB document | no |
+| `fluent_task_log` | an implementer's note in the task journal | yes (`task-notes.jsonl`) |
+| `fluent_task_report` | a JSON+MD task report for the maintainer | yes (into `analysis/`) |
+| `fluent_plugin_update` | check/plan/script/apply a plugin update | yes (script/profile) |
 
-## 5. Расширение: новый проект или новое знание
+## 5. Extending: a new project or new knowledge
 
-- **Новый проектный кейс** — добавьте `data/profiles/<id>/profile.json` + шаблоны
-  (`setup_case.jou.tmpl`, `start.sh.tmpl`) по контракту `docs/FORMATS.md` §1, зарегистрируйте
-  `templateRoots`/`profileRoots` в `cordis.patch.yml`. Код не меняется.
-- **Новая проверенная команда** — `data/recipes/<id>.json` (журнальная строка, статус, источник
-  `файл:строки`). Компилятор включит её автоматически; непроверенная не попадёт в журнал.
-- **Новое инженерное правило** — `data/rules/physics-rules.json`: `when` → `recommend` + `why` +
-  `source`. Например «Re ≥ 5000 → k-ω SST» уже работает.
-- **Новый вопрос интервью** — `data/rules/questions.json` с `specPath` в спецификацию.
+- **A new project case** — add `data/profiles/<id>/profile.json` + templates
+  (`setup_case.jou.tmpl`, `start.sh.tmpl`) according to the contract in `docs/FORMATS.md` §1, and
+  register `templateRoots`/`profileRoots` in `cordis.patch.yml`. No code changes.
+- **A new verified command** — `data/recipes/<id>.json` (journal line, status, source
+  `file:lines`). The compiler picks it up automatically; an unverified recipe never reaches the
+  journal.
+- **A new engineering rule** — `data/rules/physics-rules.json`: `when` → `recommend` + `why` +
+  `source`. For example "Re ≥ 5000 → k-ω SST" already works.
+- **A new interview question** — `data/rules/questions.json` with a `specPath` into the spec.
 
-Правило: **сначала проверить в живой сессии Fluent, потом добавлять в данные**. Именно поэтому
-в `unsupported` попадают inlet/outlet BC, transient, `/mesh/scale`, under-relaxation.
+The rule: **verify in a live session Fluent first, then add to the data.** That is exactly why
+inlet/outlet BCs, transient, `/mesh/scale` and under-relaxation end up in `unsupported`.
 
-## 6. Безопасность и ограничения
+## 6. Security and limitations
 
-- Запись только в `caseRoots` из конфига; путь проверяется.
-- `allowRun` в конфиге: `true` — запуск разрешён; сам запуск всегда требует `confirm:true`.
-- Остановка: `fluent_case_run({action:"stop"})` убивает группу процессов.
-- Строки `/solve/set/under-relaxation …` и `/solve/initialize fmg-initialization …` в проверенных журналах 2025 R1
-  пришли из журналов 2025 R1 (валидатор помечает их `journal-2025`). Живой прогон 2026-11-11 показал,
-  что Fluent 2026 R1 их **принимает**. В конце журнала возможна безвредная ошибка
-  `invalid command: yes` — это batch-подтверждение перезаписи после успешной записи `.cas.h5/.dat.h5`;
-  `fluent_case_status` в этом случае даёт `status: configured` и предупреждение, а не «провал».
+- Writing is allowed only into `caseRoots` from the config; the path is validated.
+- `allowRun` in the config: `true` — runs are allowed; a run itself always requires `confirm:true`.
+- Stop: `fluent_case_run({action:"stop"})` kills the process group.
+- The `/solve/set/under-relaxation …` and `/solve/initialize fmg-initialization …` lines in verified
+  journals came from 2025 R1 journals (the validator marks them `journal-2025`). A live run on
+  2026-11-11 showed that Fluent 2026 R1 **accepts** them. At the end of the journal a harmless
+  `invalid command: yes` error is possible — it is the batch confirmation of overwriting after a
+  successful `.cas.h5/.dat.h5` write; in that case `fluent_case_status` reports `status: configured`
+  plus a warning instead of a "failure".

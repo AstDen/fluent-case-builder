@@ -1,16 +1,16 @@
-# Case Spec — универсальное описание расчётного кейса
+# Case Spec — universal description of a computational case
 
-Один JSON-объект описывает кейс целиком: от сетки до критериев остановки и выходных полей.
-Инструмент `fluent_case_plan` принимает его (или профиль+параметры) и строит план,
-`fluent_case_generate` — материализует файлы, `fluent_case_validate` — проверяет журнал,
-`fluent_case_run` — запускает.
+A single JSON object describes the whole case: from the mesh to the stopping criteria and output
+fields. The `fluent_case_plan` tool accepts it (or a profile + parameters) and builds a plan,
+`fluent_case_generate` materializes the files, `fluent_case_validate` validates the journal and
+`fluent_case_run` launches it.
 
 ```json
 {
   "meta": {
     "name": "my-case",
     "taskKind": "gas-dynamics",
-    "description": "свободное описание задачи",
+    "description": "free-form task description",
     "created": "2026-11-11"
   },
   "fluent": {
@@ -93,32 +93,34 @@
 }
 ```
 
-## Семантика ключевых полей
+## Semantics of key fields
 
-| Поле | Значение |
+| Field | Meaning |
 |---|---|
-| `mesh.kind` | `single` — один `.msh` через `/file/read-case`; `case` — готовый `.cas.h5`; `zip` — архив (профильная логика). |
-| `mesh.scale` | если `units != "m"`, масштаб **должен** быть подтверждён (KB: `/mesh/scale` не проверен — 🔴). |
+| `mesh.kind` | `single` — one `.msh` through `/file/read-case`; `case` — a ready `.cas.h5`; `zip` — an archive (profile logic). |
+| `mesh.scale` | if `units != "m"`, the scale **must** be confirmed (KB: `/mesh/scale` is not verified — 🔴). |
 | `physics.turbulence.model` | `laminar`, `kw-sst`, `ke-realizable`, `spalart-allmaras`, … |
 | `solver.p-v-coupling` | `SIMPLE=20`, `SIMPLEC=21`, `PISO=22`, `Coupled=24`. |
 | `convergence.stopping.type` | `iterations`, `report-criteria`, `residuals`, `physical-time`, `custom`. |
-| `outputs.backups` | бэкап кейса/данных во время расчёта: частота в итерациях, сколько хранить. |
-| `run.stages` | этапы расчёта; `expressionSweep` — перебор значения Named Expression с сохранением результата на каждом шаге. |
-| `provenance` | какие правила сработали, какие предупреждения, чей профиль. |
+| `outputs.backups` | case/data backups during the run: the frequency in iterations and how many to keep. |
+| `run.stages` | run stages; `expressionSweep` sweeps a Named Expression value, saving the result at every step. |
+| `provenance` | which rules fired, which warnings were issued, whose profile this is. |
 
-## Правила компиляции журнала
+## Journal compilation rules
 
-1. Журнал собирается **только из рецептов** (`data/recipes/*.json`) со статусом `verified`.
-2. Всё непроверенное → `warnings[]` + отдельный блок `requires_verification` в плане; в журнал не попадает.
-3. Порядок: mesh → models → materials → boundary → udf/expressions → solver → initialization →
+1. The journal is assembled **only from recipes** (`data/recipes/*.json`) with the `verified` status.
+2. Everything unverified → `warnings[]` + a separate `requires_verification` block in the plan; it
+   never reaches the journal.
+3. Order: mesh → models → materials → boundary → udf/expressions → solver → initialization →
    reports/convergence → outputs → run → save.
-4. Число `q` берётся из рецепта (в KB оно не выводимо формально — это ключевое ограничение).
-5. Журнал всегда завершается `/file/write-case-data "<name>" yes` и `/exit yes`.
+4. The number of `q` answers comes from the recipe (it cannot be formally derived from the KB — this
+   is the key limitation).
+5. The journal always ends with `/file/write-case-data "<name>" yes` and `/exit yes`.
 
-## Различие «профильный» и «универсальный» путь
+## The difference between the "profile" and the "universal" path
 
-- **Профиль** (`{ "profile": "example-channel", "params": {...} }`) — материализует готовый проектный
-  кейс по шаблонам; самый надёжный путь (эталон проверен на 43 кейсах).
-- **Универсальный spec** — собирает журнал из рецептов; на текущей KB он принципиально не может
-  покрыть скорость/давление на входе, тепловую стенку, transient и `/mesh/scale` (🔴) — эти места
-  явно помечаются в плане, а не подставляются наугад.
+- **Profile** (`{ "profile": "example-channel", "params": {...} }`) — materializes a ready project
+  case from templates; the most reliable path (the reference was verified on 43 cases).
+- **Universal spec** — assembles the journal from recipes; with the current KB it fundamentally
+  cannot cover inlet velocity/pressure, a thermal wall, transient or `/mesh/scale` (🔴) — those
+  places are explicitly flagged in the plan instead of being filled in at random.

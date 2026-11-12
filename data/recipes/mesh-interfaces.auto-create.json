@@ -1,6 +1,6 @@
 {
   "id": "mesh-interfaces.auto-create",
-  "title": "Автосоздание mesh-интерфейсов",
+  "title": "Auto-create mesh interfaces",
   "category": "mesh",
   "status": "verified",
   "confidence": "medium",
@@ -9,9 +9,9 @@
   "journal": [
     "/define/mesh-interfaces auto-create"
   ],
-  "interactive": "/define/mesh-interfaces/auto-create → цепочка вопросов не зафиксирована",
+  "interactive": "/define/mesh-interfaces/auto-create → question chain not recorded",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Строка из проверенного рабочего журнала (CHT fluid-solid); KB фиксирует только существование меню /define/mesh-interfaces/ (auto-options/create/edit/delete/list). Текст вопросов не снят."
+  "notes": "Line from the verified working journal (CHT fluid-solid); the KB records only the existence of the /define/mesh-interfaces/ menu (auto-options/create/edit/delete/list). The question texts were not captured."
 }

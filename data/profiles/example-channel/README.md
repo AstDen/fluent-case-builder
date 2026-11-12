@@ -1,29 +1,29 @@
-# Профиль `example-channel` — синтетический пример
+# Profile `example-channel` — synthetic example
 
-Минимальный профиль, показывающий формат данных и возможности движка:
+A minimal profile showing the data format and engine capabilities:
 
-- **параметры** (`meshFile`, `L`, `h`, `iterations`) и **вычисляемое** поле (`y_mid`);
-- **именование** кейса и файлов (`channel_L-<L>mm_h-<h>mm...`);
-- **пресеты** `quick`/`fine` (критерий по невязкам выбирается автоматически);
-- **шаблон журнала** `templates/setup_case.jou.tmpl` — только проверенные строки TUI.
+- **parameters** (`meshFile`, `L`, `h`, `iterations`) and a **computed** field (`y_mid`);
+- case and file **naming** (`channel_L-<L>mm_h-<h>mm...`);
+- `quick`/`fine` **presets** (the residual criterion is chosen automatically);
+- **journal template** `templates/setup_case.jou.tmpl` — verified TUI lines only.
 
-Это **не** воспроизведение научного расчёта: шаблон не содержит граничных условий и
-отчётов конкретного проекта. Он нужен, чтобы:
+This is **not** a reproduction of a scientific run: the template contains no boundary conditions or
+reports of a specific project. It is meant to:
 
-1. понять, как устроен профиль (как писать `profile.json` и шаблоны);
-2. быстро проверить установку: `fluent_case_plan({profile:"example-channel", params:{meshFile:"/path/to/your.msh"}})`;
-3. взять его за основу своего профиля.
+1. understand how a profile is structured (how to write `profile.json` and templates);
+2. quickly check the installation: `fluent_case_plan({profile:"example-channel", params:{meshFile:"/path/to/your.msh"}})`;
+3. use it as a starting point for your own profile.
 
-## Попробовать
+## Try it
 
 ```text
 fluent_case_plan({ profile: "example-channel", params: { meshFile: "/path/to/channel.msh" } })
 fluent_case_generate({ profile: "example-channel", params: { meshFile: "/path/to/channel.msh" } })
 ```
 
-Кейс появится в `caseRoots[0]` (по умолчанию `~/fluent-cases`).
+The case appears in `caseRoots[0]` (by default `~/fluent-cases`).
 
-## Свой профиль
+## Your own profile
 
-Скопируйте каталог, переименуйте `id`, опишите свои параметры/вычисления/ассеты и шаблоны
-по контракту `docs/FORMATS.md` §1. Код менять не нужно.
+Copy the directory, rename `id`, describe your parameters/computations/assets and templates
+according to the `docs/FORMATS.md` §1 contract. No code changes are needed.

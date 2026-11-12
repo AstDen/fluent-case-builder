@@ -1,15 +1,15 @@
 {
   "id": "solve.discretization-scheme",
-  "title": "Схемы дискретизации уравнений",
+  "title": "Equation discretization schemes",
   "category": "solution",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/07_SOLVER/deep_dive.md:52-73; KB/QA_LOG.md:288-296",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "/solve/set/discretization-scheme/<уравнение> → Convective discretization scheme for <eq> (коды в [...]); точные коды не сняты",
+  "interactive": "/solve/set/discretization-scheme/<equation> → Convective discretization scheme for <eq> (codes in [...]); the exact codes were not captured",
   "requires": [],
   "conflicts": [],
   "params": [],
-  "notes": "Ни одна строка не выполнялась в живой сессии. Числовые коды схем соответствуют порядку в меню TUI и зависят от уравнения; пример в deep_dive §3 помечен requires_verification, кроме того KB отмечает проверенными только mom/k. Нужен съём `?` в живой сессии по каждому уравнению. Уравнения: pressure, mom, temperature (energy), k, omega, species, do, vol-frac."
+  "notes": "None of the lines was executed in a live session. The numeric scheme codes follow the order in the TUI menu and depend on the equation; the example in deep_dive §3 is marked requires_verification, and the KB marks only mom/k as verified. A `?` capture in a live session is needed for each equation. Equations: pressure, mom, temperature (energy), k, omega, species, do, vol-frac."
 }

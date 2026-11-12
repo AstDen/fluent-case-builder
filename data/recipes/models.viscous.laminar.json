@@ -1,6 +1,6 @@
 {
   "id": "models.viscous.laminar",
-  "title": "Ламинарная модель",
+  "title": "Laminar model",
   "category": "models",
   "status": "verified",
   "confidence": "high",
@@ -15,5 +15,5 @@
     "models.viscous.kw-sst"
   ],
   "params": [],
-  "notes": "В новой сессии laminar уже включён по умолчанию; строка фиксирует состояние явно. В проверенном рабочем журнале setup_case.jou ВСЕГДА ламинарный, турбулентность включается позже в runtime при Re>5000 (ИНСТРУКЦИЯ-ПО-СОЗДАНИЮ-КЕЙСА.md)."
+  "notes": "In a new session laminar is already enabled by default; the line records the state explicitly. In the verified working journal setup_case.jou is ALWAYS laminar; turbulence is enabled later at runtime when Re>5000 (see the case-creation instructions)."
 }

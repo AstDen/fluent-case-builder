@@ -3,52 +3,52 @@
   "sections": [
     {
       "id": "task",
-      "title": "Задача",
+      "title": "Task",
       "questions": [
         {
           "id": "task.kind",
-          "text": "Какой класс задачи?",
+          "text": "What is the task class?",
           "type": "enum",
           "values": ["hydrodynamics", "gas-dynamics", "combustion", "engines", "supersonic", "chemical-reactions", "heat-transfer", "multiphase", "other"],
           "default": "hydrodynamics",
-          "why": "от класса задачи зависят набор моделей (турбулентность, species, излучение, многофазность) и рекомендации правил",
+          "why": "The model set (turbulence, species, radiation, multiphase) and the rule recommendations depend on the task class",
           "specPath": "meta.taskKind",
           "required": true
         },
         {
           "id": "task.dimension",
-          "text": "Какая размерность задачи?",
+          "text": "What is the problem dimensionality?",
           "type": "enum",
           "values": ["3ddp", "2ddp"],
           "default": "3ddp",
-          "why": "размерность задаётся при запуске Fluent (3ddp/2ddp) и определяет доступные модели и тип зоны axis",
+          "why": "The dimensionality is set when starting Fluent (3ddp/2ddp) and determines the available models and the axis zone type",
           "specPath": "fluent.dimension",
           "required": true
         },
         {
           "id": "task.name",
-          "text": "Короткое имя кейса (латиницей, без пробелов)?",
+          "text": "Short case name (Latin letters, no spaces)?",
           "type": "string",
           "default": "case",
-          "why": "используется в именах файлов .cas.h5/.dat.h5 и отчётов; имя должно быть допустимым именем файла",
+          "why": "Used in .cas.h5/.dat.h5 and report file names; the name must be a valid file name",
           "specPath": "meta.name",
           "required": false
         },
         {
           "id": "task.axisymmetric",
-          "text": "Задача осесимметричная (тело вращения)?",
+          "text": "Is the problem axisymmetric (a body of revolution)?",
           "type": "boolean",
           "default": false,
-          "why": "осесимметрия требует 2D-осесимметричной постановки и зоны типа axis; в KB цепочка не проверена",
+          "why": "Axisymmetry requires a 2D axisymmetric setup and an axis-type zone; the chain is not verified in the KB",
           "specPath": "physics.axisymmetric",
           "required": false
         },
         {
           "id": "task.description",
-          "text": "Опишите задачу одной фразой (что считается, какая цель)?",
+          "text": "Describe the problem in one sentence (what is computed, what is the goal)?",
           "type": "string",
           "default": "",
-          "why": "контекст помогает правильно выбрать модели и интерпретировать результаты",
+          "why": "Context helps choose the models correctly and interpret the results",
           "specPath": "meta.description",
           "required": false
         }
@@ -56,51 +56,51 @@
     },
     {
       "id": "mesh",
-      "title": "Сетка",
+      "title": "Mesh",
       "questions": [
         {
           "id": "mesh.files",
-          "text": "Укажите файл сетки (.msh) или кейс (.cas.h5).",
+          "text": "Specify the mesh file (.msh) or case (.cas.h5).",
           "type": "array",
           "default": [],
-          "why": "без сетки Fluent не открывает меню моделей/BC; первая сетка читается через /file/read-case",
+          "why": "Without a mesh Fluent does not open the models/BC menus; the first mesh is read via /file/read-case",
           "specPath": "mesh.files",
           "required": true
         },
         {
           "id": "mesh.units",
-          "text": "В каких единицах задана геометрия сетки?",
+          "text": "In what units is the mesh geometry defined?",
           "type": "enum",
           "values": ["m", "mm", "cm", "in"],
           "default": "mm",
-          "why": "от единиц зависит необходимость /mesh/scale; аргументы этой команды в KB не проверены — масштаб нужно подтвердить",
+          "why": "The need for /mesh/scale depends on the units; the arguments of that command are not verified in the KB — the scale must be confirmed",
           "specPath": "mesh.units",
           "required": true
         },
         {
           "id": "mesh.scale",
-          "text": "Подтвердите масштабные множители перевода в метры (x, y, z).",
+          "text": "Confirm the scale factors converting to meters (x, y, z).",
           "type": "array",
           "default": [],
-          "why": "KB: /mesh/scale не проверен, число и порядок аргументов неизвестны (requires_verification); без подтверждённого масштаба геометрия и BC будут неверными",
+          "why": "KB: /mesh/scale is not verified, the number and order of arguments are unknown (requires_verification); without a confirmed scale the geometry and BCs will be wrong",
           "specPath": "mesh.scale",
           "required": false
         },
         {
           "id": "mesh.check",
-          "text": "Проверять сетку после чтения (/mesh/check и /mesh/quality)?",
+          "text": "Check the mesh after reading (/mesh/check and /mesh/quality)?",
           "type": "boolean",
           "default": true,
-          "why": "проверка занимает секунды и выявляет дыры/отрицательные объёмы до расчёта",
+          "why": "The check takes seconds and reveals holes/negative volumes before the run",
           "specPath": "mesh.check",
           "required": false
         },
         {
           "id": "mesh.appendMesh",
-          "text": "Нужно ли присоединить дополнительные сетки (например, solid-область для CHT)?",
+          "text": "Do you need to append additional meshes (e.g. a solid region for CHT)?",
           "type": "array",
           "default": [],
-          "why": "присоединение второй сетки (/mesh/modify-zones append-mesh) меняет состав зон; порядок zone-name/zone-type зависит от этого",
+          "why": "Appending a second mesh (/mesh/modify-zones append-mesh) changes the zone composition; the order of zone-name/zone-type depends on it",
           "specPath": "mesh.appendMesh",
           "required": false
         }
@@ -108,42 +108,42 @@
     },
     {
       "id": "flow",
-      "title": "Течение и сжимаемость",
+      "title": "Flow and compressibility",
       "questions": [
         {
           "id": "flow.mach",
-          "text": "Каково характерное число Маха?",
+          "text": "What is the characteristic Mach number?",
           "type": "number",
           "default": 0.0,
-          "why": "Mach >= 0.3 — порог, выше которого рекомендуется density-based-implicit, энергия и сжимаемые свойства",
+          "why": "Mach >= 0.3 is the threshold above which density-based-implicit, energy and compressible properties are recommended",
           "specPath": "physics.mach",
           "required": true
         },
         {
           "id": "flow.compressibility",
-          "text": "Течение сжимаемое (газ с заметным изменением плотности)?",
+          "text": "Is the flow compressible (a gas with a noticeable density change)?",
           "type": "enum",
           "values": ["incompressible", "compressible"],
           "default": "incompressible",
-          "why": "влияет на выбор решателя и метода плотности материала (ideal-gas)",
+          "why": "Affects the choice of solver and of the material density method (ideal-gas)",
           "specPath": "physics.compressibility",
           "required": true
         },
         {
           "id": "flow.reynolds",
-          "text": "Каково характерное число Рейнольдса?",
+          "text": "What is the characteristic Reynolds number?",
           "type": "number",
           "default": 0,
-          "why": "порог Re = 5000 (как в проверенном рабочем журнале) переключает laminar ↔ k-omega SST",
+          "why": "The threshold Re = 5000 (as in the verified working journal) switches laminar ↔ k-omega SST",
           "specPath": "physics.reynolds",
           "required": true
         },
         {
           "id": "flow.velocity",
-          "text": "Какая характерная скорость потока, м/с?",
+          "text": "What is the characteristic flow velocity, m/s?",
           "type": "number",
           "default": 0,
-          "why": "нужна для оценки Re и выбора входного ГУ (velocity-inlet возможен только после проверки цепочки)",
+          "why": "Needed to estimate Re and choose the inlet BC (velocity-inlet is possible only after the chain is verified)",
           "specPath": "physics.velocity",
           "required": false
         }
@@ -151,42 +151,42 @@
     },
     {
       "id": "heat",
-      "title": "Теплообмен и излучение",
+      "title": "Heat transfer and radiation",
       "questions": [
         {
           "id": "heat.transfer",
-          "text": "Есть ли в задаче теплообмен (нагрев/охлаждение, температура важна)?",
+          "text": "Does the problem involve heat transfer (heating/cooling, temperature matters)?",
           "type": "boolean",
           "default": false,
-          "why": "если да — включается уравнение энергии; без него температура не решается и тепловые ГУ недоступны",
+          "why": "If yes, the energy equation is enabled; without it the temperature is not solved and thermal BCs are unavailable",
           "specPath": "physics.heatTransfer",
           "required": true
         },
         {
           "id": "heat.maxTemperature",
-          "text": "Какая максимальная температура в задаче, K?",
+          "text": "What is the maximum temperature in the problem, K?",
           "type": "number",
           "default": 300,
-          "why": "при T >= ~1000 K рекомендуется излучение (Discrete Ordinates) и обязательна энергия",
+          "why": "At T >= ~1000 K radiation (Discrete Ordinates) is recommended and energy is mandatory",
           "specPath": "physics.temperature.max",
           "required": false
         },
         {
           "id": "heat.radiation",
-          "text": "Нужно ли учитывать излучение?",
+          "text": "Should radiation be taken into account?",
           "type": "boolean",
           "default": false,
-          "why": "излучение добавляет оптические свойства материалов и требует энергии; DO — основной вариант для горения/печей",
+          "why": "Radiation adds optical material properties and requires energy; DO is the main option for combustion/furnaces",
           "specPath": "physics.radiation.enabled",
           "required": false
         },
         {
           "id": "heat.radiationModel",
-          "text": "Какая модель излучения предпочтительна?",
+          "text": "Which radiation model is preferable?",
           "type": "enum",
           "values": ["discrete-ordinates", "p1", "s2s", "montecarlo", "discrete-transfer", "rosseland"],
           "default": "discrete-ordinates",
-          "why": "DO проверен для горения/печей; S2S — только поверхности без участвующей среды; P1 дешевле, но плох для оптически тонких сред",
+          "why": "DO is verified for combustion/furnaces; S2S is surfaces only without a participating medium; P1 is cheaper but poor for optically thin media",
           "specPath": "physics.radiation.model",
           "required": false
         }
@@ -194,41 +194,41 @@
     },
     {
       "id": "combustion",
-      "title": "Горение и химия",
+      "title": "Combustion and chemistry",
       "questions": [
         {
           "id": "combustion.enabled",
-          "text": "Есть ли горение или химические реакции?",
+          "text": "Is there combustion or chemical reactions?",
           "type": "boolean",
           "default": false,
-          "why": "требует Species Transport, mixture-материала и механизма реакций; меняет состав уравнений и ГУ",
+          "why": "Requires Species Transport, a mixture material and a reaction mechanism; changes the equation set and the BCs",
           "specPath": "physics.species.enabled",
           "required": true
         },
         {
           "id": "combustion.mechanism",
-          "text": "Укажите файл механизма/базы материалов (.src) с реакциями.",
+          "text": "Specify the mechanism/material database file (.src) with reactions.",
           "type": "string",
           "default": "",
-          "why": "механизм импортируется через /define/materials/data-base database-type user-defined; без него species-transport не включится",
+          "why": "The mechanism is imported via /define/materials/data-base database-type user-defined; without it species-transport will not turn on",
           "specPath": "physics.species.mechanism",
           "required": false
         },
         {
           "id": "combustion.mixture",
-          "text": "Как называется mixture-материал из механизма?",
+          "text": "What is the name of the mixture material from the mechanism?",
           "type": "string",
           "default": "",
-          "why": "имя mixture-материала передаётся вторым аргументом в species-transport (например, mixture-material)",
+          "why": "The mixture material name is passed as the second argument to species-transport (e.g. mixture-material)",
           "specPath": "physics.species.mixture",
           "required": false
         },
         {
           "id": "combustion.reactions",
-          "text": "Включать объёмные реакции и stiff chemistry?",
+          "text": "Enable volumetric reactions and stiff chemistry?",
           "type": "boolean",
           "default": true,
-          "why": "для детальных механизмов нужен stiff-интегратор; без объёмных реакций источники не появятся",
+          "why": "Detailed mechanisms need the stiff integrator; without volumetric reactions no sources appear",
           "specPath": "physics.species.reactions",
           "required": false
         }
@@ -236,33 +236,33 @@
     },
     {
       "id": "multiphase",
-      "title": "Многофазность",
+      "title": "Multiphase",
       "questions": [
         {
           "id": "multiphase.enabled",
-          "text": "Есть ли несколько фаз (жидкость-газ, пузыри, капли, кипение)?",
+          "text": "Are there several phases (liquid-gas, bubbles, droplets, boiling)?",
           "type": "boolean",
           "default": false,
-          "why": "многофазные модели меняют набор уравнений и требуют специальных ГУ; несовместимы с рядом моделей",
+          "why": "Multiphase models change the equation set and require special BCs; they are incompatible with a number of models",
           "specPath": "physics.multiphase.enabled",
           "required": true
         },
         {
           "id": "multiphase.model",
-          "text": "Какая многофазная модель подходит?",
+          "text": "Which multiphase model is suitable?",
           "type": "enum",
           "values": ["none", "vof", "eulerian", "mixture", "wetsteam"],
           "default": "none",
-          "why": "VOF — резкие границы раздела; Eulerian — плотные дисперсные потоки; Mixture — слабо связанные фазы; wetsteam — пар/конденсат",
+          "why": "VOF — sharp interfaces; Eulerian — dense dispersed flows; Mixture — weakly coupled phases; wetsteam — steam/condensate",
           "specPath": "physics.multiphase.model",
           "required": false
         },
         {
           "id": "multiphase.phases",
-          "text": "Сколько фаз?",
+          "text": "How many phases?",
           "type": "number",
           "default": 2,
-          "why": "число фаз задаётся после выбора модели (/define/models/multiphase/number-of-phases)",
+          "why": "The number of phases is set after choosing the model (/define/models/multiphase/number-of-phases)",
           "specPath": "physics.multiphase.phases",
           "required": false
         }
@@ -270,32 +270,32 @@
     },
     {
       "id": "particles",
-      "title": "Частицы / DPM",
+      "title": "Particles / DPM",
       "questions": [
         {
           "id": "particles.enabled",
-          "text": "Нужно ли моделировать частицы/капли (дискретная фаза, DPM)?",
+          "text": "Do you need to model particles/droplets (discrete phase, DPM)?",
           "type": "boolean",
           "default": false,
-          "why": "DPM активируется созданием инжекции; требует сетки и часто двустороннего взаимодействия с газом",
+          "why": "DPM is activated by creating an injection; it requires a mesh and often two-way coupling with the gas",
           "specPath": "physics.particles.enabled",
           "required": true
         },
         {
           "id": "particles.diameter",
-          "text": "Характерный диаметр частиц, м?",
+          "text": "Characteristic particle diameter, m?",
           "type": "number",
           "default": 0,
-          "why": "определяет инерцию частиц и выбор drag-law; в профильных кейсах задаётся через UDF",
+          "why": "Determines particle inertia and the choice of drag law; in profile cases it is set via a UDF",
           "specPath": "physics.particles.diameter",
           "required": false
         },
         {
           "id": "particles.twoWayCoupling",
-          "text": "Учитывать обратное влияние частиц на газ (two-way coupling)?",
+          "text": "Account for the back-influence of particles on the gas (two-way coupling)?",
           "type": "boolean",
           "default": true,
-          "why": "при заметной массовой доле частиц односторонней связи недостаточно",
+          "why": "With a noticeable particle mass fraction, one-way coupling is not enough",
           "specPath": "physics.particles.twoWayCoupling",
           "required": false
         }
@@ -307,37 +307,37 @@
       "questions": [
         {
           "id": "udf.enabled",
-          "text": "Нужны ли пользовательские функции (UDF)?",
+          "text": "Do you need user-defined functions (UDFs)?",
           "type": "boolean",
           "default": false,
-          "why": "UDF компилируются в библиотеку и привязываются хуками; влияют на свойства, источники, инициализацию",
+          "why": "UDFs are compiled into a library and bound by hooks; they affect properties, sources, initialization",
           "specPath": "physics.udf.enabled",
           "required": true
         },
         {
           "id": "udf.files",
-          "text": "Перечислите .c-файлы UDF.",
+          "text": "List the UDF .c files.",
           "type": "array",
           "default": [],
-          "why": "все файлы должны компилироваться в одну библиотеку; имена не должны содержать пробелов (compile.js не экранирует)",
+          "why": "All files must compile into one library; the names must not contain spaces (compile.js does not escape them)",
           "specPath": "physics.udf.files",
           "required": false
         },
         {
           "id": "udf.library",
-          "text": "Имя библиотеки UDF (латиницей, без пробелов)?",
+          "text": "UDF library name (Latin letters, no spaces)?",
           "type": "string",
           "default": "libudf",
-          "why": "имя библиотеки используется при compile/load и в строке хука <функция>::<библиотека>",
+          "why": "The library name is used in compile/load and in the hook line <function>::<library>",
           "specPath": "physics.udf.library",
           "required": false
         },
         {
           "id": "udf.hooks",
-          "text": "Какие хуки нужно привязать?",
+          "text": "Which hooks need to be bound?",
           "type": "array",
           "default": [],
-          "why": "хуки (initialization, volume-reaction-rate и т.д.) привязываются после load; подменю function-hooks появляется только при загруженной библиотеке",
+          "why": "Hooks (initialization, volume-reaction-rate, etc.) are bound after load; the function-hooks submenu appears only with a loaded library",
           "specPath": "physics.udf.hooks",
           "required": false
         }
@@ -345,42 +345,42 @@
     },
     {
       "id": "materials",
-      "title": "Материалы",
+      "title": "Materials",
       "questions": [
         {
           "id": "materials.fluid",
-          "text": "Какой текущий/рабочий материал (fluid)?",
+          "text": "What is the current/working material (fluid)?",
           "type": "string",
           "default": "air",
-          "why": "материал назначается зонам; его свойства определяют теплофизику (плотность, Cp, вязкость)",
+          "why": "The material is assigned to zones; its properties determine the thermophysics (density, Cp, viscosity)",
           "specPath": "materials.fluid",
           "required": false
         },
         {
           "id": "materials.fluidDensity",
-          "text": "Какой метод плотности для газа?",
+          "text": "Which density method for the gas?",
           "type": "enum",
           "values": ["constant", "incompressible-ideal-gas", "ideal-gas"],
           "default": "constant",
-          "why": "ideal-gas обязателен для сжимаемых задач и автоматически включает энергию; проверенная журнальная форма есть",
+          "why": "ideal-gas is mandatory for compressible cases and automatically enables energy; a verified journal form exists",
           "specPath": "materials.fluidDensity",
           "required": false
         },
         {
           "id": "materials.mixture",
-          "text": "Какой mixture-материал использовать (для species/горения)?",
+          "text": "Which mixture material to use (for species/combustion)?",
           "type": "string",
           "default": "",
-          "why": "смесь должна быть импортирована из .src; её имя идёт в species-transport",
+          "why": "The mixture must be imported from a .src; its name goes into species-transport",
           "specPath": "materials.mixture",
           "required": false
         },
         {
           "id": "materials.database",
-          "text": "Укажите пользовательскую базу материалов (.src), если нужна.",
+          "text": "Specify the user material database (.src), if needed.",
           "type": "string",
           "default": "",
-          "why": "импорт .src через database-type user-defined; без него не будет mixture-материала и механизма",
+          "why": "The .src is imported via database-type user-defined; without it there is no mixture material and no mechanism",
           "specPath": "materials.database",
           "required": false
         }
@@ -388,98 +388,98 @@
     },
     {
       "id": "boundary",
-      "title": "Граничные условия",
+      "title": "Boundary conditions",
       "questions": [
         {
           "id": "bc.inlet.type",
-          "text": "Какой тип входной границы?",
+          "text": "What is the inlet boundary type?",
           "type": "enum",
           "values": ["mass-flow-inlet", "velocity-inlet", "pressure-inlet"],
           "default": "mass-flow-inlet",
-          "why": "тип задаётся через zone-type; цепочки velocity/pressure-inlet в KB не проверены — в журнал без проверки не попадут",
+          "why": "The type is set via zone-type; the velocity/pressure-inlet chains are not verified in the KB — they will not go into the journal without verification",
           "specPath": "boundary.inlet.type",
           "required": true
         },
         {
           "id": "bc.inlet.massFlow",
-          "text": "Массовый расход на входе, кг/с?",
+          "text": "Mass flow rate at the inlet, kg/s?",
           "type": "number",
           "default": 0,
-          "why": "одно из основных входных значений mass-flow-inlet; в профильных кейсах задаётся Named Expression",
+          "why": "One of the main mass-flow-inlet inputs; in profile cases it is set as a Named Expression",
           "specPath": "boundary.inlet.massFlow",
           "required": false
         },
         {
           "id": "bc.inlet.temperature",
-          "text": "Температура на входе, K?",
+          "text": "Inlet temperature, K?",
           "type": "number",
           "default": 300,
-          "why": "тепловое ГУ входа; доступно после включения энергии",
+          "why": "Thermal inlet BC; available after the energy equation is enabled",
           "specPath": "boundary.inlet.temperature",
           "required": false
         },
         {
           "id": "bc.inlet.turbulenceIntensity",
-          "text": "Интенсивность турбулентности на входе, %?",
+          "text": "Turbulence intensity at the inlet, %?",
           "type": "number",
           "default": 10,
-          "why": "в проверенном рабочем журнале используется 10% и viscosity ratio 30 (проверенная строка mass-flow-inlet)",
+          "why": "The verified working journal uses 10% and viscosity ratio 30 (verified mass-flow-inlet line)",
           "specPath": "bc.inlet.turbulenceIntensity",
           "required": false
         },
         {
           "id": "bc.inlet.turbulenceViscosityRatio",
-          "text": "Турбулентное отношение вязкостей на входе?",
+          "text": "Turbulent viscosity ratio at the inlet?",
           "type": "number",
           "default": 30,
-          "why": "пара к интенсивности турбулентности; 30 — значение из проверенного журнала",
+          "why": "Pairs with the turbulence intensity; 30 is the value from the verified journal",
           "specPath": "bc.inlet.turbulenceViscosityRatio",
           "required": false
         },
         {
           "id": "bc.outlet.type",
-          "text": "Какой тип выходной границы?",
+          "text": "What is the outlet boundary type?",
           "type": "enum",
           "values": ["pressure-outlet", "outflow", "wall"],
           "default": "pressure-outlet",
-          "why": "цепочка pressure-outlet в KB не проходилась (зависит от моделей) — без проверки шаг попадёт в requires_verification",
+          "why": "The pressure-outlet chain was not walked in the KB (depends on models) — without verification the step goes to requires_verification",
           "specPath": "boundary.outlet.type",
           "required": false
         },
         {
           "id": "bc.outlet.pressure",
-          "text": "Избыточное (gauge) давление на выходе, Па?",
+          "text": "Gauge pressure at the outlet, Pa?",
           "type": "number",
           "default": 0,
-          "why": "основной параметр pressure-outlet; опорное давление задаётся в /define/operating-conditions",
+          "why": "The main pressure-outlet parameter; the operating pressure is set in /define/operating-conditions",
           "specPath": "boundary.outlet.pressure",
           "required": false
         },
         {
           "id": "bc.wallThermal",
-          "text": "Тепловые условия на стенке?",
+          "text": "Thermal conditions at the wall?",
           "type": "enum",
           "values": ["adiabatic", "temperature", "heat-flux", "radiation"],
           "default": "adiabatic",
-          "why": "тепловая ветка wall в KB проверена только частично (рабочая строка с radiation есть, тексты вопросов не сняты)",
+          "why": "The wall thermal branch is only partially verified in the KB (the working line with radiation exists, the question texts were not captured)",
           "specPath": "boundary.wall.thermal",
           "required": false
         },
         {
           "id": "bc.wallTemperature",
-          "text": "Температура стенки, K (если задана)?",
+          "text": "Wall temperature, K (if specified)?",
           "type": "number",
           "default": 300,
-          "why": "используется при thermal condition = temperature; требует включённой энергии",
+          "why": "Used when thermal condition = temperature; requires the energy equation",
           "specPath": "boundary.wall.temperature",
           "required": false
         },
         {
           "id": "bc.porous",
-          "text": "Есть ли пористая зона?",
+          "text": "Is there a porous zone?",
           "type": "boolean",
           "default": false,
-          "why": "пористая среда задаётся в fluid-зоне 55-шаговой цепочкой; полная расшифровка аргументов в KB отсутствует",
+          "why": "A porous medium is set in the fluid zone by a 55-step chain; the full decoding of the arguments is missing from the KB",
           "specPath": "boundary.porous",
           "required": false
         }
@@ -487,44 +487,44 @@
     },
     {
       "id": "solver",
-      "title": "Решатель",
+      "title": "Solver",
       "questions": [
         {
           "id": "solver.type",
-          "text": "Какой решатель использовать?",
+          "text": "Which solver to use?",
           "type": "enum",
           "values": ["pressure-based", "density-based-implicit", "density-based-explicit"],
           "default": "pressure-based",
-          "why": "pressure-based для несжимаемых, density-based-implicit для Mach >= 0.3; explicit требует отдельной проверки",
+          "why": "pressure-based for incompressible, density-based-implicit for Mach >= 0.3; explicit requires a separate check",
           "specPath": "solver.type",
           "required": false
         },
         {
           "id": "solver.pvCoupling",
-          "text": "Схема связи давление-скорость (для pressure-based)?",
+          "text": "Pressure-velocity coupling scheme (for pressure-based)?",
           "type": "enum",
           "values": ["SIMPLE", "SIMPLEC", "PISO", "Coupled"],
           "default": "Coupled",
-          "why": "коды проверены: SIMPLE=20, SIMPLEC=21, PISO=22, Coupled=24; в новом кейсе по умолчанию Coupled",
+          "why": "Codes verified: SIMPLE=20, SIMPLEC=21, PISO=22, Coupled=24; a new case defaults to Coupled",
           "specPath": "solver.p-v-coupling",
           "required": false
         },
         {
           "id": "solver.iterations",
-          "text": "Сколько итераций выполнять за запуск?",
+          "text": "How many iterations to run per launch?",
           "type": "number",
           "default": 1000,
-          "why": "число итераций по умолчанию; останов дополнительно по критериям сходимости и reporting-interval",
+          "why": "The default iteration count; stopping is additionally by convergence criteria and reporting-interval",
           "specPath": "solver.iterations",
           "required": false
         },
         {
           "id": "solver.initialization",
-          "text": "Как инициализировать решение?",
+          "text": "How to initialize the solution?",
           "type": "enum",
           "values": ["hybrid", "standard"],
           "default": "hybrid",
-          "why": "гибридная инициализация проверена; стандартная (initialize-flow) подтверждена только журналом пользователя и в KB помечена blocked",
+          "why": "Hybrid initialization is verified; standard (initialize-flow) is confirmed only by the user journal and is marked blocked in the KB",
           "specPath": "initialization.method",
           "required": false
         }
@@ -532,42 +532,42 @@
     },
     {
       "id": "convergence",
-      "title": "Сходимость и остановка",
+      "title": "Convergence and stopping",
       "questions": [
         {
           "id": "convergence.stopType",
-          "text": "По какому признаку останавливать расчёт?",
+          "text": "On what basis should the run stop?",
           "type": "enum",
           "values": ["iterations", "report-criteria", "residuals", "physical-time", "custom"],
           "default": "report-criteria",
-          "why": "в рабочем проекте остановка комбинированная: невязки + критерии по отчётам; только по итерациям — риск недо/пересчёта",
+          "why": "In the working project stopping is combined: residuals + report criteria; iterations only — risk of under/over-solving",
           "specPath": "convergence.stopping.type",
           "required": false
         },
         {
           "id": "convergence.residuals",
-          "text": "Пороговые значения невязок по уравнениям (continuity, x/y/z-velocity, energy)?",
+          "text": "Residual thresholds per equation (continuity, x/y/z-velocity, energy)?",
           "type": "array",
           "default": [0.5, 0.001, 0.001, 0.001, 0.000005],
-          "why": "число значений должно совпадать с числом уравнений; порядок: continuity, x/y/z-velocity, energy",
+          "why": "The number of values must match the number of equations; the order is: continuity, x/y/z-velocity, energy",
           "specPath": "convergence.residuals",
           "required": false
         },
         {
           "id": "convergence.reportStop",
-          "text": "Порог остановки по отчёту (например, по средней температуре на выходе)?",
+          "text": "Report-based stopping threshold (e.g. by the average outlet temperature)?",
           "type": "number",
           "default": 0.001,
-          "why": "conv-reports/add: stop-criterion; строгий 1e-3, ослабленный 5e-3",
+          "why": "conv-reports/add: stop-criterion; strict 1e-3, relaxed 5e-3",
           "specPath": "convergence.reports.stopCriterion",
           "required": false
         },
         {
           "id": "convergence.frequency",
-          "text": "Как часто проверять сходимость (каждые N итераций)?",
+          "text": "How often to check convergence (every N iterations)?",
           "type": "number",
           "default": 100,
-          "why": "проверка реже записи истории (например 100 и 50), чтобы критерий опирался на записанные значения",
+          "why": "The check is less frequent than the history write (e.g. 100 and 50) so that the criterion relies on recorded values",
           "specPath": "convergence.stopping.frequency",
           "required": false
         }
@@ -575,41 +575,41 @@
     },
     {
       "id": "outputs",
-      "title": "Выходные данные",
+      "title": "Output data",
       "questions": [
         {
           "id": "outputs.reportFile",
-          "text": "Куда писать историю отчётов (.out)?",
+          "text": "Where to write the report history (.out)?",
           "type": "string",
           "default": "data/all_data_file.out",
-          "why": "report-files пишет значения report definitions каждые N итераций; каталог должен существовать",
+          "why": "report-files writes report definition values every N iterations; the directory must exist",
           "specPath": "outputs.reportFile",
           "required": false
         },
         {
           "id": "outputs.reportPlots",
-          "text": "Строить графики истории отчётов (report-plots)?",
+          "text": "Build report history plots (report-plots)?",
           "type": "boolean",
           "default": true,
-          "why": "в batch (-g) график не отображается, но объект создаётся; в движке reportDefs пока не передаётся",
+          "why": "In batch (-g) the plot is not displayed, but the object is created; reportDefs is not passed by the engine yet",
           "specPath": "outputs.reportPlots",
           "required": false
         },
         {
           "id": "outputs.exportFields",
-          "text": "Какие поля выгружать в ASCII-экспорт?",
+          "text": "Which fields to export in the ASCII export?",
           "type": "array",
           "default": ["temperature", "pressure", "velocity-magnitude"],
-          "why": "поля задаются позиционно в /file/export/ascii; имена внутренние (temperature, pressure, heat-flux, ...)",
+          "why": "Fields are passed positionally in /file/export/ascii; the names are internal (temperature, pressure, heat-flux, ...)",
           "specPath": "outputs.export.fields",
           "required": false
         },
         {
           "id": "outputs.exportSurfaces",
-          "text": "С каких поверхностей/зон выгружать поля?",
+          "text": "From which surfaces/zones to export the fields?",
           "type": "array",
           "default": [],
-          "why": "список поверхностей — второй аргумент /file/export/ascii; поверхности должны существовать",
+          "why": "The surface list is the second argument of /file/export/ascii; the surfaces must exist",
           "specPath": "outputs.export.surfaces",
           "required": false
         }
@@ -617,69 +617,69 @@
     },
     {
       "id": "backups",
-      "title": "Бэкапы и ресурсы",
+      "title": "Backups and resources",
       "questions": [
         {
           "id": "backups.enabled",
-          "text": "Делать автосохранение кейса/данных во время расчёта?",
+          "text": "Auto-save the case/data during the run?",
           "type": "boolean",
           "default": true,
-          "why": "защищает длинный расчёт; но рабочий синтаксис /file/auto-save в KB НЕ найден (requires_verification) — без проверки шаг не попадёт в журнал",
+          "why": "Protects a long run; but the working /file/auto-save syntax was NOT found in the KB (requires_verification) — without verification the step will not go into the journal",
           "specPath": "outputs.backups.enabled",
           "required": false
         },
         {
           "id": "backups.everyIterations",
-          "text": "Как часто сохранять (каждые N итераций)?",
+          "text": "How often to save (every N iterations)?",
           "type": "number",
           "default": 500,
-          "why": "data-frequency — числовой инкремент (в 2026 R1), но конкретная форма команды не проверена",
+          "why": "data-frequency is a numeric increment (in 2026 R1), but the exact command form is not verified",
           "specPath": "outputs.backups.everyIterations",
           "required": false
         },
         {
           "id": "backups.keep",
-          "text": "Сколько последних файлов хранить?",
+          "text": "How many recent files to keep?",
           "type": "number",
           "default": 5,
-          "why": "retain-most-recent-files; при переполнении старые файлы удаляются",
+          "why": "retain-most-recent-files; older files are deleted on overflow",
           "specPath": "outputs.backups.keep",
           "required": false
         },
         {
           "id": "backups.path",
-          "text": "Куда складывать бэкапы и результаты?",
+          "text": "Where to store backups and results?",
           "type": "string",
           "default": "archive",
-          "why": "отдельный каталог (archive/) защищает результаты от перезаписи при пересчёте",
+          "why": "A separate directory (archive/) protects the results from being overwritten on a re-run",
           "specPath": "outputs.backups.path",
           "required": false
         },
         {
           "id": "resources.threads",
-          "text": "Сколько потоков/процессов использовать?",
+          "text": "How many threads/processes to use?",
           "type": "number",
           "default": 4,
-          "why": "задаётся при запуске (fluent -tN); больше ядер ускоряет расчёт, но требует лицензии и памяти",
+          "why": "Set at launch (fluent -tN); more cores speed up the run but require license and memory",
           "specPath": "fluent.threads",
           "required": false
         },
         {
           "id": "resources.mpi",
-          "text": "Какой MPI использовать?",
+          "text": "Which MPI to use?",
           "type": "enum",
           "values": ["intel", "msmpi", "none"],
           "default": "intel",
-          "why": "в проекте используется -mpi=intel; локальный запуск без MPI — none",
+          "why": "The project uses -mpi=intel; a local run without MPI — none",
           "specPath": "fluent.mpi",
           "required": false
         },
         {
           "id": "run.stages",
-          "text": "Опишите этапы расчёта (итерации, перебор FR/выражений), если их несколько.",
+          "text": "Describe the run stages (iterations, FR/expression sweeps) if there are several.",
           "type": "array",
           "default": [],
-          "why": "run.stages используются компилятором для последовательности /solve/iterate; sweep по FR — профильная логика",
+          "why": "run.stages is used by the compiler for the /solve/iterate sequence; FR sweep is profile logic",
           "specPath": "run.stages",
           "required": false
         }

@@ -1,7 +1,7 @@
 {
   "id": "example-channel",
-  "title": "Пример: ламинарный канал (синтетический шаблон)",
-  "description": "Минимальный учебный кейс: сетка + ламинарный решатель + инициализация + сохранение. Показывает формат профиля (параметры, вычисления, пресеты, шаблон журнала); НЕ воспроизводит конкретный научный расчёт. Добавьте свои ГУ и отчёты.",
+  "title": "Example: laminar channel (synthetic template)",
+  "description": "Minimal tutorial case: mesh + laminar solver + initialization + save. It shows the profile format (parameters, computations, presets, journal template); it does NOT reproduce a specific scientific run. Add your own BCs and reports.",
   "category": "example",
   "version": 1,
   "status": "example",
@@ -11,24 +11,24 @@
       "type": "string",
       "required": true,
       "default": "/path/to/channel.msh",
-      "description": "путь к вашей сетке .msh (замените)"
+      "description": "path to your .msh mesh (replace)"
     },
     "L": {
       "type": "number",
       "unit": "mm",
       "default": 1000,
-      "description": "длина канала"
+      "description": "channel length"
     },
     "h": {
       "type": "number",
       "unit": "mm",
       "default": 10,
-      "description": "высота канала"
+      "description": "channel height"
     },
     "iterations": {
       "type": "integer",
       "default": 500,
-      "description": "максимум итераций"
+      "description": "maximum number of iterations"
     }
   },
   "computed": {
@@ -54,7 +54,7 @@
   "verification": {
     "status": "example",
     "date": "2026-11-11",
-    "evidence": "Синтетический пример. Журнал собран только из проверенных рецептов (read-case, mesh/check, laminar, solver, p-v-coupling, number-of-iterations, reporting-interval, hyb-initialization, residual criteria, write-case-data), но не воспроизводит чужой расчёт и не содержит чужих данных.",
-    "notes": "Это шаблон для обучения формату профиля. Для реальной задачи используйте fluent_case_interview → fluent_case_plan({spec}) или добавьте свой профиль в data/profiles/ или config.profileDirs."
+    "evidence": "Synthetic example. The journal is assembled only from verified recipes (read-case, mesh/check, laminar, solver, p-v-coupling, number-of-iterations, reporting-interval, hyb-initialization, residual criteria, write-case-data), but it does not reproduce someone else's run and contains no third-party data.",
+    "notes": "This is a template for learning the profile format. For a real problem use fluent_case_interview → fluent_case_plan({spec}) or add your own profile under data/profiles/ or config.profileDirs."
   }
 }

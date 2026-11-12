@@ -1,6 +1,6 @@
 {
   "id": "boundary.pressure-inlet.chain",
-  "title": "Pressure-inlet: цепочка параметров",
+  "title": "Pressure-inlet: parameter chain",
   "category": "boundary",
   "status": "unverified",
   "confidence": "low",
@@ -26,5 +26,5 @@
       "type": "number"
     }
   ],
-  "notes": "Для сжимаемых/сверхзвуковых входов. Цепочка в KB не проходилась; известно, что набор вопросов зависит от моделей (энергия/species/турбулентность) и что /solve/set/previous-defaults содержит опцию про normal Mach number at pressure inlet (00_GENERAL/command_index.md:1657). Нужна live-сессия."
+  "notes": "For compressible/supersonic inlets. The chain was not walked in the KB; it is known that the question set depends on the models (energy/species/turbulence) and that /solve/set/previous-defaults contains an option about normal Mach number at pressure inlet (00_GENERAL/command_index.md:1657). A live session is needed."
 }

@@ -1,6 +1,6 @@
 {
   "id": "expressions.edit",
-  "title": "Изменение Named Expression",
+  "title": "Edit a Named Expression",
   "category": "expressions",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/named-expressions edit \"{{name}}\" definition \"{{value}}\" q q"
   ],
-  "interactive": "edit → имя выражения → definition → значение (с единицами, например \"2000 [K]\") → q q",
+  "interactive": "edit → expression name → definition → value (with units, e.g. \"2000 [K]\") → q q",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -26,5 +26,5 @@
       "default": "1.0"
     }
   ],
-  "notes": "Проверено рабочим журналом. Два `q` закрывают подменю; значение можно задавать с единицами в квадратных скобках."
+  "notes": "Verified by the working journal. Two `q` close the submenu; the value may be given with units in square brackets."
 }

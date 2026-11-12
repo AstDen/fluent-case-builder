@@ -1,6 +1,6 @@
 {
   "id": "file.write-case-data",
-  "title": "Сохранение кейса и данных",
+  "title": "Save case and data",
   "category": "file",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/file/write-case-data \"{{name}}\" yes"
   ],
-  "interactive": "/file/write-case-data → имя файла (без расширения) → подтверждение yes",
+  "interactive": "/file/write-case-data → file name (without extension) → confirmation yes",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "required": true
     }
   ],
-  "notes": "СКРЫТАЯ команда: отсутствует в меню /file/, в ?write-case-data, в commands.csv, но работает в журналах (проверено двумя рабочими журналами). Без расширения Fluent добавляет .cas.h5. Требует наличия данных решения."
+  "notes": "HIDDEN command: absent from the /file/ menu, from ?write-case-data, and from commands.csv, but it works in journals (verified by two working journals). Without an extension Fluent adds .cas.h5. Requires solution data."
 }

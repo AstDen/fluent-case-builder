@@ -3,14 +3,14 @@
   "rules": [
     {
       "id": "solver.base-pressure-based",
-      "title": "База: несжимаемая постановка — pressure-based",
+      "title": "Base: incompressible setup — pressure-based",
       "when": {
         "physics.compressibility": "incompressible"
       },
       "recommend": {
         "solver.type": "pressure-based"
       },
-      "why": "Для несжимаемых и слабосжимаемых течений штатный segregated-решатель pressure-based; в 3ddp он включён по умолчанию (07_SOLVER §1).",
+      "why": "For incompressible and weakly compressible flows the standard segregated pressure-based solver is used; in 3ddp it is enabled by default (07_SOLVER §1).",
       "status": "derived",
       "confidence": "high",
       "source": "KB/04_MODELS/models_overview.md:81-93; KB/07_SOLVER/deep_dive.md:6-14; KB/QA_LOG.md:43-59",
@@ -20,7 +20,7 @@
     },
     {
       "id": "solver.mach-density-based",
-      "title": "Mach >= 0.3: density-based-implicit + сжимаемость + энергия",
+      "title": "Mach >= 0.3: density-based-implicit + compressibility + energy",
       "when": {
         "physics.mach": {
           ">=": 0.3
@@ -32,7 +32,7 @@
         "physics.energy": true,
         "materials.density.method": "ideal-gas"
       },
-      "why": "При Mach >= 0.3 сжимаемость существенна: coupled-implicit density-based решатель устойчивее для транс-/сверхзвука и скачков; для сжимаемого газа нужны уравнение энергии и ideal-gas плотность. Порог 0.3 — инженерная практика, явного порога в KB нет, поэтому статус derived.",
+      "why": "At Mach >= 0.3 compressibility matters: the coupled-implicit density-based solver is more robust for trans/supersonic flows and shocks; a compressible gas needs the energy equation and ideal-gas density. The 0.3 threshold is engineering practice; the KB has no explicit threshold, hence status derived.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/07_SOLVER/deep_dive.md:6-14; KB/04_MODELS/models_overview.md:81-93; KB/QA_LOG.md:43-59",
@@ -44,7 +44,7 @@
     },
     {
       "id": "solver.low-mach",
-      "title": "Mach < 0.3: остаёмся на pressure-based",
+      "title": "Mach < 0.3: stay with pressure-based",
       "when": {
         "physics.mach": {
           "<": 0.3
@@ -54,7 +54,7 @@
         "solver.type": "pressure-based",
         "physics.compressibility": "incompressible"
       },
-      "why": "При Mach < 0.3 сжимаемость можно не учитывать; pressure-based проще и дешевле, p-v-coupling Coupled (код 24) — штатная схема.",
+      "why": "At Mach < 0.3 compressibility can be neglected; pressure-based is simpler and cheaper, p-v-coupling Coupled (code 24) is the standard scheme.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/07_SOLVER/deep_dive.md:6-14; KB/QA_LOG.md:43-59",
@@ -65,14 +65,14 @@
     },
     {
       "id": "solver.pv-coupling-coded",
-      "title": "Схема связи давление-скорость для pressure-based",
+      "title": "Pressure-velocity coupling scheme for pressure-based",
       "when": {
         "solver.type": "pressure-based"
       },
       "recommend": {
         "solver.p-v-coupling": "Coupled"
       },
-      "why": "В новом кейсе по умолчанию 24 (Coupled); коды проверены: 20 SIMPLE, 21 SIMPLEC, 22 PISO, 24 Coupled. Для пористых/сложных кейсов пользователь ставит 20 (SIMPLE) — это осознанное решение, не дефолт.",
+      "why": "A new case defaults to 24 (Coupled); the codes are verified: 20 SIMPLE, 21 SIMPLEC, 22 PISO, 24 Coupled. For porous/complex cases the user sets 20 (SIMPLE) — a deliberate decision, not the default.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/QA_LOG.md:61-69; KB/07_SOLVER/deep_dive.md:84-92",
@@ -82,7 +82,7 @@
     },
     {
       "id": "turbulence.laminar-low-re",
-      "title": "Re < 5000: ламинарная модель",
+      "title": "Re < 5000: laminar model",
       "when": {
         "physics.reynolds": {
           "<": 5000
@@ -91,7 +91,7 @@
       "recommend": {
         "physics.turbulence.model": "laminar"
       },
-      "why": "В проверенном рабочем журнале порог переключения — Re = 5000: ниже порога считается ламинарная постановка, setup_case.jou всегда ламинарный.",
+      "why": "In the verified working journal the switching threshold is Re = 5000: below the threshold a laminar setup is used, and setup_case.jou is always laminar.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/04_MODELS/viscous.md:92-102",
@@ -112,7 +112,7 @@
         "bc.inlet.turbulenceIntensity": 10,
         "bc.inlet.turbulenceViscosityRatio": 30
       },
-      "why": "При Re >= 5000 течение турбулентное; в проверенном рабочем журнале включается k-omega SST (в runtime, из switch_to_turbulence.jou), inlet переключается на mass-flow-inlet с интенсивностью 10% и viscosity ratio 30.",
+      "why": "At Re >= 5000 the flow is turbulent; the verified working journal enables k-omega SST (at runtime, from switch_to_turbulence.jou) and switches the inlet to mass-flow-inlet with 10% intensity and viscosity ratio 30.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/04_MODELS/viscous.md:160-181",
@@ -123,14 +123,14 @@
     },
     {
       "id": "energy.heat-transfer",
-      "title": "Теплообмен: включить уравнение энергии",
+      "title": "Heat transfer: enable the energy equation",
       "when": {
         "physics.heatTransfer": true
       },
       "recommend": {
         "physics.energy": true
       },
-      "why": "Уравнение энергии открывает тепловые ГУ, radiation, CHT, shell conduction, solidification; без него температура не решается. Цепочка из 5 вопросов проверена.",
+      "why": "The energy equation unlocks thermal BCs, radiation, CHT, shell conduction, solidification; without it the temperature is not solved. The 5-question chain is verified.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/04_MODELS/energy.md:69-94; KB/QA_LOG.md:104-117",
@@ -140,7 +140,7 @@
     },
     {
       "id": "energy.high-temperature",
-      "title": "Высокие температуры (>= 1000 K): энергия обязательна",
+      "title": "High temperatures (>= 1000 K): energy is mandatory",
       "when": {
         "temperature": {
           ">=": 1000
@@ -149,7 +149,7 @@
       "recommend": {
         "physics.energy": true
       },
-      "why": "При температурах порядка 1000 K и выше нельзя пренебрегать переменными свойствами и излучением; уравнение энергии — предпосылка radiation и температурно-зависимых свойств.",
+      "why": "At temperatures around 1000 K and above, variable properties and radiation cannot be neglected; the energy equation is a prerequisite for radiation and temperature-dependent properties.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/04_MODELS/energy.md:69-94; KB/04_MODELS/radiation.md:1-30",
@@ -159,7 +159,7 @@
     },
     {
       "id": "radiation.high-temperature",
-      "title": "T >= 1000 K: излучение Discrete Ordinates",
+      "title": "T >= 1000 K: Discrete Ordinates radiation",
       "when": {
         "temperature": {
           ">=": 1000
@@ -169,7 +169,7 @@
         "physics.radiation.enabled": true,
         "physics.radiation.model": "discrete-ordinates"
       },
-      "why": "При T >= 1000 K радиационный тепловой поток становится существенным; DO — основной рабочий вариант для горения/печей (KB 04_MODELS/radiation.md §2.2). Порог ~1000 K — инженерная практика (в KB явного порога нет), поэтому статус derived.",
+      "why": "At T >= 1000 K the radiative heat flux becomes significant; DO is the main working option for combustion/furnaces (KB 04_MODELS/radiation.md §2.2). The ~1000 K threshold is engineering practice (the KB has no explicit threshold), hence status derived.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/04_MODELS/radiation.md:33-78; KB/QA_LOG.md:262-269",
@@ -180,14 +180,14 @@
     },
     {
       "id": "materials.compressible-ideal-gas",
-      "title": "Сжимаемый газ: плотность ideal-gas",
+      "title": "Compressible gas: ideal-gas density",
       "when": {
         "physics.compressibility": "compressible"
       },
       "recommend": {
         "materials.density.method": "ideal-gas"
       },
-      "why": "Метод ideal-gas требует включённого уравнения энергии (Fluent включает его сам); проверены обе журнальные формы — fluid и mixture.",
+      "why": "The ideal-gas method requires the energy equation to be enabled (Fluent enables it itself); both journal forms — fluid and mixture — are verified.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/05_MATERIALS/materials.md:291-342; KB/QA_LOG.md:191-213",
@@ -198,7 +198,7 @@
     },
     {
       "id": "combustion.species-transport",
-      "title": "Горение: Species Transport с mixture-материалом",
+      "title": "Combustion: Species Transport with a mixture material",
       "when": {
         "combustion": true
       },
@@ -207,7 +207,7 @@
         "physics.species.reactions": true,
         "materials.datasource": "user-defined"
       },
-      "why": "Для горения сначала импортируется пользовательская база материалов (.src) с mixture-материалом и механизмом, затем включается species-transport с именем mixture; без mixture-материала модель не включится.",
+      "why": "For combustion, a user material database (.src) with a mixture material and a mechanism is imported first, then species-transport is enabled with the mixture name; without a mixture material the model will not turn on.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/06_SPECIES/species_combustion.md:46-59; KB/05_MATERIALS/materials.md:168-190; KB/QA_LOG.md:149-170",
@@ -218,14 +218,14 @@
     },
     {
       "id": "combustion.reactions",
-      "title": "Горение: объёмные реакции + stiff chemistry",
+      "title": "Combustion: volumetric reactions + stiff chemistry",
       "when": {
         "combustion": true
       },
       "recommend": {
         "physics.species.reactions": true
       },
-      "why": "Механизм из .src содержит reactions/reaction-mechs; чтобы получить источники, включают volumetric-reactions; для детальных механизмов — stiff-chemistry. Строки проверены журналом user.",
+      "why": "The mechanism from the .src contains reactions/reaction-mechs; volumetric-reactions are enabled to get sources; for detailed mechanisms — stiff-chemistry. The lines are verified by the user journal.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/06_SPECIES/species_combustion.md:61-100; KB/06_SPECIES/species_combustion.md:205-227",
@@ -235,7 +235,7 @@
     },
     {
       "id": "combustion.udf-reaction-rate",
-      "title": "Горение с UDF: хук volume-reaction-rate",
+      "title": "Combustion with a UDF: volume-reaction-rate hook",
       "when": {
         "combustion": true,
         "udf": true
@@ -243,7 +243,7 @@
       "recommend": {
         "udf.hook": "volume-reaction-rate"
       },
-      "why": "UDF-механизм user подменяет скорость реакции через DEFINE_VR_RATE и хук volume-reaction-rate \"<функция>::<библиотека>\"; библиотека должна быть скомпилирована и загружена заранее.",
+      "why": "The user UDF mechanism replaces the reaction rate via DEFINE_VR_RATE and the volume-reaction-rate hook \"<function>::<library>\"; the library must be compiled and loaded beforehand.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/15_UDF/function_hooks.md:20-70; KB/06_SPECIES/species_combustion.md:205-227; KB/QA_LOG.md:149-170",
@@ -255,14 +255,14 @@
     },
     {
       "id": "multiphase.select-model",
-      "title": "Многофазность: выбор модели по умолчанию",
+      "title": "Multiphase: default model selection",
       "when": {
         "multiphase": true
       },
       "recommend": {
         "physics.multiphase.model": "vof"
       },
-      "why": "Если многофазность нужна, но тип не задан — базовый выбор VOF для резких границ раздела фаз; далее правила multiphase.vof/eulerian/mixture уточняют модель по physics.multiphase.model.",
+      "why": "If multiphase flow is needed but the type is not specified — the base choice is VOF for sharp phase interfaces; then the multiphase.vof/eulerian/mixture rules refine the model by physics.multiphase.model.",
       "status": "derived",
       "confidence": "low",
       "source": "KB/04_MODELS/dpm_multiphase.md:141-202",
@@ -272,14 +272,14 @@
     },
     {
       "id": "multiphase.vof",
-      "title": "Многофазность VOF",
+      "title": "VOF multiphase",
       "when": {
         "physics.multiphase.model": "vof"
       },
       "recommend": {
         "physics.multiphase.enabled": true
       },
-      "why": "VOF — для резких границ раздела фаз; обычно требует нестационарной постановки. Вопрос TUI проверен: Available options (\"none\" \"vof\" \"eulerian\" \"mixture\" \"wetsteam\").",
+      "why": "VOF is for sharp phase interfaces; it usually requires a transient setup. The TUI question is verified: Available options (\"none\" \"vof\" \"eulerian\" \"mixture\" \"wetsteam\").",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/04_MODELS/dpm_multiphase.md:141-202; KB/QA_LOG.md:279-286",
@@ -290,14 +290,14 @@
     },
     {
       "id": "multiphase.eulerian",
-      "title": "Многофазность Eulerian",
+      "title": "Eulerian multiphase",
       "when": {
         "physics.multiphase.model": "eulerian"
       },
       "recommend": {
         "physics.multiphase.enabled": true
       },
-      "why": "Eulerian подходит для плотных дисперсных/пузырьковых потоков с учётом межфазного взаимодействия; требует числа фаз и обычно transient.",
+      "why": "Eulerian suits dense dispersed/bubbly flows with interphase interaction; it requires the number of phases and usually transient.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/04_MODELS/dpm_multiphase.md:141-202",
@@ -307,14 +307,14 @@
     },
     {
       "id": "multiphase.mixture",
-      "title": "Многофазность Mixture",
+      "title": "Mixture multiphase",
       "when": {
         "physics.multiphase.model": "mixture"
       },
       "recommend": {
         "physics.multiphase.enabled": true
       },
-      "why": "Mixture — упрощённая модель для слабо связанных фаз; может решаться стационарно, дешевле Eulerian; используется, когда детали границы раздела не нужны.",
+      "why": "Mixture is a simplified model for weakly coupled phases; it can be solved steady-state and is cheaper than Eulerian; used when interface details are not needed.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/04_MODELS/dpm_multiphase.md:141-202",
@@ -324,7 +324,7 @@
     },
     {
       "id": "dpm.particles",
-      "title": "Частицы: DPM (дискретная фаза)",
+      "title": "Particles: DPM (discrete phase)",
       "when": {
         "particles": true
       },
@@ -332,7 +332,7 @@
         "physics.particles.enabled": true,
         "physics.dpm.two-way-coupling": true
       },
-      "why": "DPM активируется созданием инжекции; для влияния частиц на газ включают two-way coupling. Требует сетки, для испарения/реакций — energy/species. В KB нет проверенной полной цепочки.",
+      "why": "DPM is activated by creating an injection; two-way coupling is enabled for particles to affect the gas. It requires a mesh; for evaporation/reactions — energy/species. The KB has no verified full chain.",
       "status": "unverified",
       "confidence": "low",
       "source": "KB/04_MODELS/dpm_multiphase.md:7-49; KB/04_MODELS/dpm_multiphase.md:132-139",
@@ -342,14 +342,14 @@
     },
     {
       "id": "transient.unsteady",
-      "title": "Нестационарная постановка",
+      "title": "Transient setup",
       "when": {
         "transient": true
       },
       "recommend": {
         "physics.transient": true
       },
-      "why": "Для физически нестационарных задач (вращающиеся машины, VOF, импульсные процессы) включают unsteady; 2-й порядок — точнее. Полные цепочки /solve/set/transient-controls/* в KB не сняты.",
+      "why": "For physically transient problems (rotating machinery, VOF, pulsed processes) unsteady is enabled; 2nd order is more accurate. The full /solve/set/transient-controls/* chains were not captured in the KB.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/08_TRANSIENT/deep_dive.md:6-44; KB/04_MODELS/models_overview.md:94-110",
@@ -370,7 +370,7 @@
           "udf.function-hook"
         ]
       },
-      "why": "Все рабочие журналы пользователя используют только compiled-UDF: компиляция библиотеки, загрузка, затем привязка хука. Interpreted в их практике не используется; меню function-hooks появляется после load.",
+      "why": "All user working journals use compiled UDFs only: compile the library, load it, then bind the hook. Interpreted is not used in their practice; the function-hooks menu appears after load.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/15_UDF/udf_guide.md:104-145; KB/15_UDF/function_hooks.md:20-70",
@@ -381,7 +381,7 @@
     },
     {
       "id": "axisymmetric.2d",
-      "title": "Осесимметрия: 2D-axisymmetric + тип зоны axis",
+      "title": "Axisymmetry: 2D-axisymmetric + axis zone type",
       "when": {
         "axisymmetric": true
       },
@@ -393,7 +393,7 @@
         ],
         "bc.axis.type": "axis"
       },
-      "why": "Для осесимметричной задачи нужна 2D-осесимметричная постановка (размерность задаётся при запуске Fluent, 2ddp) и ось вращения как зона типа axis; команда /define/models/axisymmetric? зарегистрирована во внутреннем дереве, но в живом меню не наблюдалась.",
+      "why": "An axisymmetric problem needs a 2D axisymmetric setup (the dimensionality is set when starting Fluent, 2ddp) and the axis of rotation as an axis-type zone; the /define/models/axisymmetric? command is registered in the internal tree but was not observed in the live menu.",
       "status": "unverified",
       "confidence": "low",
       "source": "KB/04_MODELS/models_overview.md:70-80; KB/03_BOUNDARY_CONDITIONS/deep_dive.md:68-81",
@@ -404,7 +404,7 @@
     },
     {
       "id": "porous.zone",
-      "title": "Пористая зона: fluid + porous + UDF-свойства",
+      "title": "Porous zone: fluid + porous + UDF properties",
       "when": {
         "porous": true
       },
@@ -415,7 +415,7 @@
         ],
         "bc.porous.formulation": "physical-velocity"
       },
-      "why": "Пористая среда задаётся в fluid-зоне (Porous zone? yes): направляющие, viscous/inertial resistance, porosity; для сопряжённого теплообмена при необходимости нужны UDF/UDM, для физической скорости — physical-velocity-porous-formulation.",
+      "why": "A porous medium is set in the fluid zone (Porous zone? yes): directions, viscous/inertial resistance, porosity; for conjugate heat transfer UDF/UDM may be needed, and physical-velocity-porous-formulation for physical velocity.",
       "status": "derived",
       "confidence": "medium",
       "source": "KB/03_BOUNDARY_CONDITIONS/deep_dive.md:114-150",
@@ -426,7 +426,7 @@
     },
     {
       "id": "stopping.monitoring",
-      "title": "Критерии остановки: residual + conv-reports + reporting-interval",
+      "title": "Stopping criteria: residual + conv-reports + reporting-interval",
       "when": {
         "transient": false
       },
@@ -437,7 +437,7 @@
           "solve.reporting-interval"
         ]
       },
-      "why": "В рабочем проекте остановка комбинированная: пороги невязок (5 значений, последнее — energy), критерии по отчётам (conv-reports) и reporting-interval, чтобы внешний Scheme-цикл мог вклиниться. строгий режим: energy 5e-6/stop 1e-3/window 1000/freq 100; ослабленный режим: 5e-4/5e-3/500/50.",
+      "why": "In the working project stopping is combined: residual thresholds (5 values, the last one is energy), report-based criteria (conv-reports) and reporting-interval so that the external Scheme loop can step in. strict mode: energy 5e-6/stop 1e-3/window 1000/freq 100; relaxed mode: 5e-4/5e-3/500/50.",
       "status": "derived",
       "confidence": "high",
       "source": "KB/11_MONITORS/monitors.md:120-160; KB/10_CONVERGENCE/deep_dive.md:28-67",

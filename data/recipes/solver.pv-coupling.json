@@ -1,6 +1,6 @@
 {
   "id": "solver.pv-coupling",
-  "title": "Схема связи давление–скорость (pressure-velocity coupling)",
+  "title": "Pressure-velocity coupling scheme",
   "category": "solver",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/set/p-v-coupling {{code}}"
   ],
-  "interactive": "Pressure Velocity Coupling Scheme [24] → коды: 20 SIMPLE, 21 SIMPLEC, 22 PISO, 24 Coupled",
+  "interactive": "Pressure Velocity Coupling Scheme [24] → codes: 20 SIMPLE, 21 SIMPLEC, 22 PISO, 24 Coupled",
   "requires": [
     "models.solver.pressure-based"
   ],
@@ -29,5 +29,5 @@
       "default": "24"
     }
   ],
-  "notes": "Коды сняты через `?` в живой сессии (Q-002); по умолчанию в новом кейсе 24 (Coupled). В проверенном рабочем журнале для пористого кейса стоит 20 (SIMPLE). Применимо только к pressure-based."
+  "notes": "The codes were captured via `?` in a live session (Q-002); the default in a new case is 24 (Coupled). In the verified working journal the porous case uses 20 (SIMPLE). Applies to pressure-based only."
 }

@@ -1,13 +1,13 @@
 {
   "id": "materials.copy",
-  "title": "Копирование материала из базы",
+  "title": "Copy a material from the database",
   "category": "materials",
   "status": "unverified",
   "confidence": "low",
   "source": "KB/05_MATERIALS/materials.md:141-150; KB/05_MATERIALS/materials.md:270-277",
   "date": "2026-11-11",
   "journal": [],
-  "interactive": "copy → Available options (\"fluid\" \"solid\") → Select material type → материал из базы → новое имя",
+  "interactive": "copy → Available options (\"fluid\" \"solid\") → Select material type → material from the database → new name",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -29,5 +29,5 @@
       "type": "string"
     }
   ],
-  "notes": "Проверен только первый вопрос (`Available options: (\"fluid\" \"solid\")` → `Select material type [\"fluid\"]`); дальнейшая цепочка (имя материала базы, новое имя) не записана — requires_verification. Для изменения уже существующего материала использовать change-create."
+  "notes": "Only the first question was verified (`Available options: (\"fluid\" \"solid\")` → `Select material type [\"fluid\"]`); the rest of the chain (database material name, new name) was not recorded — requires_verification. To modify an existing material use change-create."
 }

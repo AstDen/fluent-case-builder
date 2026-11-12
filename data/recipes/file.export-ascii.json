@@ -1,6 +1,6 @@
 {
   "id": "file.export-ascii",
-  "title": "ASCII-экспорт поверхностных/объёмных данных",
+  "title": "ASCII export of surface/volume data",
   "category": "file",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/file/export/ascii \"{{file}}\" ({{surfaces}}) () yes {{fields}} () yes"
   ],
-  "interactive": "/file/export/ascii → имя файла → список поверхностей (…) → () → yes → список полей → () → yes",
+  "interactive": "/file/export/ascii → file name → surface list (…) → () → yes → field list → () → yes",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -31,5 +31,5 @@
       "required": true
     }
   ],
-  "notes": "Проверено на реальных расчётах пользователя (start.sh/start.sh.template). Первая строка файла — заголовок, разделитель — запятая. Смысл литералов `()` и второго `yes` в справке не раскрыт (requires_verification); при неверном числе аргументов журнал обрывается. Внутренние имена полей: temperature, velocity-magnitude, x-velocity, y-velocity, pressure, density, specific-heat-cp, thermal-conductivity-lam, viscosity-lam, heat-flux."
+  "notes": "Verified on the user's real runs (start.sh/start.sh.template). The first line of the file is a header, the separator is a comma. The meaning of the `()` literals and the second `yes` is not explained in the help (requires_verification); with a wrong number of arguments the journal aborts. Internal field names: temperature, velocity-magnitude, x-velocity, y-velocity, pressure, density, specific-heat-cp, thermal-conductivity-lam, viscosity-lam, heat-flux."
 }

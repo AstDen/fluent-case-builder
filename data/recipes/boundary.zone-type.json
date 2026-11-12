@@ -1,6 +1,6 @@
 {
   "id": "boundary.zone-type",
-  "title": "Смена типа зоны (BC)",
+  "title": "Change zone type (BC)",
   "category": "boundary",
   "status": "verified",
   "confidence": "high",
@@ -9,7 +9,7 @@
   "journal": [
     "/define/boundary-conditions zone-type {{zone}} {{type}}"
   ],
-  "interactive": "zone id/name/list [] → id/имя; external-type> → новый тип",
+  "interactive": "zone id/name/list [] → id/name; external-type> → new type",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -36,5 +36,5 @@
       "required": true
     }
   ],
-  "notes": "Два последовательных под-приглашения (zone id/name/list, затем external-type). Команды типа BC доступны только при наличии зон этого типа; смена типа сбрасывает параметры BC. Полный список external-type см. 03_BC §3."
+  "notes": "Two consecutive sub-prompts (zone id/name/list, then external-type). BC-type commands are available only when zones of that type exist; changing the type resets the BC parameters. See 03_BC §3 for the full external-type list."
 }

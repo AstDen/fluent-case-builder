@@ -1,6 +1,6 @@
 {
   "id": "models.species.reactions",
-  "title": "Объёмные реакции и stiff chemistry",
+  "title": "Volumetric reactions and stiff chemistry",
   "category": "models",
   "status": "verified",
   "confidence": "medium",
@@ -17,5 +17,5 @@
   ],
   "conflicts": [],
   "params": [],
-  "notes": "Строки из проверенного журнала user (QA_LOG Q-010); журнал пользователя не датирован v261 — синтаксис помечен как «journal пользователя». Смысл параметров `1 0.5` у stiff-chemistry не расшифрован (requires_verification)."
+  "notes": "Lines from the verified user journal (QA_LOG Q-010); the user journal is not dated v261 — the syntax is marked as 'user journal'. The meaning of the `1 0.5` parameters for stiff-chemistry is not decoded (requires_verification)."
 }

@@ -1,6 +1,6 @@
 {
   "id": "report.plots",
-  "title": "График истории отчёта (report-plots/add)",
+  "title": "Report history plot (report-plots/add)",
   "category": "reports",
   "status": "derived",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/report-plots/add {{name}} report-defs ({{reportDefs}}) frequency {{frequency}} active? yes q q"
   ],
-  "interactive": "add → имя rp---… → report-defs (список) → frequency → active? yes → q q",
+  "interactive": "add → name rp---… → report-defs (list) → frequency → active? yes → q q",
   "requires": [
     "report.definitions"
   ],
@@ -36,5 +36,5 @@
       "default": 50
     }
   ],
-  "notes": "DERIVED из проверенной строки проверенного рабочего журнала (закрывается двумя `q`). compile.js передаёт {name: rp---<имя отчёта>, reportDef: <имя отчёта>, frequency}. Соглашение проекта: rd---<смысл> для дефиниций, rp---<смысл> для графиков; в batch (-g) график не отображается, но объект создаётся."
+  "notes": "DERIVED from the verified line of the verified working journal (closed by two `q`). compile.js passes {name: rp---<report name>, reportDef: <report name>, frequency}. Project convention: rd---<meaning> for definitions, rp---<meaning> for plots; in batch (-g) the plot is not displayed, but the object is still created."
 }

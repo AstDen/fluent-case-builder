@@ -1,6 +1,6 @@
 {
   "id": "solve.iterate",
-  "title": "Запуск итераций (alias для compile.js)",
+  "title": "Run iterations (alias for compile.js)",
   "category": "solution",
   "status": "verified",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/iterate {{iterations}}"
   ],
-  "interactive": "/solve/iterate → Perform a specified number of iterations; аргумент — число итераций",
+  "interactive": "/solve/iterate → Perform a specified number of iterations; the argument is the iteration count",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "default": 1
     }
   ],
-  "notes": "ALIAS: compile.js вызывает ['solve.iterate'] и передаёт {iterations}; канонический id — solver.iterate. Форма подтверждена рабочими start.sh/start.sh.template (число 1000000000 через Scheme)."
+  "notes": "ALIAS: compile.js calls ['solve.iterate'] and passes {iterations}; the canonical id is solver.iterate. The form is confirmed by the working start.sh/start.sh.template files (iteration count 1000000000 via Scheme)."
 }

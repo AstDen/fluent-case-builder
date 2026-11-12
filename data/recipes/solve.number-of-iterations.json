@@ -1,6 +1,6 @@
 {
   "id": "solve.number-of-iterations",
-  "title": "Число итераций по умолчанию",
+  "title": "Default number of iterations",
   "category": "solution",
   "status": "verified",
   "confidence": "medium",
@@ -9,7 +9,7 @@
   "journal": [
     "/solve/set/number-of-iterations {{iterations}} q"
   ],
-  "interactive": "Number of Iterations [0] → целое число → q",
+  "interactive": "Number of Iterations [0] → integer → q",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -19,5 +19,5 @@
       "default": 500
     }
   ],
-  "notes": "Команда проверена (показ текущего значения [0]); рабочая журнальная строка `/solve/set/number-of-iterations 10000000 q`. В исследовании итерации не запускались. В проверенный журнал число заведомо большое, останов — по критериям сходимости."
+  "notes": "The command is verified (shows the current value [0]); the working journal line is `/solve/set/number-of-iterations 10000000 q`. Iterations were not run during the research. In the verified journal the number is deliberately large; stopping is by convergence criteria."
 }

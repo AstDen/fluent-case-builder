@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 /**
- * ingest-report.mjs — агрегатор отчётов «петли обучения» fluent-case-builder.
+ * ingest-report.mjs — report aggregator for the fluent-case-builder learning loop.
  *
- * Коллеги генерируют отчёты инструментом `fluent_task_report`
- * (контракт: docs/REPORT_FORMAT.md, schema `fluent-case-builder/report@1`),
- * мейнтейнер складывает их в learning/inbox/ и запускает этот скрипт.
- * На выходе:
- *   learning/aggregate.json — машиночитаемый агрегат (дедуп по id отчёта, merge);
- *   learning/backlog.md     — человекочитаемый бэклог для мейнтейнера.
+ * Colleagues generate reports with the `fluent_task_report` tool
+ * (contract: docs/REPORT_FORMAT.md, schema `fluent-case-builder/report@1`),
+ * the maintainer puts them into learning/inbox/ and runs this script.
+ * Output:
+ *   learning/aggregate.json — machine-readable aggregate (dedup by report id, merge);
+ *   learning/backlog.md     — human-readable backlog for the maintainer.
  *
- * Автономный ESM-скрипт: только стандартная библиотека Node.js (>= 20),
- * никаких импортов из lib/ плагина.
+ * Standalone ESM script: Node.js standard library only (>= 20),
+ * no imports from the plugin's lib/.
  *
- * Использование:
- *   node scripts/ingest-report.mjs [пути...] [--out <dir>] [--merge|--no-merge]
+ * Usage:
+ *   node scripts/ingest-report.mjs [paths...] [--out <dir>] [--merge|--no-merge]
  *
- *   пути        файлы .json и/или каталоги (обход рекурсивный); по умолчанию learning/inbox
- *   --out       каталог вывода (aggregate.json, backlog.md); по умолчанию learning
- *   --merge     дополнить существующий aggregate.json (по умолчанию включён)
- *   --no-merge  пересобрать агрегат с нуля (дедуп внутри текущего запуска сохраняется)
- *   -h, --help  эта справка
+ *   paths       .json files and/or directories (recursive walk); default learning/inbox
+ *   --out       output directory (aggregate.json, backlog.md); default learning
+ *   --merge     extend the existing aggregate.json (enabled by default)
+ *   --no-merge  rebuild the aggregate from scratch (dedup within the current run is kept)
+ *   -h, --help  this help
  *
- * Невалидные отчёты и не-JSON файлы не являются ошибкой: предупреждение + пропуск, exit 0.
+ * Invalid reports and non-JSON files are not an error: warning + skip, exit 0.
  */
 
 import { existsSync } from 'node:fs'
@@ -36,16 +36,16 @@ const REPORT_SCHEMA = 'fluent-case-builder/report@1'
 const AGGREGATE_SCHEMA = 'fluent-case-builder/aggregate@1'
 const SCRIPT_ID = 'scripts/ingest-report.mjs'
 
-/** Каталог входа и выхода по умолчанию — относительно корня пакета, а не cwd. */
+/** Default input and output directories — relative to the package root, not cwd. */
 const DEFAULT_INBOX = join(PACKAGE_ROOT, 'learning', 'inbox')
 const DEFAULT_OUT = join(PACKAGE_ROOT, 'learning')
 
-/** Служебные каталоги, в которые не нужно спускаться при рекурсивном обходе. */
+/** Service directories not to descend into during the recursive walk. */
 const SKIP_DIRS = new Set(['node_modules', '.git', '.hg', '.svn'])
 
-const MAX_EXAMPLES = 3 // сколько id-примеров хранить в статистике
-const MAX_TEXT = 400 // обрезка произвольного текста (сообщения находок и т.п.)
-const MAX_SECTION_ITEMS = 12 // сколько пунктов показывать в разделе backlog.md
+const MAX_EXAMPLES = 3 // how many example ids to keep in the stats
+const MAX_TEXT = 400 // truncation of arbitrary text (finding messages, etc.)
+const MAX_SECTION_ITEMS = 12 // how many items to show in a backlog.md section
 
 const commandLine = (message) => console.log(message)
 const warn = (message) => console.warn(`⚠ ${message}`)
@@ -57,20 +57,20 @@ class CliError extends Error {}
 // ---------------------------------------------------------------------------
 
 function printUsage(stream = commandLine) {
-  stream(`fluent-case-builder · агрегация отчётов
+  stream(`fluent-case-builder · report aggregation
 
-Использование:
-  node scripts/ingest-report.mjs [пути...] [--out <dir>] [--merge|--no-merge]
+Usage:
+  node scripts/ingest-report.mjs [paths...] [--out <dir>] [--merge|--no-merge]
 
-  пути        JSON-файлы отчётов и/или каталоги (обход рекурсивный).
-              По умолчанию: learning/inbox
-  --out       каталог для aggregate.json и backlog.md. По умолчанию: learning
-  --merge     дополнить существующий aggregate.json (по умолчанию)
-  --no-merge  пересобрать aggregate.json с нуля
-  -h, --help  показать эту справку
+  paths       report JSON files and/or directories (recursive walk).
+              Default: learning/inbox
+  --out       directory for aggregate.json and backlog.md. Default: learning
+  --merge     extend the existing aggregate.json (default)
+  --no-merge  rebuild aggregate.json from scratch
+  -h, --help  show this help
 
-Контракт отчёта: docs/REPORT_FORMAT.md (schema "${REPORT_SCHEMA}").
-Невалидные отчёты пропускаются с предупреждением; exit code 0.`)
+Report contract: docs/REPORT_FORMAT.md (schema "${REPORT_SCHEMA}").
+Invalid reports are skipped with a warning; exit code 0.`)
 }
 
 function parseArgs(argv) {
@@ -87,14 +87,14 @@ function parseArgs(argv) {
     }
     if (arg === '--out') {
       const value = argv[index + 1]
-      if (!value || value.startsWith('-')) throw new CliError('опция --out требует значение')
+      if (!value || value.startsWith('-')) throw new CliError('option --out requires a value')
       out = value
       index += 1
       continue
     }
     if (arg.startsWith('--out=')) {
       out = arg.slice('--out='.length)
-      if (!out) throw new CliError('опция --out требует значение')
+      if (!out) throw new CliError('option --out requires a value')
       continue
     }
     if (arg === '--merge') {
@@ -105,7 +105,7 @@ function parseArgs(argv) {
       merge = false
       continue
     }
-    if (arg.startsWith('-')) throw new CliError(`неизвестная опция ${arg}`)
+    if (arg.startsWith('-')) throw new CliError(`unknown option ${arg}`)
     paths.push(arg)
   }
 
@@ -113,10 +113,10 @@ function parseArgs(argv) {
 }
 
 // ---------------------------------------------------------------------------
-// Пути и текст
+// Paths and text
 // ---------------------------------------------------------------------------
 
-/** Короткий вид пути для логов: внутри пакета — относительный, иначе basename. */
+/** Short path form for logs: relative inside the package, otherwise basename. */
 function displayPath(path) {
   const rel = relative(PACKAGE_ROOT, path)
   if (rel && !rel.startsWith('..') && !isAbsolute(rel)) return rel.split(sep).join('/')
@@ -159,7 +159,7 @@ function firstString(...values) {
   return ''
 }
 
-/** Однострочный текст с обрезкой. */
+/** Single-line text with truncation. */
 function truncate(value, max = MAX_TEXT) {
   const flat = String(value ?? '').replace(/\s+/gu, ' ').trim()
   if (!flat) return ''
@@ -182,7 +182,7 @@ function uniqueStrings(values) {
 const isNumber = (value) => Number.isFinite(value)
 
 // ---------------------------------------------------------------------------
-// Обход входов
+// Walking inputs
 // ---------------------------------------------------------------------------
 
 async function collectJsonFiles(inputs) {
@@ -196,7 +196,7 @@ async function collectJsonFiles(inputs) {
     try {
       entries = await readdir(dir, { withFileTypes: true })
     } catch (error) {
-      warn(`не удалось прочитать каталог ${displayPath(dir)}: ${error.message}`)
+      warn(`failed to read directory ${displayPath(dir)}: ${error.message}`)
       return
     }
     entries.sort((left, right) => left.name.localeCompare(right.name))
@@ -249,15 +249,15 @@ async function collectJsonFiles(inputs) {
 }
 
 // ---------------------------------------------------------------------------
-// Чтение и валидация отчётов
+// Reading and validating reports
 // ---------------------------------------------------------------------------
 
 function validateReport(report) {
-  if (!isPlainObject(report)) return 'JSON не является объектом'
+  if (!isPlainObject(report)) return 'JSON is not an object'
   if (report.schema !== REPORT_SCHEMA) {
-    return `чужой schema: ${truncate(JSON.stringify(report.schema ?? null), 80)}`
+    return `foreign schema: ${truncate(JSON.stringify(report.schema ?? null), 80)}`
   }
-  if (typeof report.id !== 'string' || !report.id.trim()) return 'отсутствует id отчёта'
+  if (typeof report.id !== 'string' || !report.id.trim()) return 'report id is missing'
   return null
 }
 
@@ -271,9 +271,9 @@ async function readReports(files) {
     try {
       text = await readFile(file, 'utf8')
     } catch (error) {
-      const reason = `не читается: ${error.message}`
+      const reason = `unreadable: ${error.message}`
       invalid.push({ file: displayPath(file), reason })
-      warn(`пропущен ${displayPath(file)}: ${reason}`)
+      warn(`skipped ${displayPath(file)}: ${reason}`)
       continue
     }
 
@@ -281,13 +281,13 @@ async function readReports(files) {
     try {
       data = JSON.parse(text)
     } catch (error) {
-      const reason = `невалидный JSON: ${error.message}`
+      const reason = `invalid JSON: ${error.message}`
       invalid.push({ file: displayPath(file), reason })
-      warn(`пропущен ${displayPath(file)}: ${reason}`)
+      warn(`skipped ${displayPath(file)}: ${reason}`)
       continue
     }
 
-    // Собственный агрегат, случайно попавший во вход, — не отчёт и не ошибка.
+    // Our own aggregate that accidentally ended up in the input is neither a report nor an error.
     if (isPlainObject(data) && data.schema === AGGREGATE_SCHEMA) {
       aggregateJsonSkipped += 1
       continue
@@ -296,7 +296,7 @@ async function readReports(files) {
     const problem = validateReport(data)
     if (problem) {
       invalid.push({ file: displayPath(file), reason: problem })
-      warn(`пропущен ${displayPath(file)}: ${problem}`)
+      warn(`skipped ${displayPath(file)}: ${problem}`)
       continue
     }
 
@@ -307,7 +307,7 @@ async function readReports(files) {
 }
 
 // ---------------------------------------------------------------------------
-// Нормализация полей отчёта
+// Normalizing report fields
 // ---------------------------------------------------------------------------
 
 function normalizeFinding(raw) {
@@ -382,7 +382,7 @@ function describeError(raw) {
   return ''
 }
 
-/** Шаг, который плагин не поддержал: строка или объект ({step|id|reason|why|...}). */
+/** A step the plugin did not support: a string or an object ({step|id|reason|why|...}). */
 function describeStep(raw) {
   if (typeof raw === 'string') {
     const step = truncate(raw, 200)
@@ -426,7 +426,7 @@ function mergeRecipes(items) {
 }
 
 // ---------------------------------------------------------------------------
-// Карточка отчёта (компактное представление, которое хранится в aggregate.json)
+// Report card (the compact representation stored in aggregate.json)
 // ---------------------------------------------------------------------------
 
 function toCard(report, sourceFile, now) {
@@ -549,7 +549,7 @@ function toCard(report, sourceFile, now) {
   }
 }
 
-/** Приводит карточку из старого aggregate.json к текущей форме (без потери данных). */
+/** Bring a card from an old aggregate.json to the current shape (without losing data). */
 function adoptExistingCard(raw, fallbackId) {
   if (!isPlainObject(raw)) return null
   const id = asString(raw.id) || fallbackId
@@ -593,7 +593,7 @@ function compareCards(left, right) {
 }
 
 // ---------------------------------------------------------------------------
-// Статистика
+// Statistics
 // ---------------------------------------------------------------------------
 
 function sortedCounts(map) {
@@ -744,7 +744,7 @@ function computeStats(cards) {
       addExample(bump(missingRequiredQuestions, question), id)
       const entry = bump(openQuestions, `interview::${question}`)
       entry.kind = 'interview'
-      entry.text = `обязательный вопрос интервью «${question}» остался без ответа`
+      entry.text = `required interview question "${question}" is still unanswered`
       addExample(entry, id)
     }
 
@@ -784,7 +784,7 @@ function computeStats(cards) {
       const normalize = (value) => value.toLowerCase().replace(/[^a-z0-9]/gu, '')
       const matches = claimed.some((version) => normalize(version) === normalize(detected))
       if (!matches) {
-        const key = `заявлено ${claimed.join(', ')} / в логе ${detected}`
+        const key = `claimed ${claimed.join(', ')} / in the log ${detected}`
         const entry = bump(ansysVersionConflicts, key)
         entry.claimed = claimed
         entry.detected = detected
@@ -894,28 +894,28 @@ function markdownText(value) {
 }
 
 function idExamples(reports) {
-  if (!Array.isArray(reports) || reports.length === 0) return 'примеры: —'
-  return `примеры: ${reports.map((id) => `\`${id}\``).join(', ')}`
+  if (!Array.isArray(reports) || reports.length === 0) return 'examples: —'
+  return `examples: ${reports.map((id) => `\`${id}\``).join(', ')}`
 }
 
 function actionItem(text, count, reports) {
-  return `- [ ] ${text} — частота: ${count} отч.; ${idExamples(reports)}`
+  return `- [ ] ${text} — frequency: ${count} rep.; ${idExamples(reports)}`
 }
 
 function noteItem(text, count, reports) {
-  return `- ${text} — частота: ${count} отч.; ${idExamples(reports)}`
+  return `- ${text} — frequency: ${count} rep.; ${idExamples(reports)}`
 }
 
 function addSection(lines, title, items) {
   lines.push('', `## ${title}`, '')
   if (items.length === 0) {
-    lines.push('_данных пока нет._')
+    lines.push('_no data yet._')
     return
   }
   const shown = items.slice(0, MAX_SECTION_ITEMS)
   lines.push(...shown)
   if (items.length > shown.length) {
-    lines.push('', `_…и ещё ${items.length - shown.length} пункт(ов): полные данные — в \`aggregate.json\`._`)
+    lines.push('', `_…and ${items.length - shown.length} more item(s): full data in \`aggregate.json\`._`)
   }
 }
 
@@ -967,36 +967,36 @@ function renderBacklog({ aggregate, cards }) {
   const stats = aggregate.stats
   const lines = []
 
-  lines.push('# Бэклог обучения `fluent-case-builder`', '')
+  lines.push('# Learning backlog for `fluent-case-builder`', '')
   lines.push(
-    `Обновлён: **${formatStamp(aggregate.updatedAt)}** · отчётов в агрегате: **${stats.reportsTotal}**`,
+    `Updated: **${formatStamp(aggregate.updatedAt)}** · reports in the aggregate: **${stats.reportsTotal}**`,
   )
   lines.push('')
   lines.push(
-    'Как обновить: положить JSON-отчёты в `learning/inbox/` и выполнить `node scripts/ingest-report.mjs`.',
+    'How to update: put report JSON files into `learning/inbox/` and run `node scripts/ingest-report.mjs`.',
   )
-  lines.push('Контракт отчёта: `docs/REPORT_FORMAT.md`. Процесс: `docs/MAINTAINING.md`.')
+  lines.push('Report contract: `docs/REPORT_FORMAT.md`. Process: `docs/MAINTAINING.md`.')
   if (stats.reportsTotal === 0) {
     lines.push('')
     lines.push(
-      '> **Данных пока нет.** В `learning/inbox/` нет валидных отчётов (`schema: "fluent-case-builder/report@1"`).',
+      '> **No data yet.** There are no valid reports in `learning/inbox/` (`schema: "fluent-case-builder/report@1"`).',
     )
   }
 
-  // 1. Проверить в живой сессии -------------------------------------------------
+  // 1. Verify in a live session -----------------------------------------------
   const live = []
   for (const item of stats.unsupportedSteps) {
     const reason = item.reason ? ` (${markdownText(item.reason)})` : ''
-    live.push(actionItem(`Проверить в живой сессии шаг «${markdownText(item.step)}»${reason}`, item.count, item.reports))
+    live.push(actionItem(`Verify step "${markdownText(item.step)}" in a live session${reason}`, item.count, item.reports))
   }
   for (const item of stats.unverifiedSteps) {
     const reason = item.reason ? `: ${markdownText(item.reason)}` : ''
-    live.push(actionItem(`Проверить шаг, помеченный как непроверенный — «${markdownText(item.step)}»${reason}`, item.count, item.reports))
+    live.push(actionItem(`Verify the step marked as unverified — "${markdownText(item.step)}"${reason}`, item.count, item.reports))
   }
   for (const recipe of stats.unverifiedRecipes) {
     live.push(
       actionItem(
-        `Проверить рецепт \`${markdownText(recipe.id)}\` (${markdownText(recipe.status)}) и повысить статус до \`verified\``,
+        `Verify recipe \`${markdownText(recipe.id)}\` (${markdownText(recipe.status)}) and promote its status to \`verified\``,
         recipe.count,
         recipe.reports,
       ),
@@ -1005,20 +1005,20 @@ function renderBacklog({ aggregate, cards }) {
   for (const item of stats.unknownJournalLines) {
     live.push(
       actionItem(
-        `Разобрать строку журнала \`${markdownText(item.line)}\` — её нет в индексе команд`,
+        `Investigate journal line \`${markdownText(item.line)}\` — it is not in the command index`,
         item.count,
         item.reports,
       ),
     )
   }
-  addSection(lines, 'Проверить в живой сессии', live)
+  addSection(lines, 'Verify in a live session', live)
 
-  // 2. Добавить вопросы интервью ------------------------------------------------
+  // 2. Add interview questions ------------------------------------------------
   const questions = []
   for (const item of stats.missingRequiredQuestions) {
     questions.push(
       actionItem(
-        `Добавить/уточнить обязательный вопрос \`${markdownText(item.id)}\` в \`data/rules/questions.json\``,
+        `Add/refine required question \`${markdownText(item.id)}\` in \`data/rules/questions.json\``,
         item.count,
         item.reports,
       ),
@@ -1031,26 +1031,26 @@ function renderBacklog({ aggregate, cards }) {
   )) {
     questions.push(
       actionItem(
-        `Добавить вопрос в интервью: «${markdownText(gap.item.detail)}»`,
+        `Add interview question: "${markdownText(gap.item.detail)}"`,
         gap.item.frequency,
         [gap.card.id],
       ),
     )
   }
-  addSection(lines, 'Добавить вопросы интервью', questions)
+  addSection(lines, 'Add interview questions', questions)
 
-  // 3. Диагностика ошибок -------------------------------------------------------
+  // 3. Error diagnostics ------------------------------------------------------
   const diagnostics = []
   for (const group of collectFindingGroups(cards)) {
     const severity = [...group.severities].join('/') || 'info'
-    const message = group.messages[0] ? `: «${markdownText(group.messages[0])}»` : ''
+    const message = group.messages[0] ? `: "${markdownText(group.messages[0])}"` : ''
     const recommendation = group.recommendations[0]
       ? ` → ${markdownText(group.recommendations[0])}`
       : ''
-    const code = group.code === 'other' ? 'other (назначить точный code)' : group.code
+    const code = group.code === 'other' ? 'other (assign an exact code)' : group.code
     diagnostics.push(
       actionItem(
-        `Добавить/уточнить диагностику \`${markdownText(code)}\` (${markdownText(severity)})${message}${recommendation}`,
+        `Add/refine diagnostic \`${markdownText(code)}\` (${markdownText(severity)})${message}${recommendation}`,
         group.count,
         group.reports,
       ),
@@ -1062,21 +1062,21 @@ function renderBacklog({ aggregate, cards }) {
     if (failed && !hasFindings) {
       diagnostics.push(
         actionItem(
-          `Разобрать отчёт \`${card.id}\`: запуск/анализ failed, но findings пуст — нужна новая диагностика`,
+          `Investigate report \`${card.id}\`: run/analysis failed, but findings is empty — a new diagnostic is needed`,
           1,
           [card.id],
         ),
       )
     }
   }
-  addSection(lines, 'Диагностика ошибок', diagnostics)
+  addSection(lines, 'Error diagnostics', diagnostics)
 
-  // 4. Версии ANSYS -------------------------------------------------------------
-  lines.push('', '## Версии ANSYS', '')
+  // 4. ANSYS versions ---------------------------------------------------------
+  lines.push('', '## ANSYS versions', '')
   if (stats.reportsTotal === 0) {
-    lines.push('_данных пока нет._')
+    lines.push('_no data yet._')
   } else {
-    lines.push('| Версия Fluent | build | отчётов |', '|---|---|---|')
+    lines.push('| Fluent version | build | reports |', '|---|---|---|')
     for (const [version, entry] of Object.entries(stats.fluentVersions)) {
       const builds = Object.entries(entry.builds)
         .map(([build, count]) => `${build} ×${count}`)
@@ -1086,7 +1086,7 @@ function renderBacklog({ aggregate, cards }) {
     lines.push('')
     if (Object.keys(stats.ansysVersions).length > 0) {
       lines.push(
-        `Заявленные версии в отчётах (\`task.ansysVersions\`): ${Object.entries(stats.ansysVersions)
+        `Versions claimed in the reports (\`task.ansysVersions\`): ${Object.entries(stats.ansysVersions)
           .map(([version, count]) => `\`${version}\` ×${count}`)
           .join(', ')}.`,
       )
@@ -1094,7 +1094,7 @@ function renderBacklog({ aggregate, cards }) {
     }
     if (Object.keys(stats.fluentSources).length > 0) {
       lines.push(
-        `Источник версии: ${Object.entries(stats.fluentSources)
+        `Version source: ${Object.entries(stats.fluentSources)
           .map(([source, count]) => `\`${source}\` ×${count}`)
           .join(', ')}.`,
       )
@@ -1106,7 +1106,7 @@ function renderBacklog({ aggregate, cards }) {
       if (version === 'unknown') continue
       versionItems.push(
         actionItem(
-          `Прогнать verification-журнал на Fluent «${version}» и проставить \`verifiedOn\` в затронутых рецептах`,
+          `Run the verification journal on Fluent "${version}" and set \`verifiedOn\` in the affected recipes`,
           entry.count,
           entry.reports ?? [],
         ),
@@ -1115,19 +1115,19 @@ function renderBacklog({ aggregate, cards }) {
     for (const conflict of stats.ansysVersionConflicts) {
       versionItems.push(
         actionItem(
-          `Сверить версию ANSYS: ${markdownText(conflict.conflict)} (в отчёте заявлено, в логе — другое)`,
+          `Reconcile the ANSYS version: ${markdownText(conflict.conflict)} (claimed in the report, different in the log)`,
           conflict.count,
           conflict.reports,
         ),
       )
     }
-    // Гэп и находка version-mismatch часто описывают одно и то же — дедуплицируем по карточке и тексту.
+    // A gap and a version-mismatch finding often describe the same thing — deduplicate by card and text.
     const seenVersionIssues = new Set()
     const pushVersionIssue = (card, text, count) => {
       const key = `${card.id}::${truncate(text).toLowerCase()}`
       if (seenVersionIssues.has(key)) return
       seenVersionIssues.add(key)
-      versionItems.push(actionItem(`Разобрать расхождение версий: «${markdownText(text)}»`, count, [card.id]))
+      versionItems.push(actionItem(`Investigate the version mismatch: "${markdownText(text)}"`, count, [card.id]))
     }
     for (const card of cards) {
       for (const gap of Array.isArray(card.gaps) ? card.gaps : []) {
@@ -1141,40 +1141,40 @@ function renderBacklog({ aggregate, cards }) {
         }
       }
     }
-    if (versionItems.length === 0) versionItems.push('- [ ] Новых версий и расхождений нет.')
+    if (versionItems.length === 0) versionItems.push('- [ ] No new versions or mismatches.')
     lines.push(...versionItems.slice(0, MAX_SECTION_ITEMS))
     if (versionItems.length > MAX_SECTION_ITEMS) {
-      lines.push('', `_…и ещё ${versionItems.length - MAX_SECTION_ITEMS} пункт(ов): полные данные — в \`aggregate.json\`._`)
+      lines.push('', `_…and ${versionItems.length - MAX_SECTION_ITEMS} more item(s): full data in \`aggregate.json\`._`)
     }
   }
 
-  // 5. Запросы и заметки коллег -------------------------------------------------
+  // 5. Requests and notes from colleagues --------------------------------------
   const requests = []
   for (const question of stats.openQuestions) {
     if (question.kind !== 'maintainer') continue
-    requests.push(actionItem(`Ответить коллеге: «${markdownText(question.text)}»`, question.count, question.reports))
+    requests.push(actionItem(`Reply to the colleague: "${markdownText(question.text)}"`, question.count, question.reports))
   }
   for (const note of stats.notes) {
-    requests.push(noteItem(`Учесть заметку: «${markdownText(note.text)}»`, note.count, note.reports))
+    requests.push(noteItem(`Take the note into account: "${markdownText(note.text)}"`, note.count, note.reports))
   }
-  addSection(lines, 'Запросы и заметки коллег', requests)
+  addSection(lines, 'Requests and notes from colleagues', requests)
 
-  // 6. Пробелы KB ---------------------------------------------------------------
+  // 6. Knowledge-base gaps ----------------------------------------------------
   const kb = []
   for (const gap of stats.kbGaps) {
     const kind = gap.kind && gap.kind !== 'kb-gap' ? ` (${markdownText(gap.kind)})` : ''
-    kb.push(actionItem(`Закрыть пробел KB: «${markdownText(gap.detail)}»${kind}`, gap.count, gap.reports))
+    kb.push(actionItem(`Close knowledge-base gap: "${markdownText(gap.detail)}"${kind}`, gap.count, gap.reports))
   }
-  addSection(lines, 'Пробелы KB', kb)
+  addSection(lines, 'Knowledge-base gaps', kb)
 
   lines.push('')
   lines.push('---')
   lines.push('')
   lines.push(
-    `Источник: ${aggregate.ingest.inputs.map((input) => `\`${input}\``).join(', ')}. Пересобрать: \`node scripts/ingest-report.mjs\`.`,
+    `Source: ${aggregate.ingest.inputs.map((input) => `\`${input}\``).join(', ')}. Rebuild: \`node scripts/ingest-report.mjs\`.`,
   )
   lines.push(
-    'Сырые отчёты в `learning/inbox/` не коммитятся; `learning/aggregate.json` и `learning/backlog.md` — коммитятся.',
+    'Raw reports in `learning/inbox/` are not committed; `learning/aggregate.json` and `learning/backlog.md` are committed.',
   )
   lines.push('')
 
@@ -1188,7 +1188,7 @@ function renderBacklog({ aggregate, cards }) {
 async function main() {
   const major = Number(process.versions.node.split('.')[0])
   if (major < 20) {
-    console.error(`Нужен Node.js >= 20 (сейчас ${process.versions.node}).`)
+    console.error(`Node.js >= 20 is required (currently ${process.versions.node}).`)
     process.exitCode = 1
     return
   }
@@ -1197,7 +1197,7 @@ async function main() {
   try {
     options = parseArgs(process.argv.slice(2))
   } catch (error) {
-    console.error(`Ошибка аргументов: ${error.message}`)
+    console.error(`Argument error: ${error.message}`)
     printUsage(console.error)
     process.exitCode = 2
     return
@@ -1212,19 +1212,19 @@ async function main() {
   const aggregatePath = join(outDir, 'aggregate.json')
   const backlogPath = join(outDir, 'backlog.md')
 
-  console.log('fluent-case-builder · агрегация отчётов')
-  console.log(`Вход:  ${inputs.join(', ')}`)
-  console.log(`Выход: ${outDir}`)
+  console.log('fluent-case-builder · report aggregation')
+  console.log(`Input:  ${inputs.join(', ')}`)
+  console.log(`Output: ${outDir}`)
 
   const { files, missingInputs, skippedNonJson } = await collectJsonFiles(inputs)
   for (const missing of missingInputs) {
-    const hint = missing === DEFAULT_INBOX ? ' — пустой inbox, это нормально' : ''
-    warn(`вход не найден: ${missing}${hint}`)
+    const hint = missing === DEFAULT_INBOX ? ' — empty inbox, this is normal' : ''
+    warn(`input not found: ${missing}${hint}`)
   }
 
   const { reports, invalid, aggregateJsonSkipped } = await readReports(files)
 
-  // Слияние с предыдущим агрегатом.
+  // Merge with the previous aggregate.
   const cards = new Map()
   let merged = false
   let reportsBefore = 0
@@ -1239,10 +1239,10 @@ async function main() {
         merged = true
         reportsBefore = cards.size
       } else {
-        warn(`aggregate.json не соответствует схеме ${AGGREGATE_SCHEMA} — пересобираю с нуля`)
+        warn(`aggregate.json does not match schema ${AGGREGATE_SCHEMA} — rebuilding from scratch`)
       }
     } catch (error) {
-      warn(`не удалось прочитать aggregate.json (${error.message}) — пересобираю с нуля`)
+      warn(`failed to read aggregate.json (${error.message}) — rebuilding from scratch`)
     }
   }
 
@@ -1300,10 +1300,10 @@ async function main() {
   await writeFile(aggregatePath, `${JSON.stringify(aggregate, null, 2)}\n`, 'utf8')
   await writeFile(backlogPath, renderBacklog({ aggregate, cards: sortedCards }), 'utf8')
 
-  // Итоговая сводка.
+  // Final summary.
   const formatCounts = (counts) => {
     const entries = Object.entries(counts)
-    return entries.length > 0 ? entries.map(([key, value]) => `${key} ${value}`).join(', ') : 'нет'
+    return entries.length > 0 ? entries.map(([key, value]) => `${key} ${value}`).join(', ') : 'none'
   }
   const formatFluent = () =>
     Object.entries(stats.fluentVersions)
@@ -1313,7 +1313,7 @@ async function main() {
           .join(', ')
         return `${version} [${builds}] ×${entry.count}`
       })
-      .join('; ') || 'нет данных'
+      .join('; ') || 'no data'
 
   const maintainerQuestions = stats.openQuestions.filter(
     (question) => question.kind === 'maintainer',
@@ -1321,33 +1321,33 @@ async function main() {
 
   console.log('')
   console.log(
-    `Отчётов прочитано: ${reports.length}; новых: ${added}; дубликатов: ${duplicates}; невалидных: ${invalid.length}; не-JSON пропущено: ${skippedNonJson.length}.`,
+    `Reports read: ${reports.length}; new: ${added}; duplicates: ${duplicates}; invalid: ${invalid.length}; non-JSON skipped: ${skippedNonJson.length}.`,
   )
   console.log(
-    `Всего в агрегате: ${stats.reportsTotal}${merged ? ` (merge; было ${reportsBefore})` : ' (пересобрано с нуля)'}.`,
+    `Total in the aggregate: ${stats.reportsTotal}${merged ? ` (merge; was ${reportsBefore})` : ' (rebuilt from scratch)'}.`,
   )
   console.log('')
-  console.log('Сводка:')
+  console.log('Summary:')
   console.log(`  findings: ${stats.findingsTotal} (${formatCounts(stats.findingsBySeverity)})`)
   console.log(`  gaps: ${stats.gapsTotal} (${formatCounts(stats.gapsByKind)})`)
   console.log(
-    `  unsupported-шагов: ${stats.unsupportedSteps.length}; непроверенных рецептов: ${stats.unverifiedRecipes.length}; неизвестных строк журнала: ${stats.unknownJournalLines.length}`,
+    `  unsupported steps: ${stats.unsupportedSteps.length}; unverified recipes: ${stats.unverifiedRecipes.length}; unknown journal lines: ${stats.unknownJournalLines.length}`,
   )
   console.log(
-    `  неотвеченных обязательных вопросов: ${stats.missingRequiredQuestions.length}; запросов к мейнтейнеру: ${maintainerQuestions}; заметок: ${stats.notes.length}`,
+    `  unanswered required questions: ${stats.missingRequiredQuestions.length}; maintainer requests: ${maintainerQuestions}; notes: ${stats.notes.length}`,
   )
-  console.log(`  версии Fluent: ${formatFluent()}`)
-  console.log(`  хостов: ${stats.hostsCount}; ОС: ${stats.osCount}`)
+  console.log(`  Fluent versions: ${formatFluent()}`)
+  console.log(`  hosts: ${stats.hostsCount}; OS: ${stats.osCount}`)
   console.log('')
-  console.log(`Агрегат: ${aggregatePath}`)
-  console.log(`Бэклог:  ${backlogPath}`)
+  console.log(`Aggregate: ${aggregatePath}`)
+  console.log(`Backlog:  ${backlogPath}`)
   if (stats.reportsTotal === 0) {
     console.log('')
-    console.log('Отчётов пока нет — бэклог пуст, это нормально.')
+    console.log('No reports yet — the backlog is empty, this is normal.')
   }
 }
 
 main().catch((error) => {
-  console.error(`Ошибка ingest: ${error?.stack || error?.message || error}`)
+  console.error(`Ingest error: ${error?.stack || error?.message || error}`)
   process.exitCode = 1
 })

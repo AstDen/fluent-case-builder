@@ -1,6 +1,6 @@
 {
   "id": "boundary.fluid.porous",
-  "title": "Пористая fluid-зона (55 шагов)",
+  "title": "Porous fluid zone (55 steps)",
   "category": "boundary",
   "status": "unverified",
   "confidence": "high",
@@ -23,5 +23,5 @@
       "type": "number"
     }
   ],
-  "notes": "Полная 55-шаговая цепочка зафиксирована в KB (walk/bc_deep.jsonl, структура проверена). Конкретная позиционная строка содержит параметры приватного расчёта и в публичный пакет не включена. Соберите строку в своей сессии: /define/boundary-conditions fluid → ответы на 55 вопросов; порядок и значения resistencia/porosity проверяйте вживую."
+  "notes": "The full 55-step chain is recorded in the KB (walk/bc_deep.jsonl, structure verified). The concrete positional line contains private case parameters and is not included in the public package. Build the line in your own session: /define/boundary-conditions fluid → answers to 55 questions; verify the order and the resistance/porosity values live."
 }

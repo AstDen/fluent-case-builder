@@ -1,11 +1,11 @@
-# Формат отчёта о задаче (`report@1`) — «петля обучения»
+# Task report format (`report@1`) — the "learning loop"
 
-Отчёт — **один самодостаточный JSON-файл**, который коллега генерирует инструментом
-`fluent_task_report` и присылает мейнтейнеру. Мейнтейнер складывает отчёты в `learning/inbox/`
-и запускает `node scripts/ingest-report.mjs`, получая агрегированный бэклог: какие вопросы,
-рецепты, диагностики, профили и версии ANSYS нужно добавить в плагин.
+A report is **a single self-contained JSON file** that a colleague generates with the
+`fluent_task_report` tool and sends to the maintainer. The maintainer puts the reports into
+`learning/inbox/` and runs `node scripts/ingest-report.mjs`, getting an aggregated backlog: which
+questions, recipes, diagnostics, profiles and ANSYS versions should be added to the plugin.
 
-Рядом с JSON пишется человекочитаемый `.md` с тем же содержимым.
+A human-readable `.md` with the same content is written next to the JSON.
 
 ```json
 {
@@ -14,7 +14,7 @@
   "generatedAt": "2026-11-11T09:40:00.000Z",
   "generator": {
     "plugin": "fluent-case-builder",
-    "pluginVersion": "0.2.0",
+    "pluginVersion": "0.6.0",
     "dshProfile": "web"
   },
   "environment": {
@@ -27,12 +27,12 @@
     "hardware": { "cpus": 32 }
   },
   "task": {
-    "title": "Сверхзвуковое сопло, Mach 2.5",
+    "title": "Supersonic nozzle, Mach 2.5",
     "kind": "gas-dynamics",
-    "description": "что считаем и зачем",
-    "expectations": "какой результат нужен",
-    "notes": ["заметки по ходу"],
-    "questionsForMaintainer": ["почему не сгенерировался inlet BC?"],
+    "description": "what we compute and why",
+    "expectations": "what result is needed",
+    "notes": ["notes along the way"],
+    "questionsForMaintainer": ["why was the inlet BC not generated?"],
     "appVersion": "2026 R1",
     "ansysVersions": ["2026 R1"]
   },
@@ -64,7 +64,7 @@
     "invalidCommands": [],
     "outputsPresent": true,
     "logFile": ".run/setup.log",
-    "logTail": "…последние N строк…"
+    "logTail": "…the last N lines…"
   },
   "analysis": {
     "verdict": "configured | failed | incomplete | analyzed",
@@ -81,14 +81,14 @@
     "findings": [
       {
         "severity": "error | warning | info",
-        "code": "<id из data/rules/diagnostics.json, напр. invalid-command-batch-confirm | license | udf-compile | crash | kb-gap>",
-        "message": "что произошло",
-        "journalLine": "строка журнала, если известна",
-        "recipeId": "id рецепта, если применимо",
-        "recommendation": "что делать",
-        "source": "KB-файл или протокол",
+        "code": "<id from data/rules/diagnostics.json, e.g. invalid-command-batch-confirm | license | udf-compile | crash | kb-gap>",
+        "message": "what happened",
+        "journalLine": "the journal line, if known",
+        "recipeId": "the recipe id, if applicable",
+        "recommendation": "what to do",
+        "source": "a KB file or protocol",
         "count": 1,
-        "examples": ["первая строка лога, если полезна"]
+        "examples": ["the first log line, if useful"]
       }
     ],
     "gaps": [
@@ -105,22 +105,22 @@
 }
 ```
 
-## Правила заполнения
+## Filling rules
 
-- `interview` может быть `null` (отчёт без интервью); `case.mode` — `profile`, `spec`, `existing` (отчёт по готовому кейсу) или `none`.
+- `interview` may be `null` (a report without an interview); `case.mode` is `profile`, `spec`, `existing` (a report about a ready case) or `none`.
 
-- `id` — уникален: `<generatedAt>-<hash>`, по нему ingest дедуплицирует отчёты.
-- `environment.fluent.version/build` берётся из лога запуска Fluent (строки `Build Id`, `Welcome to ANSYS Fluent`); иначе версия выводится из пути (`source: "path"`, например `v261`); иначе `unknown`. Это нужно для поддержки нескольких версий ANSYS.
-- `analysis.findings` — главная ценность: каждая проблема с кодом и рекомендацией. Набор кодов — в `data/rules/diagnostics.json` (12 кодов на 0.2.0); каждый finding несёт `severity`, `code`, `message`, `recommendation`, `source` и опционально `examples[]`.
-- `analysis.gaps` — чего не хватило плагину: шаг не поддержан (`unsupported-step`), рецепт не проверен (`unverified-recipe`), не было вопроса в интервью (`missing-question`), пробел в KB (`kb-gap`), расхождение версий (`version-mismatch`).
-- `case.spec` (для универсального пути) сохраняется целиком — по нему мейнтейнер видит, какие поля спеки нужно поддержать.
-- Логи усекаются (`maxLogLines`, общий лимит ~400 КБ (TOTAL_LOG_LIMIT в lib/report.js)); `truncated: true`, если усечение было.
-- Лицензия пишется только в `environment.license` (`server`, `features[]`, `source`); в `environment.fluent` её нет.
-- Никаких секретов/токенов: пути и имена хостов допустимы, лицензионные ключи — нет.
+- `id` is unique: `<generatedAt>-<hash>`; ingest deduplicates reports by it.
+- `environment.fluent.version/build` comes from the Fluent run log (the `Build Id`, `Welcome to ANSYS Fluent` lines); otherwise the version is derived from the path (`source: "path"`, `v261` for example); otherwise `unknown`. This is needed to support several ANSYS versions.
+- `analysis.findings` is the main value: every problem with a code and a recommendation. The set of codes lives in `data/rules/diagnostics.json` (14 codes in 0.6.0); every finding carries `severity`, `code`, `message`, `recommendation`, `source` and optionally `examples[]`.
+- `analysis.gaps` describes what the plugin was missing: a step is unsupported (`unsupported-step`), a recipe is unverified (`unverified-recipe`), the interview had no question (`missing-question`), a KB gap (`kb-gap`), a version mismatch (`version-mismatch`).
+- `case.spec` (for the universal path) is stored in full — it shows the maintainer which spec fields need support.
+- Logs are truncated (`maxLogLines`, total limit ~400 KB (TOTAL_LOG_LIMIT in lib/report.js)); `truncated: true` if truncation happened.
+- The license is written only to `environment.license` (`server`, `features[]`, `source`); it is not in `environment.fluent`.
+- No secrets or tokens: paths and host names are fine, license keys are not.
 
-## Что делает мейнтейнер
+## What the maintainer does
 
-1. `node scripts/ingest-report.mjs learning/inbox --out learning` — обновляет `learning/aggregate.json` и `learning/backlog.md`.
-2. Смотрит бэклог: топ `unsupported-step` → что проверить в живой сессии; топ `missing-question` → что добавить в `data/rules/questions.json`; топ ошибок → что добавить в `data/rules/diagnostics.json`; новые версии ANSYS → что перепроверить.
-3. Проверяет факты в живой сессии Fluent, добавляет рецепты/правила/вопросы/профили, повышает статусы (`unverified → verified`), обновляет `CHANGELOG.md` и версию.
-4. Коммит + тег — коллеги обновляют плагин и получают новые знания.
+1. `node scripts/ingest-report.mjs learning/inbox --out learning` — updates `learning/aggregate.json` and `learning/backlog.md`.
+2. Reads the backlog: top `unsupported-step` → what to verify in a live session; top `missing-question` → what to add to `data/rules/questions.json`; top errors → what to add to `data/rules/diagnostics.json`; new ANSYS versions → what to re-check.
+3. Verifies the facts in a live Fluent session, adds recipes/rules/questions/profiles, raises statuses (`unverified → verified`), updates `CHANGELOG.md` and the version.
+4. Commit + tag — colleagues update the plugin and receive the new knowledge.

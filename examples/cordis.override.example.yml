@@ -1,18 +1,18 @@
-# Пример пользовательского патча профиля DSH.
+# Example user patch for a DSH profile.
 #
-# Куда положить:  ~/.dsh/profiles/web/cordis.patch.yml   (или свой профиль вместо web)
-# Что это:        обычный loader-патч, который применяется ПОСЛЕ патчей бандлов.
-#                 Он адресует уже вставленную строку плагина по id и заменяет её config.
+# Where to put it:  ~/.dsh/profiles/web/cordis.patch.yml   (or your own profile instead of web)
+# What it is:       a regular loader patch applied AFTER bundle patches.
+#                   It targets the already inserted plugin line by id and replaces its config.
 #
-# Важно: поле config заменяется ЦЕЛИКОМ, а не сливается с конфигом из bundle-патча.
-# Поэтому перечислите все ключи, значения которых вам нужны; неперечисленные
-# получат значения по умолчанию из lib/config.js.
+# Important: the config field is replaced ENTIRELY, not merged with the config from the bundle
+# patch. So list every key whose value you need; keys you omit get their defaults from
+# lib/config.js.
 #
-# Полный список ключей и их смысл — examples/config.example.json и docs/INSTALL.md.
-# Внешний config.json (~/.config/fluent-case-builder/config.json) имеет приоритет
-# ВЫШЕ этого файла, а переменные окружения — ещё выше. Для личной машины обычно
-# достаточно внешнего config.json; патч профиля нужен, если конфиг должен быть
-# частью профиля DSH (например, на общей рабочей станции).
+# The full list of keys and their meaning — examples/config.example.json and docs/INSTALL.md.
+# The external config.json (~/.config/fluent-case-builder/config.json) takes priority
+# ABOVE this file, and environment variables rank even higher. For a personal machine the
+# external config.json is usually enough; the profile patch is needed when the config must be
+# part of the DSH profile (on a shared workstation, for example).
 
 - id: fluent-case-builder
   name: 'fluent-case-builder'
@@ -30,13 +30,12 @@
     fluentPath: '/opt/ansys_inc/v261/fluent/bin/fluent'
     licenseHost: '1055@localhost'
 
-# Временно отключить плагин в профиле (не удаляя пакет) можно так:
+# You can temporarily disable the plugin in a profile (without removing the package) like this:
 #
 # - id: fluent-case-builder
 #   disabled: true
 #
-# Чтобы задать в конфиге выражение времени выполнения, используйте скаляр !!js,
-# например:
+# To set a runtime expression in the config, use a !!js scalar, for example:
 #
 # - id: fluent-case-builder
 #   config:

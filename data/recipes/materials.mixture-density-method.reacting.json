@@ -1,0 +1,36 @@
+{
+  "category": "materials",
+  "status": "verified",
+  "confidence": "high",
+  "date": "2026-11-12",
+  "interactive": "change-create -> material name -> same name -> (reacting mixture only: change Reaction? no -> change Mechanism? no) -> change Density? yes -> method -> five property prompts: no",
+  "requires": [
+    "models.species-transport"
+  ],
+  "conflicts": [],
+  "notes": "reacting=false: 'no yes <method> ...' (only Mixture Species is declined). reacting=true: 'no no no yes <method> ...' because change-create asks Reaction (finite-rate) and Mechanism (reaction-mechs) before Density. Verified live on Fluent 2026 R1 (build 10262) and 2025 R1 (build 10210). Passing the method token too early gives 'Error: eval: unbound variable / Invalid integer' and aborts the journal.",
+  "id": "materials.mixture-density-method.reacting",
+  "title": "Mixture density method (reacting): change-create",
+  "source": "live 2026 R1 reproduction of the 'unbound variable' failure; fixed journal verified 2026 R1",
+  "journal": [
+    "/define/materials change-create {{name}} {{name}} no no no yes {{method}} no no no no no"
+  ],
+  "params": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "default": "mixture-template"
+    },
+    {
+      "name": "method",
+      "type": "enum",
+      "values": [
+        "ideal-gas",
+        "incompressible-ideal-gas",
+        "constant"
+      ],
+      "default": "incompressible-ideal-gas"
+    }
+  ]
+}

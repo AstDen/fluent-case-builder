@@ -9,7 +9,7 @@
   "journal": [
     "/solve/report-definitions/add {{name}} {{type}} field {{field}} surface-names ({{surfaces}}) q"
   ],
-  "interactive": "add → имя объекта → тип отчёта → ключи (field, surface-names/zone-names, define) → q (закрыть подменю объекта)",
+  "interactive": "add → object name → report type → keys (field, surface-names/zone-names, define) → q (close the object submenu)",
   "requires": [],
   "conflicts": [],
   "params": [
@@ -53,5 +53,5 @@
       "required": true
     }
   ],
-  "notes": "DERIVED: шаблон обобщает проверенную строку surface-areaavg (reports.md §1.2); тип подставляется. ВНИМАНИЕ: surface-massflowrate НЕ принимает field (проверенная строка: `add rd---mass_flow_rate-out surface-massflowrate surface-names (inlet) q`), volume-* используют zone-names, single-val-expression — `define \"имя\"`. Для этих типов обобщённый шаблон неверен — компилятор должен ветвить по type. `q` в конце обязателен, иначе следующая строка журнала уйдёт в меню объекта. Полный список типов TUI не снят."
+  "notes": "DERIVED: the template generalizes the verified surface-areaavg line (reports.md §1.2); the type is substituted. WARNING: surface-massflowrate does NOT accept field (verified line: `add rd---mass_flow_rate-out surface-massflowrate surface-names (inlet) q`), volume-* use zone-names, single-val-expression uses `define \"name\"`. For these types the generic template is wrong — the compiler must branch by type. The trailing `q` is mandatory, otherwise the next journal line goes into the object menu. The full list of TUI types was not captured."
 }

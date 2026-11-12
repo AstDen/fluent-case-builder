@@ -1,8 +1,8 @@
 {
   "name": "fluent-case-builder",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": false,
-  "description": "Универсальный конструктор расчётных кейсов ANSYS Fluent для DeepSeek Harness: интервью, рекомендации моделей, генерация журналов и кейсов, проверка по базе знаний, контролируемый запуск и отчёты для петли обучения.",
+  "description": "Universal ANSYS Fluent case builder for DeepSeek Harness: task interview, model recommendations, TUI journal and case-file generation, knowledge-base validation, controlled runs with backups, and maintainer reports.",
   "type": "module",
   "main": "index.js",
   "exports": {
